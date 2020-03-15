@@ -26,28 +26,33 @@ public class RefilBehavior : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Bucket == null)
+        if (Bucket == null) //If water bucket is empty
         {
-            if (myTimer == null)
+            if (myTimer == null) //If there isnt a timer running
             {
-                myTimer = Instantiate(Timer, transform.position, Timer.rotation);
-                Invoke("endTime", TimeDelay);
+                myTimer = Instantiate(Timer, transform.position, Timer.rotation); //create timer
+                Invoke("endTime", TimeDelay); //call endtime() after TimeDelay time
             }
         }
     }
 
     //Destroys timer and creates four blue fruits in their spaces
     void endTime()
-    {
-        if (myTimer == null)
+    { 
+        if (myTimer == null) //if timer isnt created
         {
-            Debug.LogError("Blue Fruit Patch Timer is null");
+            Debug.LogError(name + " Refil Timer is null on endTime() startup.");
         }
         else
         {
-            Destroy(myTimer.gameObject);
+            Destroy(myTimer.gameObject); //destroy timer
 
-            Bucket = Instantiate(Water, this.gameObject.transform.position + new Vector3(-15f, 0, 0), Water.rotation);
+            if (Water == null) //If water isnt defined
+            {
+                Debug.LogError(name + " Water Transform is null after refil timer end.");
+            } else {
+                Bucket = Instantiate(Water, this.gameObject.transform.position + new Vector3(-15f, 0, 0), Water.rotation); //create water in Bucket
+            }
         }
     }
 }

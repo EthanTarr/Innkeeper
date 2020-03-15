@@ -28,38 +28,38 @@ public class BlueFruitArea : MonoBehaviour
     //Creates timer and invokes 'endtime' function after TimeDelay seconds
     void OnMouseDown()
     {
-        if (myTimer == null)
+        if (myTimer == null) //Check for if timer isnt running
         {
-            myTimer = Instantiate(Timer, transform.position, Timer.rotation);
-            Invoke("endTime", TimeDelay);
+            myTimer = Instantiate(Timer, transform.position, Timer.rotation); //create timer
+            Invoke("endTime", TimeDelay); //run function endTime() after TimerDelay time
         }
     }
 
     //Destroys timer and adds fruits to fruit counter
     void endTime()
     {
-        if (myTimer == null)
+        if (myTimer == null) //Check for timer
         {
-            Debug.LogError("Blue Fruit Patch Timer is null");
+            Debug.LogError(name + " Blue Fruit Patch Timer is null at endTime() startup.");
         }
         else
         {
             Destroy(myTimer.gameObject); //Destroy timer
 
-            GameObject BlueFruitCounter = GameObject.Find("Blue Fruit UI Counter");
-            if(BlueFruitCounter == null)
+            GameObject BlueFruitCounter = GameObject.Find("Blue Fruit UI Counter"); //Grab Blue Fruti UI Counter Object
+            if(BlueFruitCounter == null) //Check for Blue Fruit UI Counter Object
             {
-                Debug.LogError("Blue Fruit UI Counter could not be found");
+                Debug.LogError(name + " Blue Fruit UI Counter could not be found after timer destruction.");
             } else
             {
-                int counter = -1;
+                int counter = -1; //Initialize Counter
                 try
                 {
-                    counter = int.Parse(BlueFruitCounter.GetComponent<Text>().text); //get current blue fruit count
+                    counter = int.Parse(BlueFruitCounter.GetComponent<Text>().text); //get current blue fruit count from UI
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Blue Fruit Counter is not an int. " + e);
+                    Debug.LogError(name + " Blue Fruit Counter is not an int. " + e);
                 }
                 BlueFruitCounter.GetComponent<Text>().text = counter + FruitGain + ""; //add to and save new blue fruit count
             }
