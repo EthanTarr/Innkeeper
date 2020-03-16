@@ -19,7 +19,12 @@ public class PopupBehaviour : MonoBehaviour
         Destination = transform.position; //Initialize Destination
         if(PopupObject == null) //check for PopupObject
         {
-            Debug.Log(name + " could not find PopupObject on startup.");
+            string ObjectName = name.Split(' ')[0]; //grab object name
+            PopupObject = GameObject.Find(ObjectName).transform; //attempt to find object from name
+            if (PopupObject == null) //check again for PopupObject
+            {
+                Debug.Log(name + " could not find PopupObject on startup.");
+            }
         }
     }
 

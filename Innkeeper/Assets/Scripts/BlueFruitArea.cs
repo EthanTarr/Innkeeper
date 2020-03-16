@@ -7,11 +7,12 @@ using System;
 public class BlueFruitArea : MonoBehaviour
 {
     //Timer
-    private static Transform myTimer = null;
+    [HideInInspector] public Transform myTimer = null;
     public Transform Timer;
     public float TimeDelay = 4f; //length of gathering time in seconds
 
     public int FruitGain = 5; //number of fruits gained with each gather action
+    public int WaterGain = 3; //number of water usages gained with each gather action
 
     // Start is called before the first frame update
     void Start()
@@ -25,44 +26,48 @@ public class BlueFruitArea : MonoBehaviour
 
     }
 
-    //Creates timer and invokes 'endtime' function after TimeDelay seconds
-    void OnMouseDown()
+    // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
+    private void Gather(GameObject GatherObject, int ObjectGain)
     {
-        if (myTimer == null) //Check for if timer isnt running
+        if (myTimer == null) //if timer isnt created
         {
-            myTimer = Instantiate(Timer, transform.position, Timer.rotation); //create timer
-            Invoke("endTime", TimeDelay); //run function endTime() after TimerDelay time
-        }
-    }
-
-    //Destroys timer and adds fruits to fruit counter
-    void endTime()
-    {
-        if (myTimer == null) //Check for timer
-        {
-            Debug.LogError(name + " Blue Fruit Patch Timer is null at endTime() startup.");
+            Debug.LogError(name + " Refil Timer is null on endTime() startup.");
         }
         else
         {
-            Destroy(myTimer.gameObject); //Destroy timer
+            Destroy(myTimer.gameObject); //destroy timer
 
-            GameObject BlueFruitCounter = GameObject.Find("Blue Fruit UI Counter"); //Grab Blue Fruti UI Counter Object
-            if(BlueFruitCounter == null) //Check for Blue Fruit UI Counter Object
+            if (GatherObject == null) //Check for Gather Object
             {
-                Debug.LogError(name + " Blue Fruit UI Counter could not be found after timer destruction.");
-            } else
+                Debug.LogError(name + " GatherObject could not be found after timer destruction.");
+            }
+            else
             {
                 int counter = -1; //Initialize Counter
                 try
                 {
-                    counter = int.Parse(BlueFruitCounter.GetComponent<Text>().text); //get current blue fruit count from UI
+                    counter = int.Parse(GatherObject.GetComponent<Text>().text); //get current object count from UI
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(name + " Blue Fruit Counter is not an int. " + e);
+                    Debug.LogError(name + " GatherObject Counter is not an int. " + e);
                 }
-                BlueFruitCounter.GetComponent<Text>().text = counter + FruitGain + ""; //add to and save new blue fruit count
+                GatherObject.GetComponent<Text>().text = counter + ObjectGain + ""; //add to and save new object count
             }
         }
+    }
+
+    //Destroys timer and adds fruits to fruit counter
+    public void endBlueFruitGather()
+    {
+        GameObject BlueFruitCounter = GameObject.Find("Blue Fruit UI Counter"); //Grab Blue Fruit UI Counter Object
+        Gather(BlueFruitCounter, FruitGain);
+    }
+
+    //Destroys timer and creates four blue fruits in their spaces
+    public void endWaterGather()
+    {
+        GameObject WaterCounter = GameObject.Find("Water UI Counter"); //Grab Water UI Counter Object
+        Gather(WaterCounter, WaterGain);
     }
 }
