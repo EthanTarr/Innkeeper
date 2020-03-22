@@ -78,8 +78,28 @@ public class CustomerRequestBehavior : MonoBehaviour
                     else if(this.transform.parent.transform.childCount == 2)
                     {
                         ChangeToSingle();
+                    } else
+                    {
+                        bool foundSelf = false;
+                        foreach (Transform child in this.transform.parent)
+                        {
+                            if(!foundSelf)
+                            {
+                                if(child == this.transform)
+                                {
+                                    foundSelf = true;
+                                }
+                                child.GetComponent<RectTransform>().position += new Vector3(25, 0, 0);
+                            }
+                            else
+                            {
+                                child.GetComponent<RectTransform>().position += new Vector3(-25, 0, 0);
+                            }
+                        }
+                        this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0);
                     }
-                    Destroy(this.gameObject); //Destroy Parent Popup
+
+                    Destroy(this.gameObject); //Destroy this gameobject
                 }
             }
         }
@@ -87,18 +107,22 @@ public class CustomerRequestBehavior : MonoBehaviour
 
     public void ChangeToMultiple()
     {
-        Popup.GetComponentInChildren<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 132);
-        this.GetComponent<RectTransform>().position = new Vector2(-(this.GetComponent<RectTransform>().sizeDelta.x/2), 0);
+        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 132);
+        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(132, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y);
+        this.GetComponent<RectTransform>().position = this.GetComponent<RectTransform>().position + new Vector3(-(this.GetComponent<RectTransform>().sizeDelta.x/2), 0, 0);
     }
 
-    private void ChangeToSingle()
+    public void ChangeToSingle()
     {
-        Popup.GetComponentInChildren<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 66);
+        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 66);
+        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(66, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y);
+        this.transform.parent.GetComponent<RectTransform>().right = Vector3.zero;
+        this.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, this.transform.parent.GetComponent<RectTransform>().sizeDelta.y);
         foreach (Transform child in this.transform.parent)
         {
-            if (child != this.gameObject)
+            if (child != this.transform)
             {
-                this.GetComponent<RectTransform>().position = new Vector2(0, 0);
+                child.GetComponent<RectTransform>().localPosition = new Vector2(33, child.GetComponent<RectTransform>().localPosition.y);
             }
         }
     }

@@ -48,8 +48,18 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < RequestAmount; i++)
             {
                 GameObject popupChild = popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject;
-                GameObject newRequest = Instantiate(popupChild, popupChild.transform.position + new Vector3(popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1), 0, 0), popupChild.transform.rotation);
-                newRequest.transform.SetParent(popup.transform);
+                GameObject newRequest = Instantiate(popupChild, popup.transform.position + 
+                    new Vector3((popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1)) - (popupChild.GetComponent<RectTransform>().sizeDelta.x * .5f), 0, 0), popupChild.transform.rotation);
+                newRequest.transform.SetParent(popupChild.transform.parent);
+                if (i > 0)
+                {
+                    popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x +
+                        popupChild.GetComponent<RectTransform>().sizeDelta.x, popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.y);
+                    foreach(Transform child in popupChild.transform.parent)
+                    {
+                        child.GetComponent<RectTransform>().position = child.GetComponent<RectTransform>().position + new Vector3(-popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0);
+                    }
+                }
             }
 
             customer.GetComponent<PopUpObjectBehavior>().Popup = popup.transform; //set customer to have popup
