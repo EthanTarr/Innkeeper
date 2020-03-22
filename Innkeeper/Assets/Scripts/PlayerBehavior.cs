@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerBehavior : MonoBehaviour
 {
+    [HideInInspector] public bool controlMovement = true;
+
     public float MovementSpeed = 15f; //movement speed of the player character
     private Vector2 Destination;
     
@@ -16,7 +18,7 @@ public class PlayerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0)) //check for left mouse click
+        if(Input.GetMouseButtonDown(0) && controlMovement) //check for left mouse click
         {
             Collider2D worldClick = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)); //get all colliders in the world where the mouse is positioned
             Collider2D ScreenClick = Physics2D.OverlapPoint(Input.mousePosition); //get all colliders in the screen where the mouse is positioned

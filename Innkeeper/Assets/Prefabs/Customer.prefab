@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6476801766657664325}
   - component: {fileID: 3379899347146801695}
-  - component: {fileID: 1733211267}
   - component: {fileID: 3895026899837423814}
   - component: {fileID: 5933590265604029105}
   m_Layer: 0
@@ -19,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6476801766657664325
 Transform:
   m_ObjectHideFlags: 0
@@ -84,18 +83,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1733211267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7286162701436057464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ada309b3fec9194a8ea06c3d4e20ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3895026899837423814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,7 +96,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Popup: {fileID: 0}
-  isInitiallyOff: 0
   InitialTurnOffTimer: 5
 --- !u!61 &5933590265604029105
 BoxCollider2D:

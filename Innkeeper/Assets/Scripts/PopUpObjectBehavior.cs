@@ -20,6 +20,7 @@ public class PopUpObjectBehavior : MonoBehaviour
                 Debug.LogError(name + " could not find Popup Transform on startup.");
             }
         }
+        Popup.gameObject.SetActive(true); //Initially turn the popup on
         Invoke("TurnOff", InitialTurnOffTimer); //Invoke TurnOff function after InitialTurnOffTimer time
 
         Player = GameObject.Find("Player").transform; //Attempt to find Player object
