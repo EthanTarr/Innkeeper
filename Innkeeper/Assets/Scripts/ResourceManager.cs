@@ -14,10 +14,12 @@ public class ResourceManager : MonoBehaviour
     public int FruitGain = 5; //number of fruits gained with each gather action
     public int WaterGain = 3; //number of water usages gained with each gather action
     public int BlueFruitJuiceGain = 1; //number of Blue Fruit Juice created with each create action
+    public int AcidFlyGain = 10; //number of Acid Flys created with each create action
 
     private GameObject BlueFruitCounter; //UI counter object for Blue Fruits
     private GameObject WaterCounter; //UI counter object for Water
     private GameObject BlueFruitJuiceCounter; //UI counter for Blue Fruit Juice
+    private GameObject AcidFlyCounter; //UI counter for AcidFlys
 
     private Transform Player; //Player Transform
 
@@ -43,6 +45,11 @@ public class ResourceManager : MonoBehaviour
         if (BlueFruitJuiceCounter == null) //check for Blue fruit Juice Counter object
         {
             Debug.LogError(name + " could not find Blue Fruit Juice UI on startup.");
+        }
+        AcidFlyCounter = GameObject.Find("Acid Fly UI Counter"); //Grab Acid Fly UI Counter Object
+        if (AcidFlyCounter == null) //check for Acid Fly Counter object
+        {
+            Debug.LogError(name + " could not find Acid Fly UI on startup.");
         }
     }
 
@@ -108,6 +115,19 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    //Destroys timer and creates water in UI
+    private void endAcidFlyGather()
+    {
+        if (AcidFlyCounter == null) //check for Acid Fly Counter object
+        {
+            Debug.LogError(name + " could not find Acid fly Counter UI object.");
+        }
+        else
+        {
+            Gather(AcidFlyCounter, AcidFlyGain);
+        }
+    }
+
     //Destroys timer and creates blue fruit juice in UI
     private void endBlueFruitJuiceCreation()
     {
@@ -165,7 +185,7 @@ public class ResourceManager : MonoBehaviour
     {
         if (myTimer == null) //Check for if timer isnt running
         {
-            myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer
+            myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Invoke("endWaterGather", TimeDelay); //run function endTime() after TimerDelay time
         }
@@ -176,9 +196,20 @@ public class ResourceManager : MonoBehaviour
     {
         if (myTimer == null) //Check for if timer isnt running
         {
-            myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer
+            myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Invoke("endBlueFruitGather", TimeDelay); //run function endTime() after TimerDelay time
+        }
+    }
+
+    // places timer on Blue Fruit Area and calls function to increase Acid Flys
+    public void GatherAcidFlys()
+    {
+        if (myTimer == null) //Check for if timer isnt running
+        {
+            myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
+            Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
+            Invoke("endAcidFlyGather", TimeDelay); //run function endTime() after TimerDelay time
         }
     }
 }

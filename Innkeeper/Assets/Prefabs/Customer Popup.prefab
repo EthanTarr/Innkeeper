@@ -90,7 +90,7 @@ MonoBehaviour:
   smoothTime: 0.005
   PopupObject: {fileID: 0}
   PopupOffsetX: 0
-  PopupOffsetY: 15
+  PopupOffsetY: 2.5
 --- !u!1 &1388616400110305713
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,7 +586,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -17}
+  m_SizeDelta: {x: 0, y: -17.36}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7623548326740613735
 CanvasRenderer:

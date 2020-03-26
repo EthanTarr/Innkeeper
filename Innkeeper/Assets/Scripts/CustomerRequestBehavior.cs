@@ -18,6 +18,7 @@ public class CustomerRequestBehavior : MonoBehaviour
         Items.Add("Blue Fruit");
         Items.Add("Water");
         Items.Add("Blue Fruit Juice");
+        Items.Add("Acid Fly");
         string RequestedItem = (string) Items[UnityEngine.Random.Range(0, Items.Count)];
         ResourceCounter = GameObject.Find(RequestedItem + " UI Counter");
         if (ResourceCounter == null)
@@ -70,33 +71,33 @@ public class CustomerRequestBehavior : MonoBehaviour
                     Debug.LogError(name + " could not find Customer Transform after decrementing the counter.");
                 } else
                 {
-                    if (this.transform.parent.transform.childCount <= 1)
+                    if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
                         Destroy(Customer.gameObject); //Destroy Customer
                         Destroy(Popup); //Destroy Parent Popup
                     }
-                    else if(this.transform.parent.transform.childCount == 2)
+                    else if(this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {
-                        ChangeToSingle();
+                        ChangeToSingle(); //change UI to single request look
                     } else
                     {
-                        bool foundSelf = false;
-                        foreach (Transform child in this.transform.parent)
+                        bool foundSelf = false; //bool for if self child is found
+                        foreach (Transform child in this.transform.parent) //search through this parents children
                         {
-                            if(!foundSelf)
+                            if(!foundSelf) //if not found self
                             {
                                 if(child == this.transform)
                                 {
-                                    foundSelf = true;
+                                    foundSelf = true; //found self
                                 }
-                                child.GetComponent<RectTransform>().position += new Vector3(25, 0, 0);
+                                child.GetComponent<RectTransform>().position += new Vector3(25, 0, 0); //move request to the right
                             }
                             else
                             {
-                                child.GetComponent<RectTransform>().position += new Vector3(-25, 0, 0);
+                                child.GetComponent<RectTransform>().position += new Vector3(-25, 0, 0); //move reqeust to the left
                             }
                         }
-                        this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0);
+                        this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
 
                     Destroy(this.gameObject); //Destroy this gameobject
@@ -107,22 +108,22 @@ public class CustomerRequestBehavior : MonoBehaviour
 
     public void ChangeToMultiple()
     {
-        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 132);
-        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(132, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y);
-        this.GetComponent<RectTransform>().position = this.GetComponent<RectTransform>().position + new Vector3(-(this.GetComponent<RectTransform>().sizeDelta.x/2), 0, 0);
+        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 132); //expand UI scrollview to have two or more requests
+        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(132, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y); //expand box collider to new size
+        this.GetComponent<RectTransform>().position += new Vector3(-(this.GetComponent<RectTransform>().sizeDelta.x/2), 0, 0); //move this request to the left half my size
     }
 
     public void ChangeToSingle()
     {
-        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 66);
-        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(66, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y);
-        this.transform.parent.GetComponent<RectTransform>().right = Vector3.zero;
-        this.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, this.transform.parent.GetComponent<RectTransform>().sizeDelta.y);
-        foreach (Transform child in this.transform.parent)
+        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 66); //reduce UI scrollview to one request
+        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(66, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y); //reduce box colldier to new size
+        this.transform.parent.GetComponent<RectTransform>().right = Vector3.zero; //reduce content to one reqeust
+        this.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, this.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //reduce it more
+        foreach (Transform child in this.transform.parent) //search for brothers
         {
-            if (child != this.transform)
+            if (child != this.transform) //find brother
             {
-                child.GetComponent<RectTransform>().localPosition = new Vector2(33, child.GetComponent<RectTransform>().localPosition.y);
+                child.GetComponent<RectTransform>().localPosition = new Vector2(33, child.GetComponent<RectTransform>().localPosition.y); //move brother to single request spot
             }
         }
     }
