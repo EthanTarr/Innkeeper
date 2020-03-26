@@ -47,7 +47,7 @@ public class CustomerRequestBehavior : MonoBehaviour
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()
     {
-        if (ResourceCounter == null) //Check for Resource UI Counter Object
+        /*if (ResourceCounter == null) //Check for Resource UI Counter Object
         {
             Debug.LogError(name + " Resource UI Counter could not be found after FullfilRequest() startup.");
         }
@@ -100,6 +100,51 @@ public class CustomerRequestBehavior : MonoBehaviour
                         this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
 
+                    Destroy(this.gameObject); //Destroy this gameobject
+                }
+            }
+        }*/
+        Transform PlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().HandObject;
+        if (PlayerObject != null)
+        {
+            if(PlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+            {
+                if (Customer == null)
+                {
+                    Debug.LogError(name + " could not find Customer Transform after decrementing the counter.");
+                }
+                else
+                {
+                    if (this.transform.parent.transform.childCount <= 1) //if this is the last request
+                    {
+                        Destroy(Customer.gameObject); //Destroy Customer
+                        Destroy(Popup); //Destroy Parent Popup
+                    }
+                    else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
+                    {
+                        ChangeToSingle(); //change UI to single request look
+                    }
+                    else
+                    {
+                        bool foundSelf = false; //bool for if self child is found
+                        foreach (Transform child in this.transform.parent) //search through this parents children
+                        {
+                            if (!foundSelf) //if not found self
+                            {
+                                if (child == this.transform)
+                                {
+                                    foundSelf = true; //found self
+                                }
+                                child.GetComponent<RectTransform>().position += new Vector3(25, 0, 0); //move request to the right
+                            }
+                            else
+                            {
+                                child.GetComponent<RectTransform>().position += new Vector3(-25, 0, 0); //move reqeust to the left
+                            }
+                        }
+                        this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
+                    }
+                    Destroy(PlayerObject.gameObject);
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
             }

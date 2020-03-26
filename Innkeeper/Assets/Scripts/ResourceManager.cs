@@ -16,6 +16,11 @@ public class ResourceManager : MonoBehaviour
     public int BlueFruitJuiceGain = 1; //number of Blue Fruit Juice created with each create action
     public int AcidFlyGain = 10; //number of Acid Flys created with each create action
 
+    public Transform BlueFruit;
+    public Transform Water;
+    public Transform BlueFruitJuice;
+    public Transform AcidFly;
+
     private GameObject BlueFruitCounter; //UI counter object for Blue Fruits
     private GameObject WaterCounter; //UI counter object for Water
     private GameObject BlueFruitJuiceCounter; //UI counter for Blue Fruit Juice
@@ -60,7 +65,7 @@ public class ResourceManager : MonoBehaviour
     }
 
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
-    private void Gather(GameObject GatherObject, int ObjectGain)
+    private void Gather(Transform GatherObject)
     {
         if (myTimer == null) //if timer isnt created
         {
@@ -76,7 +81,7 @@ public class ResourceManager : MonoBehaviour
             }
             else
             {
-                int counter = -1; //Initialize Counter
+                /*int counter = -1; //Initialize Counter
                 try
                 {
                     counter = int.Parse(GatherObject.GetComponent<Text>().text); //get current object count from UI
@@ -86,7 +91,10 @@ public class ResourceManager : MonoBehaviour
                     Debug.LogError(name + " GatherObject Counter is not an int. " + e);
                 }
                 GatherObject.GetComponent<Text>().text = counter + ObjectGain + ""; //add to and save new object count
-                GatherObject.GetComponent<CounterBehaviour>().onChange(); //signify that the value has been changed
+                GatherObject.GetComponent<CounterBehaviour>().onChange(); //signify that the value has been changed*/
+                Transform GatheredObject = Instantiate(GatherObject, Player.position, BlueFruit.rotation);
+                GatheredObject.transform.localScale = new Vector2(2, 2);
+                Player.GetComponent<PlayerBehavior>().HandObject = GatheredObject;
             }
         }
     }
@@ -94,50 +102,54 @@ public class ResourceManager : MonoBehaviour
     //Destroys timer and adds fruits to fruit counter
     private void endBlueFruitGather()
     {
-        if (BlueFruitCounter == null) //check for Blue fruit Counter object
+        Gather(BlueFruit);
+        /*if (BlueFruitCounter == null) //check for Blue fruit Counter object
         {
             Debug.LogError(name + " could not find Blue Fruit Counter UI object.");
         } else
         {
             Gather(BlueFruitCounter, FruitGain);
-        }
+        }*/
     }
 
     //Destroys timer and creates water in UI
     private void endWaterGather()
     {
-        if(WaterCounter == null) //check for Water Counter object
+        Gather(Water);
+        /*if(WaterCounter == null) //check for Water Counter object
         {
             Debug.LogError(name + " could not find Water Counter UI object.");
         } else
         {
             Gather(WaterCounter, WaterGain);
-        }
+        }*/
     }
 
     //Destroys timer and creates water in UI
     private void endAcidFlyGather()
     {
-        if (AcidFlyCounter == null) //check for Acid Fly Counter object
+        Gather(AcidFly);
+        /*if (AcidFlyCounter == null) //check for Acid Fly Counter object
         {
             Debug.LogError(name + " could not find Acid fly Counter UI object.");
         }
         else
         {
             Gather(AcidFlyCounter, AcidFlyGain);
-        }
+        }*/
     }
 
     //Destroys timer and creates blue fruit juice in UI
     private void endBlueFruitJuiceCreation()
     {
-        if(BlueFruitJuiceCounter == null) //check for Blue fruit Juice Counter object
+        Gather(BlueFruitJuice);
+        /*if(BlueFruitJuiceCounter == null) //check for Blue fruit Juice Counter object
         {
             Debug.LogError(name + " could not find Water Counter UI object.");
         } else
         {
             Gather(BlueFruitJuiceCounter, BlueFruitJuiceGain);
-        }
+        }*/
     }
 
     // places timer on Table Area and calls function to increase Water

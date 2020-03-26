@@ -8,6 +8,10 @@ public class PlayerBehavior : MonoBehaviour
 
     public float MovementSpeed = 15f; //movement speed of the player character
     private Vector2 Destination;
+
+    public Transform HandObject;
+
+    private GameObject StorageObject;
     
     // Start is called before the first frame update
     void Start()
@@ -32,9 +36,66 @@ public class PlayerBehavior : MonoBehaviour
         }
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if player is farther than .1 from destination (Optimize)
         {
-            transform.position = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime); //move player towards destination
+            Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
+            transform.position = move; //move player towards destination
+            if (HandObject != null)
+            {
+                HandObject.transform.position = move;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (HandObject == null)
+            {
+                HandObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
+                if (HandObject != null)
+                {
+                    HandObject.transform.position = this.transform.position;
+                    HandObject.transform.localScale = new Vector2(2, 2);
+                }
+            }
+            else
+            {
+                HandObject.transform.localScale = new Vector2(5, 5);
+                StorageObject.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
+                HandObject = null;
+            }
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Storage"))
+        {
+            StorageObject = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Storage"))
+        {
+            StorageObject = null;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        /*Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Storage") && Input.GetMouseButtonDown(1))
+        {
+            if (HandObject == null)
+            {
+                HandObject = collision.GetComponent<StorageBehaviour>().GatherObject();
+                HandObject.transform.position = this.transform.position;
+            }
+            else
+            {
+                collision.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
+                HandObject = null;
+            }
+        }*/
+    }
 
 }
