@@ -49,29 +49,29 @@ public class ResourceManager : MonoBehaviour
     //Destroys timer and adds fruits to fruit counter
     private void endBlueFruitGather()
     {
-        Gather(BlueFruit);
+        Gather(BlueFruit, FruitGain);
     }
 
     //Destroys timer and creates water in UI
     private void endWaterGather()
     {
-        Gather(Water);
+        Gather(Water, WaterGain);
     }
 
     //Destroys timer and creates water in UI
     private void endAcidFlyGather()
     {
-        Gather(AcidFly);
+        Gather(AcidFly, AcidFlyGain);
     }
 
     //Destroys timer and creates blue fruit juice in UI
     private void endBlueFruitJuiceCreation()
     {
-        Gather(BlueFruitJuice);
+        Gather(BlueFruitJuice, BlueFruitJuiceGain);
     }
 
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
-    private void Gather(Transform GatherObject)
+    private void Gather(Transform GatherObject, int GatherGain)
     {
         if (myTimer == null) //if timer isnt created
         {
@@ -89,8 +89,10 @@ public class ResourceManager : MonoBehaviour
             {
                 Transform GatheredObject = Instantiate(GatherObject, Player.position, BlueFruit.rotation); //create gathered object on player
                 GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
+                GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
                 GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
                 Player.GetComponent<PlayerBehavior>().HandObject = GatheredObject; //set Player to hold object
+                Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
             }
         }
     }
@@ -99,7 +101,7 @@ public class ResourceManager : MonoBehaviour
     {
         foreach(Transform ingredient in Ingredients)
         {
-            Destroy(ingredient.gameObject);
+            ingredient.GetComponent<ItemBehavior>().ItemCount += -1;
         }
 
         myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer

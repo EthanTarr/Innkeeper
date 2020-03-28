@@ -9,6 +9,7 @@ public class CustomerRequestBehavior : MonoBehaviour
     public GameObject Popup; // parent Popup object
 
     private Transform Customer; // customer Transform
+    private Transform Player;
     public List<Transform> Items;
 
     // Start is called before the first frame update
@@ -22,6 +23,11 @@ public class CustomerRequestBehavior : MonoBehaviour
         } else
         {
             Customer = Popup.GetComponent<PopupBehaviour>().PopupObject; //set Customer Transform to be parent Popup's Customer Tranform
+        }
+        Player = GameObject.Find("Player").transform;
+        if(Player == null)
+        {
+            Debug.LogError(name + " could not find player on statup");
         }
     }
 
@@ -68,7 +74,8 @@ public class CustomerRequestBehavior : MonoBehaviour
                         }
                         this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
-                    Destroy(PlayerObject.gameObject);
+                    PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                    Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBehavior : MonoBehaviour
 {
@@ -12,11 +13,18 @@ public class PlayerBehavior : MonoBehaviour
     public Transform HandObject;
 
     private GameObject StorageObject;
+    private GameObject HandUIImage;
     
     // Start is called before the first frame update
     void Start()
     {
         Destination = transform.position; //find destination position
+        HandUIImage = GameObject.Find("HandImage");
+        if (HandUIImage == null)
+        {
+            Debug.LogError(name + " could not find Hand Image on Startup.");
+        }
+        checkHand();
     }
 
     // Update is called once per frame
@@ -53,6 +61,7 @@ public class PlayerBehavior : MonoBehaviour
                 {
                     HandObject.transform.position = this.transform.position;
                     HandObject.transform.localScale = new Vector2(3, 3);
+                    checkHand();
                 }
             }
             else
@@ -60,6 +69,7 @@ public class PlayerBehavior : MonoBehaviour
                 HandObject.transform.localScale = new Vector2(5, 5);
                 StorageObject.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
                 HandObject = null;
+                checkHand();
             }
         }
     }
@@ -77,6 +87,28 @@ public class PlayerBehavior : MonoBehaviour
         if(collision.gameObject.layer == LayerMask.NameToLayer("Storage"))
         {
             StorageObject = null;
+        }
+    }
+
+    public void checkHand()
+    {
+        if (HandObject != null)
+        {
+            int handItemCount = HandObject.GetComponent<ItemBehavior>().ItemCount;
+            if (handItemCount > 0)
+            {
+                HandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
+                HandUIImage.GetComponent<Image>().sprite = HandObject.GetComponent<SpriteRenderer>().sprite;
+                HandUIImage.SetActive(true);
+            }
+            else
+            {
+                HandUIImage.SetActive(false);
+            }
+        }
+        else
+        {
+            HandUIImage.SetActive(false);
         }
     }
 }
