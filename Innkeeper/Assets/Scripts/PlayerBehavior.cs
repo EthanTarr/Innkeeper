@@ -44,7 +44,7 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && StorageObject != null)
         {
             if (HandObject == null)
             {
@@ -52,7 +52,7 @@ public class PlayerBehavior : MonoBehaviour
                 if (HandObject != null)
                 {
                     HandObject.transform.position = this.transform.position;
-                    HandObject.transform.localScale = new Vector2(2, 2);
+                    HandObject.transform.localScale = new Vector2(3, 3);
                 }
             }
             else
@@ -79,23 +79,4 @@ public class PlayerBehavior : MonoBehaviour
             StorageObject = null;
         }
     }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        /*Debug.Log(collision.gameObject.name);
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Storage") && Input.GetMouseButtonDown(1))
-        {
-            if (HandObject == null)
-            {
-                HandObject = collision.GetComponent<StorageBehaviour>().GatherObject();
-                HandObject.transform.position = this.transform.position;
-            }
-            else
-            {
-                collision.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
-                HandObject = null;
-            }
-        }*/
-    }
-
 }

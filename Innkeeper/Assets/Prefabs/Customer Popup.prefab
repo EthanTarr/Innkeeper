@@ -380,6 +380,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Popup: {fileID: 939164177370711766}
+  Items:
+  - {fileID: 6856737758704126995, guid: d9102c17209059f41ab62f6544412fff, type: 3}
+  - {fileID: 2974822293809005922, guid: 1bd788a743ebd574d8999376d9e67367, type: 3}
+  - {fileID: 4257303612243312112, guid: 429f2830e2b74724f8800f33cc739df8, type: 3}
+  - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
 --- !u!1 &5295735590979312847
 GameObject:
   m_ObjectHideFlags: 0

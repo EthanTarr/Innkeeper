@@ -41,7 +41,7 @@ public class PopUpObjectBehavior : MonoBehaviour
     {
         if (Player == null) //check for Player object
         {
-            Debug.Log(name + " could not find Player Tranform on collision enter.");
+            Debug.LogError(name + " could not find Player Tranform on collision enter.");
         }
         else if (collision.transform.Equals(Player)) //check if collision was by Player object
         {
