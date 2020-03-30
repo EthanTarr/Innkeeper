@@ -34,10 +34,12 @@ public class CustomerRequestBehavior : MonoBehaviour
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()
     {
-        Transform PlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().HandObject;
-        if (PlayerObject != null)
+        Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
+        Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
+        if (LeftPlayerObject != null || RightPlayerObject != null)
         {
-            if(PlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+            if(LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) || 
+                RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
             {
                 if (Customer == null)
                 {
@@ -74,7 +76,16 @@ public class CustomerRequestBehavior : MonoBehaviour
                         }
                         this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
-                    PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                    if (LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+                    {
+                        LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
+                    }
+                    else
+                    {
+                        RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
+                    }
                     Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                     Destroy(this.gameObject); //Destroy this gameobject
                 }

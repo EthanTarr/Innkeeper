@@ -22,7 +22,7 @@ public class FindPlayer : MonoBehaviour
         {
             Debug.LogError(name + " could not find player on startup.");
         }
-        Destination = Player.position; //Find the player postion the first time
+        Destination = transform.position; //Find the player postion the first time
     }
 
     // Update is called once per frame

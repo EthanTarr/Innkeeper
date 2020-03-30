@@ -75,6 +75,29 @@ public class StorageBehaviour : MonoBehaviour
         }
     }
 
+    public void RemoveObject()
+    {
+        if (Highlight.gameObject.activeSelf)
+        {
+            if (Highlight.position.x < this.transform.position.x - this.GetComponent<SpriteRenderer>().bounds.size.x / 6)
+            {
+                LeftObject = null;
+            }
+            else if (Highlight.position.x < this.transform.position.x + this.GetComponent<SpriteRenderer>().bounds.size.x / 6)
+            {
+                CenterObject = null;
+            }
+            else
+            {
+                RightObject = null;
+            }
+        }
+        else
+        {
+            Debug.LogError(name + " could not find Highlight.");
+        }
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         Vector2 PlayerPosition = collision.transform.position;

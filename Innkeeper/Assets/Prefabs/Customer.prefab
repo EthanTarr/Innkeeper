@@ -140,3 +140,5 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
   - {fileID: 21300000, guid: aa090d0fe8651a248a235e6556b0bbb3, type: 3}
   - {fileID: 21300000, guid: c465c39398464d844b2493f626316720, type: 3}
+  MovementSpeed: 30
+  Destination: {x: 0, y: 0}

@@ -91,7 +91,7 @@ public class ResourceManager : MonoBehaviour
                 GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
                 GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
                 GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-                Player.GetComponent<PlayerBehavior>().HandObject = GatheredObject; //set Player to hold object
+                Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
                 Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
             }
         }
@@ -147,7 +147,7 @@ public class ResourceManager : MonoBehaviour
     // places timer on Table Area and calls function to increase Water
     public void CreateBlueFruitJuice()
     {
-        if (myTimer == null && Player.GetComponent<PlayerBehavior>().HandObject == null) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
         {
             bool Created = false;
             if (!Created)

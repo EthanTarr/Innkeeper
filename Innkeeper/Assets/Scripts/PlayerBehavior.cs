@@ -10,19 +10,29 @@ public class PlayerBehavior : MonoBehaviour
     public float MovementSpeed = 15f; //movement speed of the player character
     private Vector2 Destination;
 
-    public Transform HandObject;
+    public Transform LeftHandObject;
+    public Transform RightHandObject;
+    //public Transform HandObject;
 
     private GameObject StorageObject;
-    private GameObject HandUIImage;
+    private GameObject LeftHandUIImage;
+    private GameObject RightHandUIImage;
+
+    private Vector3 HandOffset = new Vector3(3, 0, 0);
     
     // Start is called before the first frame update
     void Start()
     {
         Destination = transform.position; //find destination position
-        HandUIImage = GameObject.Find("HandImage");
-        if (HandUIImage == null)
+        LeftHandUIImage = GameObject.Find("LeftHandImage");
+        if (LeftHandUIImage == null)
         {
-            Debug.LogError(name + " could not find Hand Image on Startup.");
+            Debug.LogError(name + " could not find Left Hand Image on Startup.");
+        }
+        RightHandUIImage = GameObject.Find("RightHandImage");
+        if (RightHandUIImage == null)
+        {
+            Debug.LogError(name + " could not find Right Hand Image on Startup.");
         }
         checkHand();
     }
@@ -46,31 +56,83 @@ public class PlayerBehavior : MonoBehaviour
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             transform.position = move; //move player towards destination
-            if (HandObject != null)
+            if (LeftHandObject != null)
             {
-                HandObject.transform.position = move;
+                LeftHandObject.transform.position = move - (Vector2)HandOffset;
+            }
+            if (RightHandObject != null)
+            {
+                RightHandObject.transform.position = move + (Vector2)HandOffset;
             }
         }
 
         if (Input.GetMouseButtonDown(1) && StorageObject != null)
         {
-            if (HandObject == null)
+            if (!(LeftHandObject == null && RightHandObject == null && StorageObject.GetComponent<StorageBehaviour>().GatherObject() == null))
             {
-                HandObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
-                if (HandObject != null)
+                Transform tableObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
+                if (tableObject == null)
                 {
-                    HandObject.transform.position = this.transform.position;
-                    HandObject.transform.localScale = new Vector2(3, 3);
-                    checkHand();
+                    if (LeftHandObject != null)
+                    {
+                        LeftHandObject.transform.localScale = new Vector2(5, 5);
+                        StorageObject.GetComponent<StorageBehaviour>().PlaceObject(LeftHandObject);
+                        MovementSpeed += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        LeftHandObject = null;
+                        checkHand();
+                    } else
+                    {
+                        RightHandObject.transform.localScale = new Vector2(5, 5);
+                        StorageObject.GetComponent<StorageBehaviour>().PlaceObject(RightHandObject);
+                        MovementSpeed += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        RightHandObject = null;
+                        checkHand();
+                    }
+                }
+                else
+                {
+                    if (LeftHandObject == null)
+                    {
+                        LeftHandObject = tableObject;
+                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
+                        LeftHandObject.transform.position = this.transform.position - HandOffset;
+                        LeftHandObject.transform.localScale = new Vector2(3, 3);
+                        MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        checkHand();
+                    }
+                    else if (RightHandObject == null)
+                    {
+                        RightHandObject = tableObject;
+                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
+                        RightHandObject.transform.position = this.transform.position + HandOffset;
+                        RightHandObject.transform.localScale = new Vector2(3, 3);
+                        MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        checkHand();
+                    }
                 }
             }
-            else
+            /*if (!(HandObject == null && StorageObject.GetComponent<StorageBehaviour>().GatherObject() == null))
             {
-                HandObject.transform.localScale = new Vector2(5, 5);
-                StorageObject.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
-                HandObject = null;
-                checkHand();
-            }
+                Transform tableObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
+                if (tableObject == null)
+                {
+                    HandObject.transform.localScale = new Vector2(5, 5);
+                    StorageObject.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
+                    HandObject = null;
+                    checkHand();
+                }
+                else
+                {
+                    if (HandObject == null)
+                    {
+                        HandObject = tableObject;
+                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
+                        HandObject.transform.position = this.transform.position;
+                        HandObject.transform.localScale = new Vector2(3, 3);
+                        checkHand();
+                    }
+                }
+            }*/
         }
     }
 
@@ -90,25 +152,58 @@ public class PlayerBehavior : MonoBehaviour
         }
     }
 
+    public void GiveObject(Transform ItemForPlayer)
+    {
+        if (LeftHandObject == null)
+        {
+            LeftHandObject = ItemForPlayer;
+            LeftHandObject.transform.position = this.transform.position - HandOffset;
+            MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+        } else
+        {
+            RightHandObject = ItemForPlayer;
+            RightHandObject.transform.position = this.transform.position - HandOffset;
+            MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+        }
+    }
+
     public void checkHand()
     {
-        if (HandObject != null)
+        if (LeftHandObject != null)
         {
-            int handItemCount = HandObject.GetComponent<ItemBehavior>().ItemCount;
+            int handItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
             if (handItemCount > 0)
             {
-                HandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
-                HandUIImage.GetComponent<Image>().sprite = HandObject.GetComponent<SpriteRenderer>().sprite;
-                HandUIImage.SetActive(true);
+                LeftHandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
+                LeftHandUIImage.GetComponent<Image>().sprite = LeftHandObject.GetComponent<SpriteRenderer>().sprite;
+                LeftHandUIImage.SetActive(true);
             }
             else
             {
-                HandUIImage.SetActive(false);
+                LeftHandUIImage.SetActive(false);
             }
         }
         else
         {
-            HandUIImage.SetActive(false);
+            LeftHandUIImage.SetActive(false);
+        }
+        if (RightHandObject != null)
+        {
+            int handItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+            if (handItemCount > 0)
+            {
+                RightHandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
+                RightHandUIImage.GetComponent<Image>().sprite = RightHandObject.GetComponent<SpriteRenderer>().sprite;
+                RightHandUIImage.SetActive(true);
+            }
+            else
+            {
+                RightHandUIImage.SetActive(false);
+            }
+        }
+        else
+        {
+            RightHandUIImage.SetActive(false);
         }
     }
 }
