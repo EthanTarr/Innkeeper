@@ -9,84 +9,61 @@ public class CustomerRequestBehavior : MonoBehaviour
     public GameObject Popup; // parent Popup object
 
     private Transform Customer; // customer Transform
-    private GameObject ResourceCounter;
-    private ArrayList Items = new ArrayList();
+    private Transform Player;
+    public List<Transform> Items;
 
     // Start is called before the first frame update
     void Start()
     {
-        Items.Add("Blue Fruit");
-        Items.Add("Water");
-        Items.Add("Blue Fruit Juice");
-        Items.Add("Acid Fly");
-        string RequestedItem = (string) Items[UnityEngine.Random.Range(0, Items.Count)];
-        ResourceCounter = GameObject.Find(RequestedItem + " UI Counter");
-        if (ResourceCounter == null)
-        {
-            Debug.LogError(name + " could not find ResourceCounter on startup");
-        }
-        GameObject Image = GameObject.Find(RequestedItem + " UI Image");
-        if (Image == null)
-        {
-            Debug.LogError(name + " could not find Image on startup");
-        }
-        else
-        {
-            this.GetComponent<Image>().sprite = Image.GetComponent<Image>().sprite;
-        }
-
-        if(Popup == null)
+        Transform RequestedItem = (Transform) Items[UnityEngine.Random.Range(0, Items.Count)];
+        this.GetComponent<Image>().sprite = RequestedItem.GetComponent<SpriteRenderer>().sprite;
+        if (Popup == null)
         {
             Debug.LogError(name + " could not find Popup parent object on startup");
         } else
         {
             Customer = Popup.GetComponent<PopupBehaviour>().PopupObject; //set Customer Transform to be parent Popup's Customer Tranform
         }
+        Player = GameObject.Find("Player").transform;
+        if(Player == null)
+        {
+            Debug.LogError(name + " could not find player on statup");
+        }
     }
 
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()
     {
-        if (ResourceCounter == null) //Check for Resource UI Counter Object
+        Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
+        Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
+        if (LeftPlayerObject != null || RightPlayerObject != null)
         {
-            Debug.LogError(name + " Resource UI Counter could not be found after FullfilRequest() startup.");
-        }
-        else
-        {
-            int counter = -1; //Initialize Counter
-            try
+            if(LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) || 
+                RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
             {
-                counter = int.Parse(ResourceCounter.GetComponent<Text>().text); //get current resource count from UI
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(name + " Resource Counter is not an int. " + e);
-            }
-            if (counter > 0) //check for any collected resources
-            {
-                ResourceCounter.GetComponent<Text>().text = counter + -1 + ""; //remove one save new resource count
-                ResourceCounter.GetComponent<CounterBehaviour>().onChange(); //signify that the value has been changed
-                if(Customer == null)
+                if (Customer == null)
                 {
                     Debug.LogError(name + " could not find Customer Transform after decrementing the counter.");
-                } else
+                }
+                else
                 {
                     if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
                         Destroy(Customer.gameObject); //Destroy Customer
                         Destroy(Popup); //Destroy Parent Popup
                     }
-                    else if(this.transform.parent.transform.childCount == 2) //if there will be only one more request
+                    else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {
                         ChangeToSingle(); //change UI to single request look
-                    } else
+                    }
+                    else
                     {
                         bool foundSelf = false; //bool for if self child is found
                         foreach (Transform child in this.transform.parent) //search through this parents children
                         {
-                            if(!foundSelf) //if not found self
+                            if (!foundSelf) //if not found self
                             {
-                                if(child == this.transform)
+                                if (child == this.transform)
                                 {
                                     foundSelf = true; //found self
                                 }
@@ -99,7 +76,17 @@ public class CustomerRequestBehavior : MonoBehaviour
                         }
                         this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
-
+                    if (LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+                    {
+                        LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
+                    }
+                    else
+                    {
+                        RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
+                    }
+                    Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
             }

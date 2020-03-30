@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         Vector2 position;
         while (true)
         {
-            position = new Vector2(Random.Range(-100, 100) * 1f, Random.Range(-100,100) * .05f); //create random location
+            position = new Vector2(Random.Range(-100, 100) * 1f, Random.Range(-1000,10) * .1f); //create random location
             Transform customer = Instantiate(Customer, position, Customer.rotation); //create customer object
 
             GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
