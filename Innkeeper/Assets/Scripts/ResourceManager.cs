@@ -15,11 +15,13 @@ public class ResourceManager : MonoBehaviour
     public int WaterGain = 3; //number of water usages gained with each gather action
     public int BlueFruitJuiceGain = 1; //number of Blue Fruit Juice created with each create action
     public int AcidFlyGain = 10; //number of Acid Flys created with each create action
+    public int SlicedBlueFruitGain = 2; //number of Acid Flys created with each create action
 
     public Transform BlueFruit;
     public Transform Water;
     public Transform BlueFruitJuice;
     public Transform AcidFly;
+    public Transform BlueFruitSlice;
 
     public Transform CraftingTable;
 
@@ -70,6 +72,12 @@ public class ResourceManager : MonoBehaviour
         Gather(BlueFruitJuice, BlueFruitJuiceGain);
     }
 
+    //Destroys timer and creates blue fruit juice in UI
+    private void endSlicedBlueFruitCreation()
+    {
+        Gather(BlueFruitSlice, SlicedBlueFruitGain);
+    }
+
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
     private void Gather(Transform GatherObject, int GatherGain)
     {
@@ -111,38 +119,100 @@ public class ResourceManager : MonoBehaviour
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
     }
 
-    private Boolean checkObject (Transform Ingredient)
+    private Boolean checkObject2(List<string> DesiredIngredients, List<Transform> GatheredObjects, string endcall)
     {
-        if (Ingredient != null && (Ingredient.name == BlueFruit.name || Ingredient.name == Water.name))
+        if (CraftingTable.GetComponent<StorageBehaviour>().CenterObject != null &&
+                    (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name)))
+        {
+            GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().CenterObject);
+            CraftItem(GatheredObjects, endcall);
+            return true;
+        }
+        else if (CraftingTable.GetComponent<StorageBehaviour>().RightObject != null &&
+            (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().RightObject.name)))
+        {
+            GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().RightObject);
+            CraftItem(GatheredObjects, endcall);
+            return true;
+        }
+        else if (CraftingTable.GetComponent<StorageBehaviour>().LeftObject != null &&
+            (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name)))
+        {
+            GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().LeftObject);
+            CraftItem(GatheredObjects, endcall);
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean checkObject (Transform Ingredient, List<string> DesiredIngredients, string endcall)
+    {
+        if (Ingredient != null && DesiredIngredients.Contains(Ingredient.name))
         {
             List<Transform> GatheredObjects = new List<Transform>();
             GatheredObjects.Add(Ingredient);
-            if (CraftingTable.GetComponent<StorageBehaviour>().CenterObject != null && CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name != GatheredObjects[0].name &&
-                (CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name == BlueFruit.name || CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name == Water.name))
+            DesiredIngredients.Remove(Ingredient.name);
+            if (DesiredIngredients.Count == 0)
             {
-                GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().CenterObject);
-                CraftItem(GatheredObjects, "endBlueFruitJuiceCreation");
+                CraftItem(GatheredObjects, endcall);
                 return true;
             }
-            else if (CraftingTable.GetComponent<StorageBehaviour>().RightObject != null && CraftingTable.GetComponent<StorageBehaviour>().RightObject.name != GatheredObjects[0].name &&
-                (CraftingTable.GetComponent<StorageBehaviour>().RightObject.name == BlueFruit.name || CraftingTable.GetComponent<StorageBehaviour>().RightObject.name == Water.name))
+            else if (DesiredIngredients.Count == 1)
             {
-                GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().RightObject);
-                CraftItem(GatheredObjects, "endBlueFruitJuiceCreation");
-                return true;
+                return checkObject2(DesiredIngredients, GatheredObjects, endcall);
             }
-            else if (CraftingTable.GetComponent<StorageBehaviour>().LeftObject != null && CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name != GatheredObjects[0].name &&
-                (CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name == BlueFruit.name || CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name == Water.name))
+            else
             {
-                GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().LeftObject);
-                CraftItem(GatheredObjects, "endBlueFruitJuiceCreation");
-                return true;
+                if (CraftingTable.GetComponent<StorageBehaviour>().CenterObject != null &&
+                    (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name)))
+                {
+                    GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().CenterObject);
+                    DesiredIngredients.Remove(CraftingTable.GetComponent<StorageBehaviour>().CenterObject.name);
+                    return checkObject2(DesiredIngredients, GatheredObjects, endcall);
+                }
+                else if (CraftingTable.GetComponent<StorageBehaviour>().RightObject != null &&
+                    (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().RightObject.name)))
+                {
+                    GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().RightObject);
+                    DesiredIngredients.Remove(CraftingTable.GetComponent<StorageBehaviour>().RightObject.name);
+                    return checkObject2(DesiredIngredients, GatheredObjects, endcall);
+                }
+                else if (CraftingTable.GetComponent<StorageBehaviour>().LeftObject != null &&
+                    (DesiredIngredients.Contains(CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name)))
+                {
+                    GatheredObjects.Add(CraftingTable.GetComponent<StorageBehaviour>().LeftObject);
+                    DesiredIngredients.Remove(CraftingTable.GetComponent<StorageBehaviour>().LeftObject.name);
+                    checkObject2(DesiredIngredients, GatheredObjects, endcall);
+                    return true;
+                }
+                return false;
             }
         }
         return false;
     }
 
 
+    public void CreateSlicedBlueFruit()
+    {
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        {
+            bool Created = false;
+            List<string> Ingredients = new List<string>();
+            Ingredients.Add("Blue Fruit");
+            if (!Created)
+            {
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().CenterObject, Ingredients, "endSlicedBlueFruitCreation");
+            }
+            if (!Created)
+            {
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().RightObject, Ingredients, "endSlicedBlueFruitCreation");
+            }
+            if (!Created)
+            {
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().LeftObject, Ingredients, "endSlicedBlueFruitCreation");
+            }
+        }
+    }
 
     // places timer on Table Area and calls function to increase Water
     public void CreateBlueFruitJuice()
@@ -150,52 +220,22 @@ public class ResourceManager : MonoBehaviour
         if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
         {
             bool Created = false;
+            List<string> Ingredients = new List<string>();
+            Ingredients.Add("Blue Fruit");
+            Ingredients.Add("Water");
             if (!Created)
             {
-                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().LeftObject);
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().CenterObject, Ingredients, "endBlueFruitJuiceCreation");
             }
             if (!Created)
             {
-                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().CenterObject);
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().RightObject, Ingredients, "endBlueFruitJuiceCreation");
             }
             if (!Created)
             {
-                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().RightObject);
+                Created = checkObject(CraftingTable.GetComponent<StorageBehaviour>().LeftObject, Ingredients, "endBlueFruitJuiceCreation");
             }
-
-                /*int BlueFruitCount = -1; //Initialize blue fruit Counter
-                try
-                {
-                    BlueFruitCount = int.Parse(BlueFruitCounter.GetComponent<Text>().text); //get current object count from UI
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(name + " Blue Fruit Counter is not an int. " + e);
-                }
-                int WaterCount = -1; //Initialize water Counter
-                try
-                {
-                    WaterCount = int.Parse(WaterCounter.GetComponent<Text>().text); //get current object count from UI
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(name + " Water Counter is not an int. " + e);
-                }
-                if (BlueFruitCount > 0 && WaterCount > 0)
-                {
-                    myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer
-
-                    BlueFruitCounter.GetComponent<Text>().text = BlueFruitCount + -1 + ""; //add to and save new object count
-                    BlueFruitCounter.GetComponent<CounterBehaviour>().onChange(); //signify that the value has been changed
-
-                    WaterCounter.GetComponent<Text>().text = WaterCount + -1 + ""; //add to and save new object count
-                    WaterCounter.GetComponent<CounterBehaviour>().onChange(); //signify that the value has been changed
-
-                    Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
-
-                    Invoke("endBlueFruitJuiceCreation", TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
-                }*/
-            }
+        }
     }
 
     // places timer on Blue Fruit Area and calls function to increase Water

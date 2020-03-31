@@ -66,73 +66,89 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(1) && StorageObject != null)
+        if (Input.GetMouseButtonDown(1))
         {
-            if (!(LeftHandObject == null && RightHandObject == null && StorageObject.GetComponent<StorageBehaviour>().GatherObject() == null))
+            if (StorageObject != null)
             {
-                Transform tableObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
-                if (tableObject == null)
+                if (!(LeftHandObject == null && RightHandObject == null && StorageObject.GetComponent<StorageBehaviour>().GatherObject() == null))
                 {
-                    if (LeftHandObject != null)
+                    Transform tableObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
+                    if (tableObject == null)
                     {
-                        LeftHandObject.transform.localScale = new Vector2(5, 5);
-                        StorageObject.GetComponent<StorageBehaviour>().PlaceObject(LeftHandObject);
+                        if (LeftHandObject != null)
+                        {
+                            LeftHandObject.transform.localScale = new Vector2(5, 5);
+                            StorageObject.GetComponent<StorageBehaviour>().PlaceObject(LeftHandObject);
+                            MovementSpeed += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            LeftHandObject = null;
+                            checkHand();
+                        }
+                        else
+                        {
+                            RightHandObject.transform.localScale = new Vector2(5, 5);
+                            StorageObject.GetComponent<StorageBehaviour>().PlaceObject(RightHandObject);
+                            MovementSpeed += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            RightHandObject = null;
+                            checkHand();
+                        }
+                    }
+                    else if (LeftHandObject != null && LeftHandObject.name.Equals(tableObject.name))
+                    {
+                        tableObject.GetComponent<ItemBehavior>().ItemCount += LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                         MovementSpeed += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        Destroy(LeftHandObject.gameObject);
                         LeftHandObject = null;
                         checkHand();
-                    } else
+                    }
+                    else if (RightHandObject != null && RightHandObject.name.Equals(tableObject.name))
                     {
-                        RightHandObject.transform.localScale = new Vector2(5, 5);
-                        StorageObject.GetComponent<StorageBehaviour>().PlaceObject(RightHandObject);
+                        tableObject.GetComponent<ItemBehavior>().ItemCount += RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                         MovementSpeed += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        Destroy(RightHandObject.gameObject);
                         RightHandObject = null;
                         checkHand();
                     }
-                }
-                else
-                {
-                    if (LeftHandObject == null)
+                    else
                     {
-                        LeftHandObject = tableObject;
-                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
-                        LeftHandObject.transform.position = this.transform.position - HandOffset;
-                        LeftHandObject.transform.localScale = new Vector2(3, 3);
-                        MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        checkHand();
-                    }
-                    else if (RightHandObject == null)
-                    {
-                        RightHandObject = tableObject;
-                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
-                        RightHandObject.transform.position = this.transform.position + HandOffset;
-                        RightHandObject.transform.localScale = new Vector2(3, 3);
-                        MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        checkHand();
+                        if (LeftHandObject == null)
+                        {
+                            LeftHandObject = tableObject;
+                            StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
+                            LeftHandObject.transform.position = this.transform.position - HandOffset;
+                            LeftHandObject.transform.localScale = new Vector2(3, 3);
+                            MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            checkHand();
+                        }
+                        else if (RightHandObject == null)
+                        {
+                            RightHandObject = tableObject;
+                            StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
+                            RightHandObject.transform.position = this.transform.position + HandOffset;
+                            RightHandObject.transform.localScale = new Vector2(3, 3);
+                            MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            checkHand();
+                        }
                     }
                 }
             }
-            /*if (!(HandObject == null && StorageObject.GetComponent<StorageBehaviour>().GatherObject() == null))
+            else if (LeftHandObject != null && RightHandObject == null)
             {
-                Transform tableObject = StorageObject.GetComponent<StorageBehaviour>().GatherObject();
-                if (tableObject == null)
-                {
-                    HandObject.transform.localScale = new Vector2(5, 5);
-                    StorageObject.GetComponent<StorageBehaviour>().PlaceObject(HandObject);
-                    HandObject = null;
-                    checkHand();
-                }
-                else
-                {
-                    if (HandObject == null)
-                    {
-                        HandObject = tableObject;
-                        StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
-                        HandObject.transform.position = this.transform.position;
-                        HandObject.transform.localScale = new Vector2(3, 3);
-                        checkHand();
-                    }
-                }
-            }*/
+                RightHandObject = Instantiate(LeftHandObject, this.transform.position + HandOffset, LeftHandObject.rotation);
+                RightHandObject.name = LeftHandObject.name;
+                RightHandObject.GetComponent<ItemBehavior>().ItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount / 2;
+                LeftHandObject.GetComponent<ItemBehavior>().ItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount / 2 + LeftHandObject.GetComponent<ItemBehavior>().ItemCount % 2;
+                RightHandObject.transform.localScale = new Vector2(3, 3);
+                checkHand();
+            } 
+            else if (LeftHandObject == null && RightHandObject != null)
+            {
+                LeftHandObject = Instantiate(RightHandObject, this.transform.position - HandOffset, RightHandObject.rotation);
+                LeftHandObject.name = RightHandObject.name;
+                LeftHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2;
+                RightHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2 + RightHandObject.GetComponent<ItemBehavior>().ItemCount % 2;
+                LeftHandObject.transform.localScale = new Vector2(3, 3);
+                checkHand();
+            }
         }
     }
 
@@ -159,11 +175,26 @@ public class PlayerBehavior : MonoBehaviour
             LeftHandObject = ItemForPlayer;
             LeftHandObject.transform.position = this.transform.position - HandOffset;
             MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-        } else
+        }
+        else if (LeftHandObject.name.Equals(ItemForPlayer.name))
+        {
+            LeftHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+        }
+        else if (RightHandObject == null)
         {
             RightHandObject = ItemForPlayer;
-            RightHandObject.transform.position = this.transform.position - HandOffset;
+            RightHandObject.transform.position = this.transform.position + HandOffset;
             MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+        }
+        else if (RightHandObject.name.Equals(ItemForPlayer.name))
+        {
+            RightHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+        }
+        else
+        {
+            Debug.LogError(name + " had a full incompatible hand when trying to give object to player.");
         }
     }
 
