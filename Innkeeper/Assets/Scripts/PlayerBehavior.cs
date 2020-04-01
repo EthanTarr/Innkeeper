@@ -12,7 +12,6 @@ public class PlayerBehavior : MonoBehaviour
 
     public Transform LeftHandObject;
     public Transform RightHandObject;
-    //public Transform HandObject;
 
     private GameObject StorageObject;
     private GameObject LeftHandUIImage;
@@ -40,7 +39,7 @@ public class PlayerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && controlMovement) //check for left mouse click
+        /*if (Input.GetMouseButtonDown(0) && controlMovement) //check for left mouse click
         {
             int layermask1 = 1 << LayerMask.NameToLayer("UI");
             int layermask2 = 1 << LayerMask.NameToLayer("Interactable");
@@ -51,7 +50,26 @@ public class PlayerBehavior : MonoBehaviour
             {
                 Destination = Camera.main.ScreenToWorldPoint(Input.mousePosition); //change destination to mouse cursor location
             }
+        }*/
+
+        Destination = transform.position;
+        if(Input.GetKey(KeyCode.W))
+        {
+            Destination += new Vector2(0, 1);
         }
+        if(Input.GetKey(KeyCode.A))
+        {
+            Destination += new Vector2(-1, 0);
+        }
+        if(Input.GetKey(KeyCode.S))
+        {
+            Destination += new Vector2(0, -1);
+        }
+        if(Input.GetKey(KeyCode.D))
+        {
+            Destination += new Vector2(1, 0);
+        }
+
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if player is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
@@ -180,6 +198,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             LeftHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
             MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            Destroy(ItemForPlayer.gameObject);
         }
         else if (RightHandObject == null)
         {
@@ -191,6 +210,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             RightHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
             MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            Destroy(ItemForPlayer.gameObject);
         }
         else
         {
