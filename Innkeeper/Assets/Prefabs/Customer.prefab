@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -111,7 +111,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.80741537}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -122,7 +122,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.08, y: 3.68}
+  m_Size: {x: 2.08, y: 5.294832}
   m_EdgeRadius: 0
 --- !u!114 &-6148196329642490862
 MonoBehaviour:
@@ -136,9 +136,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00b8d844cc667244ba6f4ca3fceb258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   Customers:
   - {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
   - {fileID: 21300000, guid: aa090d0fe8651a248a235e6556b0bbb3, type: 3}
   - {fileID: 21300000, guid: c465c39398464d844b2493f626316720, type: 3}
   MovementSpeed: 30
+  LifeTimer: 60
+  PossibleMeals:
+  - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
+  - {fileID: 4257303612243312112, guid: 429f2830e2b74724f8800f33cc739df8, type: 3}
+  - {fileID: 6856737758704126995, guid: d9102c17209059f41ab62f6544412fff, type: 3}
+  - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
+  - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}
   Destination: {x: 0, y: 0}

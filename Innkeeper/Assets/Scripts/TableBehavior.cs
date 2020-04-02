@@ -7,6 +7,7 @@ public class TableBehavior : MonoBehaviour
     public Transform Customer;
     public GameObject CustomerPopup;
     public Transform Door;
+    public Vector3 Offset = new Vector3(0, -2, 0);
 
     [HideInInspector] public Transform CurrentCustomer;
 
@@ -33,7 +34,15 @@ public class TableBehavior : MonoBehaviour
         position = new Vector2(Random.Range(-100, 100) * 1f, Random.Range(-1000, 10) * .1f); //create random location
         Transform customer = Instantiate(Customer, Door.transform.position, Customer.rotation); //create customer object
         CurrentCustomer = customer;
-        customer.GetComponent<CustomerBehavior>().Destination = this.transform.position + new Vector3(0, -2, 0);
+        customer.GetComponent<CustomerBehavior>().Table = this.transform;
+        List<Vector2> customerPath = new List<Vector2>();
+        customerPath.Add(Door.transform.position);
+        for(int i = 0; i < this.transform.childCount; i++)
+        {
+            customerPath.Add(this.transform.GetChild(i).position);
+        }
+        customerPath.Add(this.transform.position + Offset);
+        customer.GetComponent<CustomerBehavior>().setPath(customerPath);
 
         GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
         popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas

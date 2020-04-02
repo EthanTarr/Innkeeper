@@ -4,16 +4,59 @@ using UnityEngine;
 
 public class CustomerBehavior : MonoBehaviour
 {
+    //Timer
+    private Transform myTimer = null;
+    public Transform Timer;
+
     public List<Sprite> Customers;
 
     public float MovementSpeed = 15f; //movement speed of the customer character
-    [HideInInspector] public Vector2 Destination;
+    public float LifeTimer = 60f; //seconds customer will live
+    public List<Transform> PossibleMeals;
+
+    public Transform Table;
+
+    private Vector2 Destination;
+
+    private bool hasntArrived = true;
+    private bool returning = false;
+    private List<Vector2> Path = null;
+    private int node = 1;
     
     // Start is called before the first frame update
     void Start()
     {
         int thisCustomer = Random.Range(0, Customers.Count);
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
+        List<Sprite> Meals = new List<Sprite>();
+        if (Customers[thisCustomer].name.Equals("drake")) //drake
+        {
+            Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            LifeTimer = 60f;
+        }
+        else if(Customers[thisCustomer].name.Equals("antinium"))  //antinium
+        {
+            Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            LifeTimer = 30f;
+        }
+        else if(Customers[thisCustomer].name.Equals("goblin")) //goblin
+        {
+            Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            LifeTimer = 90f;
+        }
+        for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
+        {
+            GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+        }
     }
 
     // Update is called once per frame
@@ -24,5 +67,52 @@ public class CustomerBehavior : MonoBehaviour
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             transform.position = move; //move customer towards destination
         }
+        else if(Path.Count > node && !returning)
+        {
+            Destination = Path[node];
+            node++;
+        }
+        else if (node >= 0 && returning)
+        {
+            Destination = Path[node];
+            node--;
+        }
+        else if(hasntArrived)
+        {
+            hasntArrived = !hasntArrived;
+            ArrivedAtDestination();
+        }
+    }
+
+    public void setPath(List<Vector2> Path)
+    {
+        this.Path = Path;
+        Destination = Path[node];
+        node++;
+    }
+
+    private void ArrivedAtDestination()
+    {
+        if (!returning)
+        {
+            myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
+            Invoke("SendCustomerAway", LifeTimer);
+        }
+        else
+        {
+            Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+            Destroy(this.gameObject);
+        }
+    }
+
+    public void SendCustomerAway()
+    {
+        CancelInvoke();
+        Destroy(myTimer.gameObject);
+        returning = true;
+        hasntArrived = true;
+        node--;
+        Destination = Path[node];
+        node--;
     }
 }
