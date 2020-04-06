@@ -5663,6 +5663,9 @@ MonoBehaviour:
   MovementSpeed: 60
   LeftHandObject: {fileID: 0}
   RightHandObject: {fileID: 0}
+  FrontErin: {fileID: 21300000, guid: f26bd7cefcc499745a31e99ce07d9589, type: 3}
+  SideErin: {fileID: 21300000, guid: 1224b5887a8e1fe4db141bc0829d252d, type: 3}
+  BackErin: {fileID: 21300000, guid: 20d833f20aafb4346b60f2e7877b0cf9, type: 3}
 --- !u!212 &1215002486
 SpriteRenderer:
   m_ObjectHideFlags: 0

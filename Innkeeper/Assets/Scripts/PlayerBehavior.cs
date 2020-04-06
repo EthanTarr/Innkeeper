@@ -13,6 +13,10 @@ public class PlayerBehavior : MonoBehaviour
     public Transform LeftHandObject;
     public Transform RightHandObject;
 
+    public Sprite FrontErin;
+    public Sprite SideErin;
+    public Sprite BackErin;
+
     private GameObject StorageObject;
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
@@ -56,18 +60,26 @@ public class PlayerBehavior : MonoBehaviour
         if(Input.GetKey(KeyCode.W))
         {
             Destination += new Vector2(0, 1);
+            this.GetComponent<SpriteRenderer>().sprite = BackErin;
+            this.GetComponent<SpriteRenderer>().flipX = false;
         }
         if(Input.GetKey(KeyCode.A))
         {
             Destination += new Vector2(-1, 0);
+            this.GetComponent<SpriteRenderer>().sprite = SideErin;
+            this.GetComponent<SpriteRenderer>().flipX = true;
         }
         if(Input.GetKey(KeyCode.S))
         {
             Destination += new Vector2(0, -1);
+            this.GetComponent<SpriteRenderer>().sprite = FrontErin;
+            this.GetComponent<SpriteRenderer>().flipX = false;
         }
         if(Input.GetKey(KeyCode.D))
         {
             Destination += new Vector2(1, 0);
+            this.GetComponent<SpriteRenderer>().sprite = SideErin;
+            this.GetComponent<SpriteRenderer>().flipX = false;
         }
 
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if player is farther than .1 from destination (Optimize)

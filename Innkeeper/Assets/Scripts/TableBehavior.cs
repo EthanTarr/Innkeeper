@@ -8,6 +8,8 @@ public class TableBehavior : MonoBehaviour
     public GameObject CustomerPopup;
     public Transform Door;
     public Vector3 Offset = new Vector3(0, -2, 0);
+    //public List<List<Transform>> Paths;
+    //public List<Transform> test;
 
     [HideInInspector] public Transform CurrentCustomer;
 
