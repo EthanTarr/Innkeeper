@@ -8,8 +8,7 @@ public class TableBehavior : MonoBehaviour
     public GameObject CustomerPopup;
     public Transform Door;
     public Vector3 Offset = new Vector3(0, -2, 0);
-    //public List<List<Transform>> Paths;
-    //public List<Transform> test;
+    public List<Transform> Path;
 
     [HideInInspector] public Transform CurrentCustomer;
 
@@ -32,8 +31,6 @@ public class TableBehavior : MonoBehaviour
 
     public void SpawnCustomer()
     {
-        Vector2 position;
-        position = new Vector2(Random.Range(-100, 100) * 1f, Random.Range(-1000, 10) * .1f); //create random location
         Transform customer = Instantiate(Customer, Door.transform.position, Customer.rotation); //create customer object
         CurrentCustomer = customer;
         customer.GetComponent<CustomerBehavior>().Table = this.transform;

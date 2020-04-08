@@ -16,6 +16,13 @@ public class CustomerBehavior : MonoBehaviour
 
     public Transform Table;
 
+    [HideInInspector] public int OriginalDrakeChance = 33;
+    [HideInInspector] public int OriginalGoblinChance = 33;
+    [HideInInspector] public int OriginalAntiniumChance = 33;
+    public int DrakeChance = 33;
+    public int GoblinChance = 33;
+    public int AntiniumChance = 33;
+
     private Vector2 Destination;
 
     private bool hasntArrived = true;
@@ -26,7 +33,20 @@ public class CustomerBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int thisCustomer = Random.Range(0, Customers.Count);
+        int thisCustomer;
+        int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
+        if(CustomerChance < DrakeChance)
+        {
+            thisCustomer = 0;
+        }
+        else if (CustomerChance < DrakeChance + GoblinChance)
+        {
+            thisCustomer = 1;
+        }
+        else
+        {
+            thisCustomer = 2;
+        }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
         List<Sprite> Meals = new List<Sprite>();
         if (Customers[thisCustomer].name.Equals("drake")) //drake
@@ -35,14 +55,14 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = 60f;
+            LifeTimer = LifeTimer;
         }
         else if(Customers[thisCustomer].name.Equals("antinium"))  //antinium
         {
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = 30f;
+            LifeTimer = LifeTimer - 30f;
         }
         else if(Customers[thisCustomer].name.Equals("goblin")) //goblin
         {
@@ -51,7 +71,7 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = 90f;
+            LifeTimer = LifeTimer + 30f;
         }
         for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
         {
@@ -100,7 +120,6 @@ public class CustomerBehavior : MonoBehaviour
         }
         else
         {
-            Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
             Destroy(this.gameObject);
         }
     }
@@ -109,6 +128,8 @@ public class CustomerBehavior : MonoBehaviour
     {
         CancelInvoke();
         Destroy(myTimer.gameObject);
+        Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+        this.GetComponent<BoxCollider2D>().enabled = false;
         returning = true;
         hasntArrived = true;
         node--;

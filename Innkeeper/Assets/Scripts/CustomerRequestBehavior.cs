@@ -8,6 +8,8 @@ public class CustomerRequestBehavior : MonoBehaviour
 {
     public GameObject Popup; // parent Popup object
 
+    public float xpGain = 50;
+
     private Transform Customer; // customer Transform
     private Transform Player;
 
@@ -59,6 +61,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                     if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
                         Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
+                        Player.GetComponent<PlayerBehavior>().xp += xpGain;
                     }
                     else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {

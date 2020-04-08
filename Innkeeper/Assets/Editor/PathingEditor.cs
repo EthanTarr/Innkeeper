@@ -10,5 +10,9 @@ public class PathingEditor : Editor
     {
         base.OnInspectorGUI();
         TableBehavior myTableBehavior = (TableBehavior)target;
+        if(myTableBehavior.Path.Count > 0)
+        {
+
+        }
     }
 }

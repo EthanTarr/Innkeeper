@@ -17,11 +17,23 @@ public class PlayerBehavior : MonoBehaviour
     public Sprite SideErin;
     public Sprite BackErin;
 
+    public float xp = 0;
+    public int Level
+    {
+        get { return (int) (xp / 750); }
+    }
+
+    public float strength = 0;
+
+    public List<string> PlayerSkills;
+
+    public Vector3 HandOffset = new Vector3(3, -1, 0);
+
     private GameObject StorageObject;
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
-    private Vector3 HandOffset = new Vector3(3, 0, 0);
+    public Transform LevelChoices;
     
     // Start is called before the first frame update
     void Start()
@@ -43,18 +55,11 @@ public class PlayerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetMouseButtonDown(0) && controlMovement) //check for left mouse click
+
+        if(Input.GetKeyDown(KeyCode.T))
         {
-            int layermask1 = 1 << LayerMask.NameToLayer("UI");
-            int layermask2 = 1 << LayerMask.NameToLayer("Interactable");
-            int finalmask = layermask1 | layermask2;
-            Collider2D worldClick = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition), finalmask); //get all colliders in the world where the mouse is positioned
-            Collider2D ScreenClick = Physics2D.OverlapPoint(Input.mousePosition, finalmask); //get all colliders in the screen where the mouse is positioned
-            if (worldClick == null && ScreenClick == null) //if the colliding objects are not Interactables in the world or UI elements on the screen
-            {
-                Destination = Camera.main.ScreenToWorldPoint(Input.mousePosition); //change destination to mouse cursor location
-            }
-        }*/
+            LevelChoices.gameObject.SetActive(true);
+        }
 
         Destination = transform.position;
         if(Input.GetKey(KeyCode.W))
@@ -62,27 +67,71 @@ public class PlayerBehavior : MonoBehaviour
             Destination += new Vector2(0, 1);
             this.GetComponent<SpriteRenderer>().sprite = BackErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
+            HandOffset = new Vector3(3, -1, 0);
+            if(LeftHandObject != null)
+            {
+                LeftHandObject.position = this.gameObject.transform.position - HandOffset;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
+            if (RightHandObject != null)
+            {
+                RightHandObject.position = this.gameObject.transform.position + HandOffset;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
         }
         if(Input.GetKey(KeyCode.A))
         {
             Destination += new Vector2(-1, 0);
             this.GetComponent<SpriteRenderer>().sprite = SideErin;
             this.GetComponent<SpriteRenderer>().flipX = true;
+            HandOffset = new Vector3(2, -1, 0);
+            if (LeftHandObject != null)
+            {
+                LeftHandObject.position = this.gameObject.transform.position - HandOffset;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
+            if (RightHandObject != null)
+            {
+                RightHandObject.position = this.gameObject.transform.position + HandOffset;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
         }
         if(Input.GetKey(KeyCode.S))
         {
             Destination += new Vector2(0, -1);
             this.GetComponent<SpriteRenderer>().sprite = FrontErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
+            HandOffset = new Vector3(3, -1, 0);
+            if (LeftHandObject != null)
+            {
+                LeftHandObject.position = this.gameObject.transform.position - HandOffset;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
+            if (RightHandObject != null)
+            {
+                RightHandObject.position = this.gameObject.transform.position + HandOffset;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
         }
         if(Input.GetKey(KeyCode.D))
         {
             Destination += new Vector2(1, 0);
             this.GetComponent<SpriteRenderer>().sprite = SideErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
+            HandOffset = new Vector3(2, -1, 0);
+            if (LeftHandObject != null)
+            {
+                LeftHandObject.position = this.gameObject.transform.position - HandOffset;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
+            if (RightHandObject != null)
+            {
+                RightHandObject.position = this.gameObject.transform.position + HandOffset;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
         }
 
-        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if player is farther than .1 from destination (Optimize)
+        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f && controlMovement) //if player is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             transform.position = move; //move player towards destination
@@ -109,15 +158,15 @@ public class PlayerBehavior : MonoBehaviour
                         {
                             LeftHandObject.transform.localScale = new Vector2(5, 5);
                             StorageObject.GetComponent<StorageBehaviour>().PlaceObject(LeftHandObject);
-                            MovementSpeed += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                            LeftHandObject = null;
+                            MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            LeftHandObject = null; 
                             checkHand();
                         }
                         else
                         {
                             RightHandObject.transform.localScale = new Vector2(5, 5);
                             StorageObject.GetComponent<StorageBehaviour>().PlaceObject(RightHandObject);
-                            MovementSpeed += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                             RightHandObject = null;
                             checkHand();
                         }
@@ -125,7 +174,7 @@ public class PlayerBehavior : MonoBehaviour
                     else if (LeftHandObject != null && LeftHandObject.name.Equals(tableObject.name))
                     {
                         tableObject.GetComponent<ItemBehavior>().ItemCount += LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        MovementSpeed += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                         Destroy(LeftHandObject.gameObject);
                         LeftHandObject = null;
                         checkHand();
@@ -133,7 +182,7 @@ public class PlayerBehavior : MonoBehaviour
                     else if (RightHandObject != null && RightHandObject.name.Equals(tableObject.name))
                     {
                         tableObject.GetComponent<ItemBehavior>().ItemCount += RightHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        MovementSpeed += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                        MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                         Destroy(RightHandObject.gameObject);
                         RightHandObject = null;
                         checkHand();
@@ -146,7 +195,7 @@ public class PlayerBehavior : MonoBehaviour
                             StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
                             LeftHandObject.transform.position = this.transform.position - HandOffset;
                             LeftHandObject.transform.localScale = new Vector2(3, 3);
-                            MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            MovementSpeed += -Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                             checkHand();
                         }
                         else if (RightHandObject == null)
@@ -155,7 +204,7 @@ public class PlayerBehavior : MonoBehaviour
                             StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
                             RightHandObject.transform.position = this.transform.position + HandOffset;
                             RightHandObject.transform.localScale = new Vector2(3, 3);
-                            MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            MovementSpeed += -Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                             checkHand();
                         }
                     }
@@ -204,24 +253,42 @@ public class PlayerBehavior : MonoBehaviour
         {
             LeftHandObject = ItemForPlayer;
             LeftHandObject.transform.position = this.transform.position - HandOffset;
-            MovementSpeed += -LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+            if(this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(BackErin) || 
+                (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(SideErin) && this.gameObject.GetComponent<SpriteRenderer>().flipX))
+            {
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
+            else
+            {
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
         }
         else if (LeftHandObject.name.Equals(ItemForPlayer.name))
         {
             LeftHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
-            MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
             Destroy(ItemForPlayer.gameObject);
         }
         else if (RightHandObject == null)
         {
             RightHandObject = ItemForPlayer;
             RightHandObject.transform.position = this.transform.position + HandOffset;
-            MovementSpeed += -RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+            if (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(BackErin) ||
+                (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(SideErin) && !this.gameObject.GetComponent<SpriteRenderer>().flipX))
+            {
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+            }
+            else
+            {
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+            }
         }
         else if (RightHandObject.name.Equals(ItemForPlayer.name))
         {
             RightHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
-            MovementSpeed += -ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
             Destroy(ItemForPlayer.gameObject);
         }
         else

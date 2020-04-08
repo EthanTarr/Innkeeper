@@ -18,6 +18,7 @@ public class ResourceManager : MonoBehaviour
     public int SlicedBlueFruitGain = 2; //number of Sliced Blue Fruit created with each create action
     public int PastaGain = 1; //number of Patsa created with each create action
     public int NoodleGain = 5; //number of Noodles created with each create action
+    public int DeAcidFlyGain = 3; //number of DeAcid Flys created with each create action
 
     public Transform BlueFruit;
     public Transform Water;
@@ -26,6 +27,7 @@ public class ResourceManager : MonoBehaviour
     public Transform BlueFruitSlice;
     public Transform Pasta;
     public Transform Noodle;
+    public Transform DeAcidFly;
 
     private Transform Player; //Player Transform
 
@@ -85,6 +87,12 @@ public class ResourceManager : MonoBehaviour
     private void endNoodleGather()
     {
         Gather(Noodle, NoodleGain);
+    }
+
+    //Destroys timer and creates noodles
+    private void endDeAcidFlyCreation()
+    {
+        Gather(DeAcidFly, DeAcidFlyGain);
     }
 
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
@@ -246,6 +254,28 @@ public class ResourceManager : MonoBehaviour
             if (!Created)
             {
                 Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface, "endSlicedBlueFruitCreation");
+            }
+        }
+    }
+
+    public void CreateDeAcidFlys(Transform CraftingSurface)
+    {
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        {
+            bool Created = false;
+            List<string> Ingredients = new List<string>();
+            Ingredients.Add("Acid Fly");
+            if (!Created)
+            {
+                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface, "endDeAcidFlyCreation");
+            }
+            if (!Created)
+            {
+                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface, "endDeAcidFlyCreation");
+            }
+            if (!Created)
+            {
+                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface, "endDeAcidFlyCreation");
             }
         }
     }

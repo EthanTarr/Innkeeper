@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     public float MinSpawnTime = 5f;
     public float MaxSpawnTime = 25f;
 
+    public List<Transform> StorageTables;
+    public Transform Customer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,5 +49,32 @@ public class GameManager : MonoBehaviour
             }
         }
         return emptyTables;
+    }
+
+    public void ResetInn()
+    {
+        Customer.GetComponent<CustomerBehavior>().DrakeChance = Customer.GetComponent<CustomerBehavior>().OriginalDrakeChance;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance = Customer.GetComponent<CustomerBehavior>().OriginalGoblinChance;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance = Customer.GetComponent<CustomerBehavior>().OriginalAntiniumChance;
+        foreach(Transform table in Tables)
+        {
+            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
+            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+        }
+        foreach (Transform storage in StorageTables)
+        {
+            if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
+            }
+            else if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
+            }
+            else if (storage.GetComponent<StorageBehaviour>().RightObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
+            }
+        }
     }
 }
