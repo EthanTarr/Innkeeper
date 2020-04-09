@@ -52,23 +52,16 @@ public class PlayerBehavior : MonoBehaviour
         checkHand();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            LevelChoices.gameObject.SetActive(true);
-        }
-
         Destination = transform.position;
-        if(Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
-            Destination += new Vector2(0, 1);
+            Destination += new Vector2(0, MovementSpeed);
             this.GetComponent<SpriteRenderer>().sprite = BackErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
             HandOffset = new Vector3(3, -1, 0);
-            if(LeftHandObject != null)
+            if (LeftHandObject != null)
             {
                 LeftHandObject.position = this.gameObject.transform.position - HandOffset;
                 LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
@@ -79,9 +72,9 @@ public class PlayerBehavior : MonoBehaviour
                 RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
             }
         }
-        if(Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
-            Destination += new Vector2(-1, 0);
+            Destination += new Vector2(-MovementSpeed, 0);
             this.GetComponent<SpriteRenderer>().sprite = SideErin;
             this.GetComponent<SpriteRenderer>().flipX = true;
             HandOffset = new Vector3(2, -1, 0);
@@ -93,36 +86,36 @@ public class PlayerBehavior : MonoBehaviour
             if (RightHandObject != null)
             {
                 RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
         }
-        if(Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S))
         {
-            Destination += new Vector2(0, -1);
+            Destination += new Vector2(0, -MovementSpeed);
             this.GetComponent<SpriteRenderer>().sprite = FrontErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
             HandOffset = new Vector3(3, -1, 0);
             if (LeftHandObject != null)
             {
                 LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
             if (RightHandObject != null)
             {
                 RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
         }
-        if(Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
-            Destination += new Vector2(1, 0);
+            Destination += new Vector2(MovementSpeed, 0);
             this.GetComponent<SpriteRenderer>().sprite = SideErin;
             this.GetComponent<SpriteRenderer>().flipX = false;
             HandOffset = new Vector3(2, -1, 0);
             if (LeftHandObject != null)
             {
                 LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
             if (RightHandObject != null)
             {
@@ -131,19 +124,29 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
 
-        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f && controlMovement) //if player is farther than .1 from destination (Optimize)
+        //Vector2 move = Vector2.MoveTowards(transform.position, Destination, 100000 * Time.deltaTime);
+        this.GetComponent<Rigidbody2D>().MovePosition(Destination);
+        //transform.position = move; //move player towards destination
+        if (LeftHandObject != null)
         {
-            Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
-            transform.position = move; //move player towards destination
-            if (LeftHandObject != null)
-            {
-                LeftHandObject.transform.position = move - (Vector2)HandOffset;
-            }
-            if (RightHandObject != null)
-            {
-                RightHandObject.transform.position = move + (Vector2)HandOffset;
-            }
+            LeftHandObject.transform.position = Destination - (Vector2)HandOffset;
         }
+        if (RightHandObject != null)
+        {
+            RightHandObject.transform.position = Destination + (Vector2)HandOffset;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            LevelChoices.gameObject.SetActive(true);
+        }
+
+
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -261,7 +264,7 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
         }
         else if (LeftHandObject.name.Equals(ItemForPlayer.name))
@@ -282,7 +285,7 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 101;
+                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
         }
         else if (RightHandObject.name.Equals(ItemForPlayer.name))

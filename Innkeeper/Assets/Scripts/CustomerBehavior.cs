@@ -116,6 +116,10 @@ public class CustomerBehavior : MonoBehaviour
         if (!returning)
         {
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
+            foreach (AnimationState state in myTimer.GetComponent<Animation>())
+            {
+                state.speed = 0.5F;
+            }
             Invoke("SendCustomerAway", LifeTimer);
         }
         else

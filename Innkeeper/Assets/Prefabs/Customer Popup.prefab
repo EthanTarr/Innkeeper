@@ -155,8 +155,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 35b45b4c2f3d8cd40892019f3f7d0748, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -380,11 +380,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Popup: {fileID: 939164177370711766}
-  Items:
-  - {fileID: 6856737758704126995, guid: d9102c17209059f41ab62f6544412fff, type: 3}
-  - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
-  - {fileID: 4257303612243312112, guid: 429f2830e2b74724f8800f33cc739df8, type: 3}
-  - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
+  xpGain: 50
 --- !u!1 &5295735590979312847
 GameObject:
   m_ObjectHideFlags: 0

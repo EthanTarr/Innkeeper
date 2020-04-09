@@ -95,4 +95,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemCount: 0
-  ItemWeight: 0.25
+  ItemWeight: 0.005

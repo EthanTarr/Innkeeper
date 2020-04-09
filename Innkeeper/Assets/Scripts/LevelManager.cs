@@ -153,7 +153,7 @@ public class LevelManager : MonoBehaviour
 
     private void LesserSpeed()
     {
-        Player.GetComponent<PlayerBehavior>().MovementSpeed = 60f + Player.GetComponent<PlayerBehavior>().Level * .5f;
+        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .01f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Speed"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Speed");
@@ -183,7 +183,7 @@ public class LevelManager : MonoBehaviour
 
     private void EnhancedSpeed()
     {
-        Player.GetComponent<PlayerBehavior>().MovementSpeed = 60f + Player.GetComponent<PlayerBehavior>().Level * 1f;
+        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .03f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Speed"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Speed");
