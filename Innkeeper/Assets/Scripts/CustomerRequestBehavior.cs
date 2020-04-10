@@ -8,15 +8,14 @@ public class CustomerRequestBehavior : MonoBehaviour
 {
     public GameObject Popup; // parent Popup object
 
+    public float xpGain = 50;
+
     private Transform Customer; // customer Transform
     private Transform Player;
-    public List<Transform> Items;
 
     // Start is called before the first frame update
     void Start()
     {
-        Transform RequestedItem = (Transform) Items[UnityEngine.Random.Range(0, Items.Count)];
-        this.GetComponent<Image>().sprite = RequestedItem.GetComponent<SpriteRenderer>().sprite;
         if (Popup == null)
         {
             Debug.LogError(name + " could not find Popup parent object on startup");
@@ -28,6 +27,18 @@ public class CustomerRequestBehavior : MonoBehaviour
         if(Player == null)
         {
             Debug.LogError(name + " could not find player on statup");
+        }
+    }
+
+    public void SetItem(List<Sprite> Items)
+    {
+        if (Items.Count > 0)
+        {
+            Sprite RequestedItem = Items[UnityEngine.Random.Range(0, Items.Count)];
+            this.GetComponent<Image>().sprite = RequestedItem;
+        } else
+        {
+            Debug.LogError(name + " did not recieve a list of desired items.");
         }
     }
 
@@ -49,8 +60,8 @@ public class CustomerRequestBehavior : MonoBehaviour
                 {
                     if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
-                        Destroy(Customer.gameObject); //Destroy Customer
-                        Destroy(Popup); //Destroy Parent Popup
+                        Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
+                        Player.GetComponent<PlayerBehavior>().xp += xpGain;
                     }
                     else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {

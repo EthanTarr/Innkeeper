@@ -4,69 +4,77 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Transform Customer;
-    public GameObject CustomerPopup;
+    public List<Transform> Tables;
 
-    public float SpawnTime = 5f;
-    
+    public float MinSpawnTime = 5f;
+    public float MaxSpawnTime = 25f;
+
+    public List<Transform> StorageTables;
+    public Transform Customer;
+
     // Start is called before the first frame update
     void Start()
     {
-        if(Customer == null)
-        {
-            Debug.LogError(name + " could not find Customer on startup");
-        }
-        if(CustomerPopup == null)
-        {
-            Debug.LogError(name + " could not find Customer Popup on startup");
-        }
-        StartCoroutine(SpawnCustomer()); //This allows the funtion to run on a timer
+        StartCoroutine(SpawnCustomer());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     IEnumerator SpawnCustomer()
     {
-        Vector2 position;
         while (true)
         {
-            position = new Vector2(Random.Range(-100, 100) * 1f, Random.Range(-1000,10) * .1f); //create random location
-            Transform customer = Instantiate(Customer, position, Customer.rotation); //create customer object
-
-            GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
-            popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas
-
-            int RequestAmount = Random.Range(0, 3); //determine a random amount of more requests
-            if(RequestAmount > 0)
+            List<Transform> emptyTables = findEmptyTable();
+            if(emptyTables.Count > 0)
             {
-                popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().ChangeToMultiple(); //set UI to have multiple requests
+                emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer();
             }
-            for (int i = 0; i < RequestAmount; i++)
-            {
-                GameObject popupChild = popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject; //grab request object
-                GameObject newRequest = Instantiate(popupChild, popup.transform.position + 
-                    new Vector3((popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1)) - (popupChild.GetComponent<RectTransform>().sizeDelta.x * .5f), 0, 0), popupChild.transform.rotation); //create new reqeust
-                newRequest.transform.SetParent(popupChild.transform.parent);
-                if (i > 0)
-                {
-                    popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x +
-                        popupChild.GetComponent<RectTransform>().sizeDelta.x, popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //increase UI content size to hold more requests
-                    foreach(Transform child in popupChild.transform.parent)
-                    {
-                        child.GetComponent<RectTransform>().position = child.GetComponent<RectTransform>().position + new Vector3(-popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move the requests to fit in UI
-                    }
-                }
-            }
-
-            customer.GetComponent<PopUpObjectBehavior>().Popup = popup.transform; //set customer to have popup
-            popup.GetComponent<PopupBehaviour>().PopupObject = customer; //set popup to have customer
-            customer.gameObject.SetActive(true); //turn on customer object
-            popup.gameObject.SetActive(true); //turn on popup object
+            float SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
             yield return new WaitForSeconds(SpawnTime); //wait for spawntime
+        }
+    }
+
+    private List<Transform> findEmptyTable()
+    {
+        List<Transform> emptyTables = new List<Transform>();
+        foreach(Transform table in Tables)
+        {
+            if(table.GetComponent<TableBehavior>().CurrentCustomer == null)
+            {
+                emptyTables.Add(table);
+            }
+        }
+        return emptyTables;
+    }
+
+    public void ResetInn()
+    {
+        Customer.GetComponent<CustomerBehavior>().DrakeChance = Customer.GetComponent<CustomerBehavior>().OriginalDrakeChance;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance = Customer.GetComponent<CustomerBehavior>().OriginalGoblinChance;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance = Customer.GetComponent<CustomerBehavior>().OriginalAntiniumChance;
+        foreach(Transform table in Tables)
+        {
+            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
+            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+        }
+        foreach (Transform storage in StorageTables)
+        {
+            if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
+            }
+            else if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
+            }
+            else if (storage.GetComponent<StorageBehaviour>().RightObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
+            }
         }
     }
 }
