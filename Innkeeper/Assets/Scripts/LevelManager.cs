@@ -29,6 +29,10 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Inn - Calming Aura", InnCalmingAura);
         Calls.Add("Magnified Training", MagnifiedTraining);
         Calls.Add("Extra Portion", ExtraPortion);
+        Calls.Add("Basic Chopping", BasicChopping);
+        Calls.Add("Advanced Chopping", AdvancedChopping);
+        Calls.Add("Basic Gathering", BasicGathering);
+        Calls.Add("Advanced Gathering", AdvancedGathering);
     }
 
     // Update is called once per frame
@@ -143,7 +147,7 @@ public class LevelManager : MonoBehaviour
 
     private void BasicCooking()
     {
-        Player.GetComponent<ResourceManager>().TimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
+        Player.GetComponent<ResourceManager>().CookingTimeDelay = 10 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Cooking"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Cooking");
@@ -173,7 +177,7 @@ public class LevelManager : MonoBehaviour
 
     private void AdvancedCooking()
     {
-        Player.GetComponent<ResourceManager>().TimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
+        Player.GetComponent<ResourceManager>().CookingTimeDelay = 10 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Cooking"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Cooking");
@@ -260,6 +264,46 @@ public class LevelManager : MonoBehaviour
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Calming Aura"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Calming Aura");
+        }
+        this.gameObject.SetActive(false);
+    }
+
+    private void BasicChopping()
+    {
+        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Chopping"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Chopping");
+        }
+        this.gameObject.SetActive(false);
+    }
+
+    private void AdvancedChopping()
+    {
+        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Chopping"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Chopping");
+        }
+        this.gameObject.SetActive(false);
+    }
+
+    private void BasicGathering()
+    {
+        Player.GetComponent<ResourceManager>().GatheringTimeDelay = 3 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Gathering"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Gathering");
+        }
+        this.gameObject.SetActive(false);
+    }
+
+    private void AdvancedGathering()
+    {
+        Player.GetComponent<ResourceManager>().GatheringTimeDelay = 3 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Gathering"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Gathering");
         }
         this.gameObject.SetActive(false);
     }

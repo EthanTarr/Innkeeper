@@ -116,10 +116,7 @@ public class CustomerBehavior : MonoBehaviour
         if (!returning)
         {
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
-            foreach (AnimationState state in myTimer.GetComponent<Animation>())
-            {
-                state.speed = 0.5F;
-            }
+            myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
             Invoke("SendCustomerAway", LifeTimer);
         }
         else
@@ -131,7 +128,10 @@ public class CustomerBehavior : MonoBehaviour
     public void SendCustomerAway()
     {
         CancelInvoke();
-        Destroy(myTimer.gameObject);
+        if (myTimer != null)
+        {
+            Destroy(myTimer.gameObject);
+        }
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
         this.GetComponent<BoxCollider2D>().enabled = false;
         returning = true;
