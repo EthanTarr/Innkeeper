@@ -108,45 +108,36 @@ public class ResourceManager : MonoBehaviour
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
     private void Gather(Transform GatherObject, int GatherGain, bool Cooking)
     {
-        if (myTimer == null) //if timer isnt created
+        Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
+        Player.GetComponent<CapsuleCollider2D>().enabled = true;
+        if (GatherObject == null) //Check for Gather Object
         {
-            Debug.LogError(name + " Refil Timer is null on endTime() startup.");
+            Debug.LogError(name + " GatherObject could not be found after timer destruction.");
         }
         else
         {
-            //Destroy(myTimer.gameObject); //destroy timer
-            Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
-            Player.GetComponent<CapsuleCollider2D>().enabled = true;
-            if (GatherObject == null) //Check for Gather Object
+            if (Cooking)
             {
-                Debug.LogError(name + " GatherObject could not be found after timer destruction.");
+                Transform GatheredObject = Instantiate(GatherObject, Cauldron.position, GatherObject.rotation); //create gathered object on player
+                Cauldron.GetComponent<CauldronBehavior>().HeldItem = GatheredObject;
+                Cauldron.GetComponent<Collider2D>().enabled = true;
+                Cauldron.GetComponent<SpriteRenderer>().sprite = Cauldron.GetComponent<CauldronBehavior>().PastaCauldron;
+                GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
+                GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
+                GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
             }
             else
             {
-                if (Cooking)
+                Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
+                GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
+                GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
+                GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+                bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
+                if (!check)
                 {
-                    Transform GatheredObject = Instantiate(GatherObject, Cauldron.position, GatherObject.rotation); //create gathered object on player
-                    Cauldron.GetComponent<CauldronBehavior>().HeldItem = GatheredObject;
-                    Cauldron.GetComponent<Collider2D>().enabled = true;
-                    Cauldron.GetComponent<SpriteRenderer>().sprite = Cauldron.GetComponent<CauldronBehavior>().PastaCauldron;
-                    GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
-                    GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-                    GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+                    Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
                 }
-                else
-                {
-                    Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
-                    GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
-                    GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-                    GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-                    bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
-                    if (!check)
-                    {
-                        Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
-                    }
-                    Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
-                }
-                
+                Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
             }
         }
     }
@@ -174,8 +165,8 @@ public class ResourceManager : MonoBehaviour
             ingredient.GetComponent<ItemBehavior>().ItemCount += -1;
         }
 
-        myTimer = Instantiate(Timer, Cauldron.transform.position, Timer.rotation); //create timer
-        myTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
+        Transform aTimer = Instantiate(Timer, Cauldron.transform.position, Timer.rotation); //create timer
+        aTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
 
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
     }

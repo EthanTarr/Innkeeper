@@ -62,81 +62,38 @@ public class PlayerBehavior : MonoBehaviour
                 Destination += new Vector2(0, MovementSpeed);
                 this.GetComponent<SpriteRenderer>().sprite = BackErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
-                HandOffset = new Vector3(3, -1, 0);
-                if (LeftHandObject != null)
-                {
-                    LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                    LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
-                }
-                if (RightHandObject != null)
-                {
-                    RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                    RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
-                }
+                HandOffset.x = 3;
+                moveHandObject(99, 99);
             }
             if (Input.GetKey(KeyCode.A))
             {
                 Destination += new Vector2(-MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = true;
-                HandOffset = new Vector3(2, -1, 0);
-                if (LeftHandObject != null)
-                {
-                    LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                    LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
-                }
-                if (RightHandObject != null)
-                {
-                    RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                    RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
-                }
+                HandOffset.x = 2;
+                moveHandObject(99, 105);
             }
             if (Input.GetKey(KeyCode.S))
             {
                 Destination += new Vector2(0, -MovementSpeed);
                 this.GetComponent<SpriteRenderer>().sprite = FrontErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
-                HandOffset = new Vector3(3, -1, 0);
-                if (LeftHandObject != null)
-                {
-                    LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                    LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
-                }
-                if (RightHandObject != null)
-                {
-                    RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                    RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
-                }
+                HandOffset.x = 3;
+                moveHandObject(105, 105);
             }
             if (Input.GetKey(KeyCode.D))
             {
                 Destination += new Vector2(MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
-                HandOffset = new Vector3(2, -1, 0);
-                if (LeftHandObject != null)
-                {
-                    LeftHandObject.position = this.gameObject.transform.position - HandOffset;
-                    LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
-                }
-                if (RightHandObject != null)
-                {
-                    RightHandObject.position = this.gameObject.transform.position + HandOffset;
-                    RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
-                }
+                HandOffset.x = 2;
+                moveHandObject(105, 99);
             }
 
             //Vector2 move = Vector2.MoveTowards(transform.position, Destination, 100000 * Time.deltaTime);
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
             //transform.position = move; //move player towards destination
-            if (LeftHandObject != null)
-            {
-                LeftHandObject.transform.position = Destination - (Vector2)HandOffset;
-            }
-            if (RightHandObject != null)
-            {
-                RightHandObject.transform.position = Destination + (Vector2)HandOffset;
-            }
+            //moveHandObject(105, 105);
         }
     }
 
@@ -258,7 +215,7 @@ public class PlayerBehavior : MonoBehaviour
         if (LeftHandObject == null)
         {
             LeftHandObject = ItemForPlayer;
-            LeftHandObject.transform.position = this.transform.position - HandOffset;
+            LeftHandObject.transform.position = this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0);
             MovementSpeed += -Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
             if(this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(BackErin) || 
                 (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(SideErin) && this.gameObject.GetComponent<SpriteRenderer>().flipX))
@@ -281,7 +238,7 @@ public class PlayerBehavior : MonoBehaviour
         else if (RightHandObject == null)
         {
             RightHandObject = ItemForPlayer;
-            RightHandObject.transform.position = this.transform.position + HandOffset;
+            RightHandObject.transform.position = this.transform.position + new Vector3(HandOffset.x, HandOffset.y, 0);
             MovementSpeed += -Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
             if (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(BackErin) ||
                 (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(SideErin) && !this.gameObject.GetComponent<SpriteRenderer>().flipX))
@@ -345,6 +302,21 @@ public class PlayerBehavior : MonoBehaviour
         else
         {
             RightHandUIImage.SetActive(false);
+        }
+    }
+
+    private void moveHandObject(int leftLayer, int RightLayer)
+    {
+        if (LeftHandObject != null)
+        {
+            //LeftHandObject.transform.position = Vector3.Lerp(LeftHandObject.transform.position, Destination + new Vector2(-HandOffset.x, HandOffset.y), .9f);
+            LeftHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(-HandOffset.x, HandOffset.y));
+            LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = leftLayer;
+        }
+        if (RightHandObject != null)
+        {
+            RightHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(HandOffset.x, HandOffset.y));
+            RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = RightLayer;
         }
     }
 }

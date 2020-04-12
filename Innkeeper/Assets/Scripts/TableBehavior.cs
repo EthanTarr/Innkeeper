@@ -12,6 +12,8 @@ public class TableBehavior : MonoBehaviour
 
     [HideInInspector] public Transform CurrentCustomer;
 
+    public Transform Player;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +29,7 @@ public class TableBehavior : MonoBehaviour
         {
             Debug.LogError(name + " could not find Customer Popup on startup");
         }
+        Player = GameObject.Find("Player").transform;
     }
 
     public void SpawnCustomer()
@@ -45,8 +48,22 @@ public class TableBehavior : MonoBehaviour
 
         GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
         popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas
-
-        int RequestAmount = Random.Range(0, 3); //determine a random amount of more requests
+        popup.transform.SetAsFirstSibling();
+        
+        int RequestAmount;
+        float rand = Random.Range(0f, 100f);
+        if (rand < (70 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
+        {
+            RequestAmount = 0;
+        } 
+        else if (rand < 110 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
+        {
+            RequestAmount = 1;
+        }
+        else
+        {
+            RequestAmount = 2;
+        }
         if (RequestAmount > 0)
         {
             popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().ChangeToMultiple(); //set UI to have multiple requests

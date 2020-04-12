@@ -74,6 +74,9 @@ public class PopUpObjectBehavior : MonoBehaviour
     // TurnOff sets the popup object to off
     private void TurnOff()
     {
-        Popup.gameObject.SetActive(false); //Turn off Popup UI object
+        if (Popup != null)
+        {
+            Popup.gameObject.SetActive(false); //Turn off Popup UI object
+        }
     }
 }

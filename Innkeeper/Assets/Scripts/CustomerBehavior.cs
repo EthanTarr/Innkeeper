@@ -55,14 +55,14 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = LifeTimer;
+            //LifeTimer = LifeTimer;
         }
         else if(Customers[thisCustomer].name.Equals("antinium"))  //antinium
         {
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = LifeTimer - 30f;
+            LifeTimer = LifeTimer - 15f;
         }
         else if(Customers[thisCustomer].name.Equals("goblin")) //goblin
         {
@@ -71,7 +71,7 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = LifeTimer + 30f;
+            LifeTimer = LifeTimer + 15f;
         }
         for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
         {

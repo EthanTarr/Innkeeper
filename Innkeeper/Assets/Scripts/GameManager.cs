@@ -9,19 +9,33 @@ public class GameManager : MonoBehaviour
     public float MinSpawnTime = 5f;
     public float MaxSpawnTime = 25f;
 
+    public int TimelineCount = 0;
+
+    public float SpawnTimerIncreaseRate = 30f;
+    public float SpawnTimerIncreaseAmount = .2f;
+
     public List<Transform> StorageTables;
     public Transform Customer;
 
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(CountTimeline());
+        StartCoroutine(SpawnIncrease());
         StartCoroutine(SpawnCustomer());
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(TimelineCount > 300)
+        {
+            this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
+            ResetInn();
+            StopAllCoroutines();
+            TimelineCount = 0;
+            Debug.Log("GAME OVER!");
+        }
     }
 
     IEnumerator SpawnCustomer()
@@ -35,6 +49,25 @@ public class GameManager : MonoBehaviour
             }
             float SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
             yield return new WaitForSeconds(SpawnTime); //wait for spawntime
+        }
+    }
+
+    IEnumerator SpawnIncrease()
+    {
+        while (true)
+        {
+            MinSpawnTime *= SpawnTimerIncreaseAmount;
+            MaxSpawnTime *= SpawnTimerIncreaseAmount;
+            yield return new WaitForSeconds(SpawnTimerIncreaseRate);
+        }
+    }
+
+    IEnumerator CountTimeline()
+    {
+        while(true)
+        {
+            TimelineCount++;
+            yield return new WaitForSeconds(1);
         }
     }
 
@@ -58,8 +91,11 @@ public class GameManager : MonoBehaviour
         Customer.GetComponent<CustomerBehavior>().AntiniumChance = Customer.GetComponent<CustomerBehavior>().OriginalAntiniumChance;
         foreach(Transform table in Tables)
         {
-            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
-            Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+            if (table.GetComponent<TableBehavior>().CurrentCustomer != null)
+            {
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+            }
         }
         foreach (Transform storage in StorageTables)
         {
