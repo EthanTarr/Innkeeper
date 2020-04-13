@@ -29,10 +29,18 @@ public class CustomerBehavior : MonoBehaviour
     private bool returning = false;
     private List<Vector2> Path = null;
     private int node = 1;
-    
+
+    private Transform Player;
+
     // Start is called before the first frame update
     void Start()
     {
+        Player = GameObject.Find("Player").transform;
+        if (Player == null)
+        {
+            Debug.LogError(name + " could not find Player on startup");
+        }
+
         int thisCustomer;
         int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
         if(CustomerChance < DrakeChance)
@@ -116,8 +124,9 @@ public class CustomerBehavior : MonoBehaviour
         if (!returning)
         {
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
-            Invoke("SendCustomerAway", LifeTimer);
+            Invoke("DisapointedCustomer", LifeTimer);
         }
         else
         {
@@ -125,12 +134,20 @@ public class CustomerBehavior : MonoBehaviour
         }
     }
 
+    private void DisapointedCustomer()
+    {
+        Player.GetComponent<GameManager>().numOfDisSatisfiedCustomers++;
+        SendCustomerAway();
+    }
+
     public void SendCustomerAway()
     {
         CancelInvoke();
         if (myTimer != null)
         {
+            Player.GetComponent<GameManager>().Timers.Remove(myTimer);
             Destroy(myTimer.gameObject);
+            Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
         }
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
         this.GetComponent<BoxCollider2D>().enabled = false;

@@ -150,6 +150,7 @@ public class ResourceManager : MonoBehaviour
         }
 
         myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer
+        Player.GetComponent<GameManager>().Timers.Add(myTimer);
         myTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
 
         Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
@@ -166,6 +167,7 @@ public class ResourceManager : MonoBehaviour
         }
 
         Transform aTimer = Instantiate(Timer, Cauldron.transform.position, Timer.rotation); //create timer
+        Player.GetComponent<GameManager>().Timers.Add(aTimer);
         aTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
 
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
@@ -377,6 +379,7 @@ public class ResourceManager : MonoBehaviour
         if (myTimer == null) //Check for if timer isnt running
         {
             myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
@@ -390,6 +393,7 @@ public class ResourceManager : MonoBehaviour
         if (myTimer == null) //Check for if timer isnt running
         {
             myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
@@ -403,6 +407,7 @@ public class ResourceManager : MonoBehaviour
         if (myTimer == null) //Check for if timer isnt running
         {
             myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
@@ -416,6 +421,7 @@ public class ResourceManager : MonoBehaviour
         if (myTimer == null) //Check for if timer isnt running
         {
             myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer on player
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;

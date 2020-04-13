@@ -12,6 +12,7 @@ public class LevelManager : MonoBehaviour
     public GameObject CustomerPopup;
 
     [HideInInspector] public Dictionary<string, UnityEngine.Events.UnityAction> Calls;
+    [HideInInspector] public int numOfSkilUps = 0;
     
     // Start is called before the first frame update
     void Awake()
@@ -116,23 +117,37 @@ public class LevelManager : MonoBehaviour
                 Skillchoice.Add(skills.Values[10].name);
                 skills.RemoveAt(10);
             }
-            Debug.Log(Skillchoice[i]);
         }
         PopulateChoices(Skillchoice[0], Skillchoice[1], Skillchoice[2]);
     }
 
     private void PopulateChoices(string Skill1, string Skill2, string Skill3)
     {
-        Button btn1 = this.transform.GetChild(0).GetComponent<Button>();
+        Button btn1 = this.transform.GetChild(1).GetComponent<Button>();
         btn1.onClick.AddListener(Calls[Skill1]);
         btn1.transform.GetChild(0).GetComponent<Text>().text = Skill1;
-        Button btn2 = this.transform.GetChild(1).GetComponent<Button>();
+        Button btn2 = this.transform.GetChild(3).GetComponent<Button>();
         btn2.onClick.AddListener(Calls[Skill2]);
         btn2.transform.GetChild(0).GetComponent<Text>().text = Skill2;
-        Button btn3 = this.transform.GetChild(2).GetComponent<Button>();
+        Button btn3 = this.transform.GetChild(5).GetComponent<Button>();
         btn3.onClick.AddListener(Calls[Skill3]);
         btn3.transform.GetChild(0).GetComponent<Text>().text = Skill3;
 
+    }
+
+    private void CheckForMoreSkills()
+    {
+        numOfSkilUps--;
+        if (numOfSkilUps > 0)
+        {
+            getChoices();
+        } 
+        else
+        {
+            Player.GetComponent<GameManager>().start();
+            Player.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
+            this.gameObject.SetActive(false);
+        }
     }
 
     void LesserStrength()
@@ -142,7 +157,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Strength");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void BasicCooking()
@@ -152,7 +167,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Cooking");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void LesserSpeed()
@@ -162,7 +177,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Speed");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     void EnhancedStrength()
@@ -172,7 +187,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Strength");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void AdvancedCooking()
@@ -182,7 +197,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Cooking");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void EnhancedSpeed()
@@ -192,7 +207,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Speed");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void ExtraPortion()
@@ -209,7 +224,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Extra Portion");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void CustomerPreferenceDrake()
@@ -221,7 +236,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Drake");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void CustomerPreferenceGoblin()
@@ -233,7 +248,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Goblin");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void CustomerPreferenceAntinium()
@@ -245,7 +260,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Antinium");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void MagnifiedTraining()
@@ -255,7 +270,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Magnified Training");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void InnCalmingAura()
@@ -265,7 +280,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Calming Aura");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void BasicChopping()
@@ -275,7 +290,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Chopping");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void AdvancedChopping()
@@ -285,7 +300,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Chopping");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void BasicGathering()
@@ -295,7 +310,7 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Gathering");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 
     private void AdvancedGathering()
@@ -305,6 +320,6 @@ public class LevelManager : MonoBehaviour
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Gathering");
         }
-        this.gameObject.SetActive(false);
+        CheckForMoreSkills();
     }
 }

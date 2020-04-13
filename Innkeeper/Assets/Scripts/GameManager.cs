@@ -14,15 +14,32 @@ public class GameManager : MonoBehaviour
     public float SpawnTimerIncreaseRate = 30f;
     public float SpawnTimerIncreaseAmount = .2f;
 
+    public int numOfSatisfiedCustomers = 0;
+    public int numOfDisSatisfiedCustomers = 0;
+
     public List<Transform> StorageTables;
     public Transform Customer;
+    public Transform EndOfDayScreen;
+    public Transform BlackBackground;
+
+    [HideInInspector] public List<Transform> Timers;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(CountTimeline());
-        StartCoroutine(SpawnIncrease());
-        StartCoroutine(SpawnCustomer());
+        if(Customer == null)
+        {
+            Debug.LogError(name + " could not find Customer Prefab on startup");
+        }
+        if( EndOfDayScreen == null)
+        {
+            Debug.LogError(name + " could not find EndOfDayScreen on startup");
+        }
+        if (BlackBackground == null)
+        {
+            Debug.LogError(name + " could not find Black Background on startup");
+        }
+        start();
     }
 
     // Update is called once per frame
@@ -35,7 +52,20 @@ public class GameManager : MonoBehaviour
             StopAllCoroutines();
             TimelineCount = 0;
             Debug.Log("GAME OVER!");
+            BlackBackground.gameObject.SetActive(true);
+            EndOfDayScreen.gameObject.SetActive(true);
+            EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
+                this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
+            this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         }
+    }
+
+    public void start()
+    {
+        StartCoroutine(CountTimeline());
+        StartCoroutine(SpawnIncrease());
+        StartCoroutine(SpawnCustomer());
+        this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
     }
 
     IEnumerator SpawnCustomer()
@@ -94,7 +124,10 @@ public class GameManager : MonoBehaviour
             if (table.GetComponent<TableBehavior>().CurrentCustomer != null)
             {
                 Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
-                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                if (table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
             }
         }
         foreach (Transform storage in StorageTables)
@@ -112,5 +145,25 @@ public class GameManager : MonoBehaviour
                 Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
             }
         }
+        foreach (Transform timer in Timers)
+        {
+            if (timer != null)
+            {
+                Destroy(timer.gameObject);
+            }
+            else
+            {
+                Timers.Remove(timer);
+            }
+        }
+        if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
+        {
+            this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
+        }
+        if (this.GetComponent<PlayerBehavior>().RightHandObject != null)
+        {
+            this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
+        }
+        this.GetComponent<PlayerBehavior>().checkHand();
     }
 }

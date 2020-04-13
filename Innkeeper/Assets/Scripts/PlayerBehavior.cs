@@ -17,6 +17,7 @@ public class PlayerBehavior : MonoBehaviour
     public Sprite SideErin;
     public Sprite BackErin;
 
+    public float PreviousXp = 0;
     public float xp = 0;
     public int Level
     {
@@ -39,12 +40,12 @@ public class PlayerBehavior : MonoBehaviour
     void Start()
     {
         Destination = transform.position; //find destination position
-        LeftHandUIImage = GameObject.Find("LeftHandImage");
+        LeftHandUIImage = GameObject.Find("LeftHandUI");
         if (LeftHandUIImage == null)
         {
             Debug.LogError(name + " could not find Left Hand Image on Startup.");
         }
-        RightHandUIImage = GameObject.Find("RightHandImage");
+        RightHandUIImage = GameObject.Find("RightHandUI");
         if (RightHandUIImage == null)
         {
             Debug.LogError(name + " could not find Right Hand Image on Startup.");
@@ -272,8 +273,8 @@ public class PlayerBehavior : MonoBehaviour
             int handItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
             if (handItemCount > 0)
             {
-                LeftHandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
-                LeftHandUIImage.GetComponent<Image>().sprite = LeftHandObject.GetComponent<SpriteRenderer>().sprite;
+                LeftHandUIImage.transform.GetChild(5).GetComponent<Text>().text = handItemCount + "";
+                LeftHandUIImage.transform.GetChild(4).GetComponent<Image>().sprite = LeftHandObject.GetComponent<SpriteRenderer>().sprite;
                 LeftHandUIImage.SetActive(true);
             }
             else
@@ -290,8 +291,8 @@ public class PlayerBehavior : MonoBehaviour
             int handItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount;
             if (handItemCount > 0)
             {
-                RightHandUIImage.transform.GetChild(3).GetComponent<Text>().text = handItemCount + "";
-                RightHandUIImage.GetComponent<Image>().sprite = RightHandObject.GetComponent<SpriteRenderer>().sprite;
+                RightHandUIImage.transform.GetChild(5).GetComponent<Text>().text = handItemCount + "";
+                RightHandUIImage.transform.GetChild(4).GetComponent<Image>().sprite = RightHandObject.GetComponent<SpriteRenderer>().sprite;
                 RightHandUIImage.SetActive(true);
             }
             else

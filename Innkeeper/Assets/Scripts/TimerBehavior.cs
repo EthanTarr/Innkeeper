@@ -9,10 +9,16 @@ public class TimerBehavior : MonoBehaviour
     private int count = 0;
     private float time;
 
+    private Transform Player;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        Player = GameObject.Find("Player").transform;
+        if(Player == null)
+        {
+            Debug.LogError(name + " could not find Player");
+        }
     }
 
     // Update is called once per frame
@@ -80,6 +86,7 @@ public class TimerBehavior : MonoBehaviour
 
             if (count == 8)
             {
+                Player.GetComponent<GameManager>().Timers.Remove(this.transform);
                 Destroy(this.gameObject);
             }
 
