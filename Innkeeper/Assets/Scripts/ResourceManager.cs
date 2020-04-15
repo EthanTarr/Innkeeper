@@ -428,4 +428,9 @@ public class ResourceManager : MonoBehaviour
             Invoke("endNoodleGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
     }
+
+    public void stopInvokes()
+    {
+        CancelInvoke();
+    }
 }

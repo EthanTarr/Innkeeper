@@ -380,7 +380,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Popup: {fileID: 939164177370711766}
-  xpGain: 50
+  xpGain: 20
 --- !u!1 &5295735590979312847
 GameObject:
   m_ObjectHideFlags: 0

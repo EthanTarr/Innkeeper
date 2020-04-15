@@ -266,6 +266,7 @@ public class LevelManager : MonoBehaviour
     private void MagnifiedTraining()
     {
         CustomerPopup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().xpGain = 50 + Player.GetComponent<PlayerBehavior>().Level * 10;
+        Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus = 50 + Player.GetComponent<PlayerBehavior>().Level * 10;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Magnified Training"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Magnified Training");

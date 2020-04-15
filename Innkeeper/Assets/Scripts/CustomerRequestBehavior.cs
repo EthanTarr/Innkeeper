@@ -58,10 +58,10 @@ public class CustomerRequestBehavior : MonoBehaviour
                 }
                 else
                 {
+                    Player.GetComponent<PlayerBehavior>().xp += xpGain;
                     if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
                         Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
-                        Player.GetComponent<PlayerBehavior>().xp += xpGain;
                     }
                     else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {

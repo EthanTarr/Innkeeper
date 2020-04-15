@@ -1393,7 +1393,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1404,7 +1404,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &161494266
 GameObject:
@@ -4249,7 +4249,7 @@ GameObject:
   - component: {fileID: 523450439}
   - component: {fileID: 523450438}
   m_Layer: 5
-  m_Name: Customer Sadface Counter Image
+  m_Name: Customer Upset Counter Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4654,7 +4654,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4665,7 +4665,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &551722611
 GameObject:
@@ -4816,7 +4816,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4827,7 +4827,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &581741549
 GameObject:
@@ -5703,7 +5703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -6461,7 +6461,7 @@ GameObject:
   - component: {fileID: 761111432}
   - component: {fileID: 761111431}
   m_Layer: 5
-  m_Name: Customers Sadface Text
+  m_Name: Customers Upset Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6483,8 +6483,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -14, y: 0}
-  m_SizeDelta: {x: 211, y: 27}
+  m_AnchoredPosition: {x: -27.5, y: 0}
+  m_SizeDelta: {x: 184.01, y: 27}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &761111431
 MonoBehaviour:
@@ -6517,7 +6517,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Customers Sadface
+  m_Text: Customers Upset
 --- !u!222 &761111432
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6919,7 +6919,7 @@ GameObject:
   - component: {fileID: 801565710}
   - component: {fileID: 801565709}
   m_Layer: 5
-  m_Name: Customers Sadface Counter Text
+  m_Name: Customers Upset Counter Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6975,7 +6975,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 999
+  m_Text: 0
 --- !u!222 &801565710
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7097,7 +7097,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 860511822}
   m_OnClick:
     m_PersistentCalls:
@@ -7576,7 +7576,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -7587,7 +7587,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &944998980
 GameObject:
@@ -8008,7 +8008,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -8019,7 +8019,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &1013666576
 GameObject:
@@ -8112,83 +8112,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1013666576}
-  m_CullTransparentMesh: 0
---- !u!1 &1029006293
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1029006294}
-  - component: {fileID: 1029006296}
-  - component: {fileID: 1029006295}
-  m_Layer: 5
-  m_Name: Customers Sadface Extra EXP
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1029006294
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029006293}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1057355318}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 170.82999, y: -10}
-  m_SizeDelta: {x: 58.34, y: 37.8}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1029006295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029006293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 2e12c0e5f75eb83479a3812557bedc94, type: 3}
-    m_FontSize: 50
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 5
-    m_MaxSize: 50
-    m_Alignment: 4
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: +EXP
---- !u!222 &1029006296
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029006293}
   m_CullTransparentMesh: 0
 --- !u!1 &1040688519
 GameObject:
@@ -8532,7 +8455,7 @@ GameObject:
   - component: {fileID: 1057355318}
   - component: {fileID: 1057355319}
   m_Layer: 5
-  m_Name: Customers Sadface
+  m_Name: Customers Upset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8551,7 +8474,6 @@ RectTransform:
   m_Children:
   - {fileID: 1475600693}
   - {fileID: 523450437}
-  - {fileID: 1029006294}
   m_Father: {fileID: 1309830712}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9438,6 +9360,7 @@ MonoBehaviour:
   BackErin: {fileID: 21300000, guid: 20d833f20aafb4346b60f2e7877b0cf9, type: 3}
   PreviousXp: 0
   xp: 0
+  LevelMilestones: 
   strength: 0
   PlayerSkills: []
   HandOffset: {x: 3, y: -2, z: 0}
@@ -9612,7 +9535,15 @@ MonoBehaviour:
   SpawnTimerIncreaseAmount: 0.9
   numOfSatisfiedCustomers: 0
   numOfDisSatisfiedCustomers: 0
-  StorageTables: []
+  CustomerSatisfactionXpBonus: 50
+  StorageTables:
+  - {fileID: 996108143}
+  - {fileID: 335840861}
+  - {fileID: 2057068804}
+  - {fileID: 2073682641}
+  - {fileID: 1556261138}
+  - {fileID: 1564360428}
+  - {fileID: 2105704980}
   Customer: {fileID: 6476801766657664325, guid: d5e43238c679ac340bb385823812f312,
     type: 3}
   EndOfDayScreen: {fileID: 1309830712}
@@ -10086,7 +10017,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1275174878}
   m_OnClick:
     m_PersistentCalls:
@@ -10489,7 +10420,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -10500,7 +10431,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &1309304599
 GameObject:
@@ -10853,7 +10784,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 999
+  m_Text: 0
 --- !u!222 &1327715574
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11671,7 +11602,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -11682,7 +11613,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &1408345953
 GameObject:
@@ -11960,7 +11891,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1467879521
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12161,7 +12092,7 @@ GameObject:
   - component: {fileID: 1475600695}
   - component: {fileID: 1475600694}
   m_Layer: 5
-  m_Name: Customers Sadface Image
+  m_Name: Customers Upset Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13690,7 +13621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1574012216
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14090,7 +14021,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.80009526}
+  m_Offset: {x: 0, y: 1.4013982}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -14101,7 +14032,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.7598096}
+  m_Size: {x: 4, y: 0.5572039}
   m_EdgeRadius: 0
 --- !u!1 &1623368528
 GameObject:

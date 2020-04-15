@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     public int numOfSatisfiedCustomers = 0;
     public int numOfDisSatisfiedCustomers = 0;
+    public float CustomerSatisfactionXpBonus = 50f;
 
     public List<Transform> StorageTables;
     public Transform Customer;
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(TimelineCount > 300)
+        if(TimelineCount > 200)
         {
             this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
             ResetInn();
@@ -54,14 +55,17 @@ public class GameManager : MonoBehaviour
             Debug.Log("GAME OVER!");
             BlackBackground.gameObject.SetActive(true);
             EndOfDayScreen.gameObject.SetActive(true);
+            this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
-            this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         }
     }
 
     public void start()
     {
+        this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
+        numOfSatisfiedCustomers = 0;
+        numOfDisSatisfiedCustomers = 0;
         StartCoroutine(CountTimeline());
         StartCoroutine(SpawnIncrease());
         StartCoroutine(SpawnCustomer());
@@ -116,6 +120,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetInn()
     {
+        this.GetComponent<ResourceManager>().stopInvokes();
         Customer.GetComponent<CustomerBehavior>().DrakeChance = Customer.GetComponent<CustomerBehavior>().OriginalDrakeChance;
         Customer.GetComponent<CustomerBehavior>().GoblinChance = Customer.GetComponent<CustomerBehavior>().OriginalGoblinChance;
         Customer.GetComponent<CustomerBehavior>().AntiniumChance = Customer.GetComponent<CustomerBehavior>().OriginalAntiniumChance;
@@ -158,10 +163,14 @@ public class GameManager : MonoBehaviour
         }
         if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
         {
+            this.GetComponent<PlayerBehavior>().MovementSpeed += -Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - 
+                this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
             this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
         }
         if (this.GetComponent<PlayerBehavior>().RightHandObject != null)
         {
+            this.GetComponent<PlayerBehavior>().MovementSpeed += -Mathf.Max(this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemWeight -
+                this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount;
             this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
         }
         this.GetComponent<PlayerBehavior>().checkHand();
