@@ -30,6 +30,24 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Popup.activeSelf)
+        {
+            Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
+            Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
+            if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+            {
+                this.GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+        }
+    }
+
     public void SetItem(List<Sprite> Items)
     {
         if (Items.Count > 0)

@@ -173,7 +173,7 @@ public class ResourceManager : MonoBehaviour
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
     }
 
-    private Boolean checkObject2(List<string> DesiredIngredients, List<Transform> GatheredObjects, Transform CraftingSurface, string endcall)
+    private bool checkObject2(List<string> DesiredIngredients, List<Transform> GatheredObjects, Transform CraftingSurface, string endcall)
     {
         if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
                     (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
@@ -224,7 +224,7 @@ public class ResourceManager : MonoBehaviour
         return false;
     }
 
-    private Boolean checkObject (Transform Ingredient, List<string> DesiredIngredients, Transform CraftingSurface, string endcall)
+    private bool checkObject (Transform Ingredient, List<string> DesiredIngredients, Transform CraftingSurface, string endcall)
     {
         if (Ingredient != null && DesiredIngredients.Contains(Ingredient.name))
         {

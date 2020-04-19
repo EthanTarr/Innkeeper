@@ -139,8 +139,14 @@ MonoBehaviour:
   Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   Customers:
   - {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
-  - {fileID: 21300000, guid: aa090d0fe8651a248a235e6556b0bbb3, type: 3}
-  - {fileID: 21300000, guid: c465c39398464d844b2493f626316720, type: 3}
+  - {fileID: 21300000, guid: 785cabbcfc65b2c43bf014102195832a, type: 3}
+  - {fileID: 21300000, guid: 476d2b0c5e70832419a8d56ca9c8cd54, type: 3}
+  - {fileID: 21300000, guid: 323c6ee581dfb0e43b098d041588162c, type: 3}
+  - {fileID: 21300000, guid: 8c7d43a586b544842bf87dbbd3f4ded5, type: 3}
+  - {fileID: 21300000, guid: ccaf3a2e16d784948a3bb17a693998ee, type: 3}
+  - {fileID: 21300000, guid: 4d06ab49a54b12e48b188f4474f8a71a, type: 3}
+  - {fileID: 21300000, guid: d1cc3a9671298b54399bc09a67c1bbba, type: 3}
+  - {fileID: 21300000, guid: 0a79f7dbcd33c844aab5ea452ffb77da, type: 3}
   MovementSpeed: 30
   LifeTimer: 60
   PossibleMeals:
@@ -150,3 +156,9 @@ MonoBehaviour:
   - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
   - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}
   Table: {fileID: 0}
+  OriginalDrakeChance: 33
+  OriginalGoblinChance: 33
+  OriginalAntiniumChance: 33
+  DrakeChance: 33
+  GoblinChance: 33
+  AntiniumChance: 33

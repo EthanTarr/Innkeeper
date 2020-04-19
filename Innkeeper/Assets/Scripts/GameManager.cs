@@ -79,7 +79,10 @@ public class GameManager : MonoBehaviour
             List<Transform> emptyTables = findEmptyTable();
             if(emptyTables.Count > 0)
             {
-                emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer();
+                while(!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
+                {
+                    Debug.Log("Couldn't find a spot to spawn customers");
+                }
             }
             float SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
             yield return new WaitForSeconds(SpawnTime); //wait for spawntime
@@ -110,7 +113,8 @@ public class GameManager : MonoBehaviour
         List<Transform> emptyTables = new List<Transform>();
         foreach(Transform table in Tables)
         {
-            if(table.GetComponent<TableBehavior>().CurrentCustomer == null)
+            if((!table.GetComponent<TableBehavior>().isStool && (table.GetComponent<TableBehavior>().CurrentCustomer == null || table.GetComponent<TableBehavior>().CurrentCustomer1 == null || 
+                table.GetComponent<TableBehavior>().CurrentCustomer2 == null)) || (table.GetComponent<TableBehavior>().isStool && table.GetComponent<TableBehavior>().CurrentCustomer == null))
             {
                 emptyTables.Add(table);
             }

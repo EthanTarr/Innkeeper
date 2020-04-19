@@ -8,9 +8,14 @@ public class TableBehavior : MonoBehaviour
     public GameObject CustomerPopup;
     public Transform Door;
     public Vector3 Offset = new Vector3(0, -2, 0);
-    public List<Transform> Path;
+    public Vector3 Offset1 = new Vector3(2, 0, 0);
+    public Vector3 Offset2 = new Vector3(-2, 0, 0);
+    public bool isStool = false;
+    //public List<Transform> Path;
 
     [HideInInspector] public Transform CurrentCustomer;
+    [HideInInspector] public Transform CurrentCustomer1;
+    [HideInInspector] public Transform CurrentCustomer2;
 
     public Transform Player;
 
@@ -32,62 +37,96 @@ public class TableBehavior : MonoBehaviour
         Player = GameObject.Find("Player").transform;
     }
 
-    public void SpawnCustomer()
+    public bool SpawnCustomer()
     {
-        Transform customer = Instantiate(Customer, Door.transform.position, Customer.rotation); //create customer object
-        CurrentCustomer = customer;
-        customer.GetComponent<CustomerBehavior>().Table = this.transform;
-        List<Vector2> customerPath = new List<Vector2>();
-        customerPath.Add(Door.transform.position);
-        for(int i = 0; i < this.transform.childCount; i++)
+        if ((!isStool && (CurrentCustomer == null || CurrentCustomer1 == null || CurrentCustomer2 == null)) || (isStool && CurrentCustomer == null))
         {
-            customerPath.Add(this.transform.GetChild(i).position);
-        }
-        customerPath.Add(this.transform.position + Offset);
-        customer.GetComponent<CustomerBehavior>().setPath(customerPath);
+            Transform customer = Instantiate(Customer, Door.transform.position, Customer.rotation); //create customer object
+            int PathChoice;
+            if (CurrentCustomer == null)
+            {
+                CurrentCustomer = customer;
+                PathChoice = 0;
+            }
+            else if (CurrentCustomer1 == null)
+            {
+                CurrentCustomer1 = customer;
+                PathChoice = 1;
+            }
+            else
+            {
+                CurrentCustomer2 = customer;
+                PathChoice = 2;
+            }
+            customer.GetComponent<CustomerBehavior>().Table = this.transform;
+            List<Vector2> customerPath = new List<Vector2>();
+            customerPath.Add(Door.transform.position);
+            for (int i = 0; i < this.transform.GetChild(PathChoice).childCount; i++)
+            {
+                customerPath.Add(this.transform.GetChild(PathChoice).GetChild(i).position);
+            }
+            if (PathChoice == 0)
+            {
+                customerPath.Add(this.transform.position + Offset);
+            }
+            else if (PathChoice == 1)
+            {
+                customerPath.Add(this.transform.position + Offset1);
+            }
+            else
+            {
+                customerPath.Add(this.transform.position + Offset2);
+            }
+            customer.GetComponent<CustomerBehavior>().setPath(customerPath);
 
-        GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
-        popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas
-        popup.transform.SetAsFirstSibling();
-        
-        int RequestAmount;
-        float rand = Random.Range(0f, 100f);
-        if (rand < (70 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
-        {
-            RequestAmount = 0;
-        } 
-        else if (rand < 110 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
-        {
-            RequestAmount = 1;
+            GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
+            popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas
+            popup.transform.SetAsFirstSibling();
+
+            int RequestAmount;
+            float rand = Random.Range(0f, 100f);
+            if (rand < (70 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
+            {
+                RequestAmount = 0;
+            }
+            else if (rand < 110 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
+            {
+                RequestAmount = 1;
+            }
+            else
+            {
+                RequestAmount = 2;
+            }
+            if (RequestAmount > 0)
+            {
+                popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().ChangeToMultiple(); //set UI to have multiple requests
+            }
+            for (int i = 0; i < RequestAmount; i++)
+            {
+                GameObject popupChild = popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject; //grab request object
+                GameObject newRequest = Instantiate(popupChild, popup.transform.position +
+                    new Vector3((popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1)) - (popupChild.GetComponent<RectTransform>().sizeDelta.x * .5f), 0, 0), popupChild.transform.rotation); //create new reqeust
+                newRequest.transform.SetParent(popupChild.transform.parent);
+                if (i > 0)
+                {
+                    popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x +
+                        popupChild.GetComponent<RectTransform>().sizeDelta.x, popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //increase UI content size to hold more requests
+                    foreach (Transform child in popupChild.transform.parent)
+                    {
+                        child.GetComponent<RectTransform>().position = child.GetComponent<RectTransform>().position + new Vector3(-popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move the requests to fit in UI
+                    }
+                }
+            }
+
+            customer.GetComponent<PopUpObjectBehavior>().Popup = popup.transform; //set customer to have popup
+            popup.GetComponent<PopupBehaviour>().PopupObject = customer; //set popup to have customer
+            customer.gameObject.SetActive(true); //turn on customer object
+            popup.gameObject.SetActive(true); //turn on popup object
+            return true;
         }
         else
         {
-            RequestAmount = 2;
+            return false;
         }
-        if (RequestAmount > 0)
-        {
-            popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().ChangeToMultiple(); //set UI to have multiple requests
-        }
-        for (int i = 0; i < RequestAmount; i++)
-        {
-            GameObject popupChild = popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject; //grab request object
-            GameObject newRequest = Instantiate(popupChild, popup.transform.position +
-                new Vector3((popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1)) - (popupChild.GetComponent<RectTransform>().sizeDelta.x * .5f), 0, 0), popupChild.transform.rotation); //create new reqeust
-            newRequest.transform.SetParent(popupChild.transform.parent);
-            if (i > 0)
-            {
-                popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x +
-                    popupChild.GetComponent<RectTransform>().sizeDelta.x, popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //increase UI content size to hold more requests
-                foreach (Transform child in popupChild.transform.parent)
-                {
-                    child.GetComponent<RectTransform>().position = child.GetComponent<RectTransform>().position + new Vector3(-popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move the requests to fit in UI
-                }
-            }
-        }
-
-        customer.GetComponent<PopUpObjectBehavior>().Popup = popup.transform; //set customer to have popup
-        popup.GetComponent<PopupBehaviour>().PopupObject = customer; //set popup to have customer
-        customer.gameObject.SetActive(true); //turn on customer object
-        popup.gameObject.SetActive(true); //turn on popup object
     }
 }

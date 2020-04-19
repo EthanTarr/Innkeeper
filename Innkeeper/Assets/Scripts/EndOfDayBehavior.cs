@@ -59,7 +59,7 @@ public class EndOfDayBehavior : MonoBehaviour
         while (Player.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp) > Player.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp))
         {
             this.transform.GetChild(7).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(1, 7.5f);
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(5f);
             this.transform.GetChild(7).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().resetXpBar();
             PreviousXp = Player.GetComponent<PlayerBehavior>().LevelMilestones[Player.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp)];
             this.transform.GetChild(6).GetChild(1).GetChild(0).GetComponent<Text>().text =

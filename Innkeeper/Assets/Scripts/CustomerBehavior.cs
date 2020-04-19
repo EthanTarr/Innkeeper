@@ -31,6 +31,7 @@ public class CustomerBehavior : MonoBehaviour
     private int node = 1;
 
     private Transform Player;
+    private int thisCustomer;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +42,6 @@ public class CustomerBehavior : MonoBehaviour
             Debug.LogError(name + " could not find Player on startup");
         }
 
-        int thisCustomer;
         int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
         if(CustomerChance < DrakeChance)
         {
@@ -49,11 +49,11 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if (CustomerChance < DrakeChance + GoblinChance)
         {
-            thisCustomer = 1;
+            thisCustomer = 3;
         }
         else
         {
-            thisCustomer = 2;
+            thisCustomer = 6;
         }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
         List<Sprite> Meals = new List<Sprite>();
@@ -65,14 +65,14 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             //LifeTimer = LifeTimer;
         }
-        else if(Customers[thisCustomer].name.Equals("antinium"))  //antinium
+        else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             LifeTimer = LifeTimer - 15f;
         }
-        else if(Customers[thisCustomer].name.Equals("goblin")) //goblin
+        else if(Customers[thisCustomer].name.Equals("FrontGoblin")) //goblin
         {
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
@@ -93,6 +93,32 @@ public class CustomerBehavior : MonoBehaviour
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if customer is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
+            Vector2 moveTowards = Destination - (Vector2) transform.position;
+            if(Mathf.Abs(moveTowards.x) > Mathf.Abs(moveTowards.y))
+            {
+                this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 1];
+                if (moveTowards.x < 0)
+                {
+                    this.GetComponent<SpriteRenderer>().flipX = true;
+                } 
+                else
+                {
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+            }
+            else
+            {
+                if (moveTowards.y < 0)
+                {
+                    this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+                else
+                {
+                    this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 2];
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+            }
             transform.position = move; //move customer towards destination
         }
         else if(Path.Count > node && !returning)
