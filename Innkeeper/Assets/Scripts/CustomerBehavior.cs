@@ -63,7 +63,13 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            //LifeTimer = LifeTimer;
+            /*
+            LifeTimer = LifeTimer;
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.8f, 5.6f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.4f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, 2.2f);
+            */
         }
         else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
@@ -71,6 +77,12 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             LifeTimer = LifeTimer - 15f;
+            /*
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.8f, 5.6f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.4f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, 2.2f);
+            */
         }
         else if(Customers[thisCustomer].name.Equals("FrontGoblin")) //goblin
         {
@@ -80,11 +92,21 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             LifeTimer = LifeTimer + 15f;
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.1f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, .5f);
         }
         for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
         {
-            GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+            if (Meals.Count > 0)
+            {
+                Sprite chosen = GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+                Meals.Remove(chosen);
+            }
         }
+
+        MovementSpeed += Player.GetComponent<GameManager>().TimelineCount * .05f;
     }
 
     // Update is called once per frame
@@ -173,7 +195,6 @@ public class CustomerBehavior : MonoBehaviour
         {
             Player.GetComponent<GameManager>().Timers.Remove(myTimer);
             Destroy(myTimer.gameObject);
-            Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
         }
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
         this.GetComponent<BoxCollider2D>().enabled = false;

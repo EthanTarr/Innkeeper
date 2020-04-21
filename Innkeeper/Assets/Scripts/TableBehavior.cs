@@ -42,18 +42,50 @@ public class TableBehavior : MonoBehaviour
         if ((!isStool && (CurrentCustomer == null || CurrentCustomer1 == null || CurrentCustomer2 == null)) || (isStool && CurrentCustomer == null))
         {
             Transform customer = Instantiate(Customer, Door.transform.position, Customer.rotation); //create customer object
-            int PathChoice;
-            if (CurrentCustomer == null)
+            int PathChoice = 0;
+            int choices = 0;
+            if (!isStool)
             {
-                CurrentCustomer = customer;
-                PathChoice = 0;
-            }
-            else if (CurrentCustomer1 == null)
-            {
-                CurrentCustomer1 = customer;
-                PathChoice = 1;
+                if (CurrentCustomer == null)
+                {
+                    choices++;
+                }
+                if (CurrentCustomer1 == null)
+                {
+                    choices++;
+                }
+                if (CurrentCustomer2 == null)
+                {
+                    choices++;
+                }
             }
             else
+            {
+                choices = 1;
+            }
+            int spot = UnityEngine.Random.Range(1, choices);
+
+            if (CurrentCustomer == null)
+            {
+                if (spot == 1)
+                {
+                    CurrentCustomer = customer;
+                    PathChoice = 0;
+                }
+                spot--;
+            }
+
+            if (CurrentCustomer1 == null && spot > 0)
+            {
+                if (spot == 1)
+                {
+                    CurrentCustomer1 = customer;
+                    PathChoice = 1;
+                }
+                spot--;
+            }
+            
+            if (CurrentCustomer2 == null && spot > 0)
             {
                 CurrentCustomer2 = customer;
                 PathChoice = 2;

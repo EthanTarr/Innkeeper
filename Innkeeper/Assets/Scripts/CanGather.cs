@@ -30,6 +30,10 @@ public class CanGather : MonoBehaviour
                     this.GetComponent<Button>().interactable = false;
                 }
             }
+            else
+            {
+                this.GetComponent<Button>().interactable = true;
+            }
         }
     }
 }
