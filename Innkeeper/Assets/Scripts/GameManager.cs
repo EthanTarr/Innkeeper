@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public float MaxSpawnTime = 25f;
 
     public int TimelineCount = 0;
+    public int DayCount = 0;
 
     public float SpawnTimerIncreaseRate = 30f;
     public float SpawnTimerIncreaseAmount = .2f;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public Transform Customer;
     public Transform EndOfDayScreen;
     public Transform BlackBackground;
+    public Transform GameOverScreen;
 
     [HideInInspector] public List<Transform> Timers;
 
@@ -49,6 +51,8 @@ public class GameManager : MonoBehaviour
         if(TimelineCount > 200)
         {
             this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
+            this.transform.position = new Vector2(-385, 32);
+            GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
             ResetInn();
             StopAllCoroutines();
             TimelineCount = 0;
@@ -59,10 +63,22 @@ public class GameManager : MonoBehaviour
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
         }
+
+        if(numOfDisSatisfiedCustomers >= 3)
+        {
+            this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
+            ResetInn();
+            StopAllCoroutines();
+            TimelineCount = 0;
+            Debug.Log("GAME OVER!");
+            BlackBackground.gameObject.SetActive(true);
+            GameOverScreen.gameObject.SetActive(true);
+        }
     }
 
     public void start()
     {
+        DayCount++;
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         numOfSatisfiedCustomers = 0;
         numOfDisSatisfiedCustomers = 0;
@@ -136,6 +152,22 @@ public class GameManager : MonoBehaviour
                 if (table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
                 {
                     Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
+            }
+            if (table.GetComponent<TableBehavior>().CurrentCustomer1 != null)
+            {
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.gameObject);
+                if (table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
+            }
+            if (table.GetComponent<TableBehavior>().CurrentCustomer2 != null)
+            {
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.gameObject);
+                if (table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
                 }
             }
         }

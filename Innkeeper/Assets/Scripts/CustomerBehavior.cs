@@ -62,7 +62,10 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            {
+                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            }
             /*
             LifeTimer = LifeTimer;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -74,7 +77,10 @@ public class CustomerBehavior : MonoBehaviour
         else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            {
+                Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             LifeTimer = LifeTimer - 15f;
             /*
@@ -88,9 +94,15 @@ public class CustomerBehavior : MonoBehaviour
         {
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            {
+                Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            {
+                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            }
             LifeTimer = LifeTimer + 15f;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
             this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
@@ -106,7 +118,7 @@ public class CustomerBehavior : MonoBehaviour
             }
         }
 
-        MovementSpeed += Player.GetComponent<GameManager>().TimelineCount * .05f;
+        MovementSpeed += (Player.GetComponent<GameManager>().DayCount * .5f) + Player.GetComponent<GameManager>().TimelineCount * .05f;
     }
 
     // Update is called once per frame

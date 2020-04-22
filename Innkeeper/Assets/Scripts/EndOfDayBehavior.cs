@@ -9,7 +9,6 @@ public class EndOfDayBehavior : MonoBehaviour
 
     
 
-    private Transform Player;
     
     // Start is called before the first frame update
     void Start()
@@ -17,11 +16,6 @@ public class EndOfDayBehavior : MonoBehaviour
         if(LevelChoicesScreen == null)
         {
             Debug.LogError(name + " could not find Level Up Choice Selection Screen on Startup");
-        }
-        Player = GameObject.Find("Player").transform;
-        if(Player == null)
-        {
-            Debug.LogError(name + " could not find Player on startup");
         }
     }
 
@@ -56,12 +50,12 @@ public class EndOfDayBehavior : MonoBehaviour
         }
 
         int SkillUpCount = 0;
-        while (Player.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp) > Player.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp))
+        while (GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp) > GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp))
         {
             this.transform.GetChild(7).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(1, 7.5f);
             yield return new WaitForSeconds(5f);
             this.transform.GetChild(7).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().resetXpBar();
-            PreviousXp = Player.GetComponent<PlayerBehavior>().LevelMilestones[Player.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp)];
+            PreviousXp = GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp)];
             this.transform.GetChild(6).GetChild(1).GetChild(0).GetComponent<Text>().text =
             "Level " + (int.Parse(this.transform.GetChild(6).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
             if ((int.Parse(this.transform.GetChild(6).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 1)
@@ -72,9 +66,9 @@ public class EndOfDayBehavior : MonoBehaviour
         if (CurrentXp != PreviousXp)
         {
             this.transform.GetChild(7).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(
-                (CurrentXp - PreviousXp) / Player.GetComponent<PlayerBehavior>().LevelMilestones[Player.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)], 
-                7.5f * (CurrentXp - PreviousXp) / Player.GetComponent<PlayerBehavior>().LevelMilestones[Player.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
-            yield return new WaitForSeconds(5f * (CurrentXp - PreviousXp) / Player.GetComponent<PlayerBehavior>().LevelMilestones[Player.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
+                (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)], 
+                7.5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
+            yield return new WaitForSeconds(5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
         }
 
         if (SkillUpCount > 0)
@@ -92,8 +86,8 @@ public class EndOfDayBehavior : MonoBehaviour
     {
         if(!LevelChoicesScreen.gameObject.activeSelf)
         {
-            Player.GetComponent<GameManager>().start();
-            Player.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
+            GameObject.Find("Player").transform.GetComponent<GameManager>().start();
+            GameObject.Find("Player").transform.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
         }
         this.transform.GetChild(0).GetComponent<Button>().interactable = false;
         this.transform.GetChild(3).GetComponent<Button>().interactable = false;

@@ -117,11 +117,11 @@ public class TableBehavior : MonoBehaviour
 
             int RequestAmount;
             float rand = Random.Range(0f, 100f);
-            if (rand < (70 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
+            if (rand < ((70 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
             {
                 RequestAmount = 0;
             }
-            else if (rand < 110 - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
+            else if (rand < (110 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
             {
                 RequestAmount = 1;
             }

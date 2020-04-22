@@ -54,7 +54,28 @@ public class CustomerRequestBehavior : MonoBehaviour
         {
             Sprite RequestedItem = Items[UnityEngine.Random.Range(0, Items.Count)];
             this.GetComponent<Image>().sprite = RequestedItem;
-            this.transform.GetChild(0).GetComponent<Text>().text = UnityEngine.Random.Range(1, 2 + GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount / 50) + "";
+            float randomNum = UnityEngine.Random.Range(0, 100);
+
+            if(randomNum < (50 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "1";
+            }
+            else if (randomNum < (80 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "2";
+            }
+            else if (randomNum < (110 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "3";
+            }
+            else if (randomNum < (140 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "4";
+            }
+            else if (randomNum < (170 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "5";
+            }
             return RequestedItem;
         } else
         {

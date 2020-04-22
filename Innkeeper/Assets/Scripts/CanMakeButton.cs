@@ -17,42 +17,53 @@ public class CanMakeButton : MonoBehaviour
     {
         if (this.transform.parent.gameObject.activeSelf)
         {
-            bool itemCraftable = false;
-            List<string> Ingredients = new List<string>();
+            if (this.GetComponent<Image>().sprite.name.Equals("pasta_cooked") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 3)
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                bool itemCraftable = false;
+                List<string> Ingredients = new List<string>();
 
-            if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
-            {
-                Ingredients.Add("Water");
-                Ingredients.Add("Blue Fruit");
-            }
-            else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
-            {
-                Ingredients.Add("Blue Fruit");
-            }
-            else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
-            {
-                Ingredients.Add("Acid Fly");
-            }
-            else if (this.GetComponent<Image>().sprite.name.Equals("pasta_cooked"))
-            {
-                Ingredients.Add("Water");
-                Ingredients.Add("Noodles");
-            }
+                if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
+                {
+                    Ingredients.Add("Water");
+                    Ingredients.Add("Blue Fruit");
+                }
+                else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
+                {
+                    Ingredients.Add("Blue Fruit");
+                }
+                else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
+                {
+                    Ingredients.Add("Acid Fly");
+                }
+                else if (this.GetComponent<Image>().sprite.name.Equals("pasta_cooked"))
+                {
+                    Ingredients.Add("Water");
+                    Ingredients.Add("Noodles");
+                }
 
-            Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
-            if (!itemCraftable)
-            {
-                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
+                Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
+                if (!itemCraftable)
+                {
+                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
+                }
+                if (!itemCraftable)
+                {
+                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
+                }
+                if (!itemCraftable)
+                {
+                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
+                }
+                this.GetComponent<Button>().interactable = itemCraftable;
             }
-            if (!itemCraftable)
-            {
-                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
-            }
-            if (!itemCraftable)
-            {
-                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
-            }
-            this.GetComponent<Button>().interactable = itemCraftable;
         }
     }
 
