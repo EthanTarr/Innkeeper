@@ -31,6 +31,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);
 
+    private GameObject Cauldron;
     private GameObject StorageObject;
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
@@ -188,6 +189,30 @@ public class PlayerBehavior : MonoBehaviour
                     }
                 }
             }
+            else if(Cauldron != null)
+            {
+                if(Cauldron.GetComponent<CauldronBehavior>().isEmpty)
+                {
+                    if(LeftHandObject != null && LeftHandObject.name.Equals("Water")) 
+                    {
+                        LeftHandObject.GetComponent<ItemBehavior>().ItemCount += -1;
+                        MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0);
+                        checkHand();
+                        Cauldron.GetComponent<CauldronBehavior>().getWater();
+                    }
+                    else if (RightHandObject != null && RightHandObject.name.Equals("Water"))
+                    {
+                        RightHandObject.GetComponent<ItemBehavior>().ItemCount += -1;
+                        MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0);
+                        checkHand();
+                        Cauldron.GetComponent<CauldronBehavior>().getWater();
+                    }
+                }
+                else if(Cauldron.GetComponent<CauldronBehavior>().isCookedPasta && (LeftHandObject == null || RightHandObject == null))
+                {
+                    Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
+                }
+            }
             else if (LeftHandObject != null && RightHandObject == null)
             {
                 RightHandObject = Instantiate(LeftHandObject, this.transform.position + HandOffset, LeftHandObject.rotation);
@@ -215,6 +240,10 @@ public class PlayerBehavior : MonoBehaviour
         {
             StorageObject = collision.gameObject;
         }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Cauldron"))
+        {
+            Cauldron = collision.gameObject;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -222,6 +251,10 @@ public class PlayerBehavior : MonoBehaviour
         if(collision.gameObject.layer == LayerMask.NameToLayer("Storage"))
         {
             StorageObject = null;
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Cauldron"))
+        {
+            Cauldron = null;
         }
     }
 

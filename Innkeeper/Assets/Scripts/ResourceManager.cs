@@ -60,53 +60,47 @@ public class ResourceManager : MonoBehaviour
     //Destroys timer and adds fruits
     private void endBlueFruitGather()
     {
-        Gather(BlueFruit, FruitGain, false);
+        Gather(BlueFruit, FruitGain);
     }
 
     //Destroys timer and creates water
     private void endWaterGather()
     {
-        Gather(Water, WaterGain, false);
+        Gather(Water, WaterGain);
     }
 
     //Destroys timer and creates water
     private void endAcidFlyGather()
     {
-        Gather(AcidFly, AcidFlyGain, false);
+        Gather(AcidFly, AcidFlyGain);
     }
 
     //Destroys timer and creates blue fruit juice
     private void endBlueFruitJuiceCreation()
     {
-        Gather(BlueFruitJuice, BlueFruitJuiceGain, false);
+        Gather(BlueFruitJuice, BlueFruitJuiceGain);
     }
 
     //Destroys timer and creates sliced blue fruit
     private void endSlicedBlueFruitCreation()
     {
-        Gather(BlueFruitSlice, SlicedBlueFruitGain, false);
-    }
-
-    //Destroys timer and creates pasta
-    private void endPastaCreation()
-    {
-        Gather(Pasta, PastaGain, true);
+        Gather(BlueFruitSlice, SlicedBlueFruitGain);
     }
 
     //Destroys timer and creates noodles
     private void endNoodleGather()
     {
-        Gather(Noodle, NoodleGain, false);
+        Gather(Noodle, NoodleGain);
     }
 
     //Destroys timer and creates noodles
     private void endDeAcidFlyCreation()
     {
-        Gather(DeAcidFly, DeAcidFlyGain, false);
+        Gather(DeAcidFly, DeAcidFlyGain);
     }
 
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
-    private void Gather(Transform GatherObject, int GatherGain, bool Cooking)
+    private void Gather(Transform GatherObject, int GatherGain)
     {
         Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
         Player.GetComponent<CapsuleCollider2D>().enabled = true;
@@ -116,29 +110,16 @@ public class ResourceManager : MonoBehaviour
         }
         else
         {
-            if (Cooking)
+            Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
+            GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
+            GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
+            GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+            bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
+            if (!check)
             {
-                Transform GatheredObject = Instantiate(GatherObject, Cauldron.position, GatherObject.rotation); //create gathered object on player
-                Cauldron.GetComponent<CauldronBehavior>().HeldItem = GatheredObject;
-                Cauldron.GetComponent<Collider2D>().enabled = true;
-                Cauldron.GetComponent<SpriteRenderer>().sprite = Cauldron.GetComponent<CauldronBehavior>().PastaCauldron;
-                GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
-                GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-                GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+                Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
             }
-            else
-            {
-                Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
-                GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
-                GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-                GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-                bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
-                if (!check)
-                {
-                    Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
-                }
-                Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
-            }
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
         }
     }
 
@@ -159,66 +140,27 @@ public class ResourceManager : MonoBehaviour
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
     }
 
-    private void CookItem(List<Transform> Ingredients, string endCall, float TimeDelay)
-    {
-        foreach (Transform ingredient in Ingredients)
-        {
-            ingredient.GetComponent<ItemBehavior>().ItemCount += -1;
-        }
-
-        Transform aTimer = Instantiate(Timer, Cauldron.transform.position, Timer.rotation); //create timer
-        Player.GetComponent<GameManager>().Timers.Add(aTimer);
-        aTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
-
-        Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
-    }
-
     private bool checkObject2(List<string> DesiredIngredients, List<Transform> GatheredObjects, Transform CraftingSurface, string endcall)
     {
         if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
                     (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
         {
             GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject);
-            if (CraftingSurface.name.Equals("CraftingTable"))
-            {
-                CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
-            }
-            else if (CraftingSurface.name.Equals("CraftingCauldron"))
-            {
-                CookItem(GatheredObjects, endcall, CookingTimeDelay);
-            }
-            else
-            {
-                Debug.LogError(name + " could not indentify crafting surface on checkObject2 : " + CraftingSurface.name);
-            }
+            CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().RightObject != null &&
             (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)))
         {
             GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject);
-            if (CraftingSurface.name.Equals("CraftingTable"))
-            {
-                CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
-            }
-            else if (CraftingSurface.name.Equals("CraftingCauldron"))
-            {
-                CookItem(GatheredObjects, endcall, CookingTimeDelay);
-            }
+            CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().LeftObject != null &&
             (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)))
         {
             GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject);
-            if (CraftingSurface.name.Equals("CraftingTable"))
-            {
-                CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
-            }
-            else if (CraftingSurface.name.Equals("CraftingCauldron"))
-            {
-                CookItem(GatheredObjects, endcall, CookingTimeDelay);
-            }
+            CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         return false;
@@ -233,14 +175,7 @@ public class ResourceManager : MonoBehaviour
             DesiredIngredients.Remove(Ingredient.name);
             if (DesiredIngredients.Count == 0)
             {
-                if (CraftingSurface.name.Equals("CraftingTable"))
-                {
-                    CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
-                }
-                else if (CraftingSurface.name.Equals("CraftingCauldron"))
-                {
-                    CookItem(GatheredObjects, endcall, CookingTimeDelay);
-                }
+                CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
                 return true;
             }
             else if (DesiredIngredients.Count == 1)
@@ -282,28 +217,6 @@ public class ResourceManager : MonoBehaviour
 
 
 
-    public void CreatePasta(Transform CraftingSurface)
-    {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
-        {
-            bool Created = false;
-            List<string> Ingredients = new List<string>();
-            Ingredients.Add("Water");
-            Ingredients.Add("Noodles");
-            if (!Created)
-            {
-                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface, "endPastaCreation");
-            }
-            if (!Created)
-            {
-                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface, "endPastaCreation");
-            }
-            if (!Created)
-            {
-                Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface, "endPastaCreation");
-            }
-        }
-    }
 
     public void CreateSlicedBlueFruit(Transform CraftingSurface)
     {
