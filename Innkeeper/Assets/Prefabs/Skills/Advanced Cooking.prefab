@@ -45,4 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 101
   Level: 10
-  modifier: 0
+  Modifier: 0
+  Description: Greatly decrease the time it takes for water to boil and pasta to
+    cook in the cauldron.
+  PreferedToolTipSize: {x: 200, y: 100}

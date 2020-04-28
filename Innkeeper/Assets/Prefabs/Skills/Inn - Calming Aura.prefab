@@ -45,4 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 100
   Level: 6
-  modifier: 0
+  Modifier: 0
+  Description: Increase the amount of time customers will spend waiting for food
+    in the inn.
+  PreferedToolTipSize: {x: 200, y: 80}

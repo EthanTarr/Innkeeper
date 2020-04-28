@@ -45,4 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 100
   Level: 10
-  modifier: 0
+  Modifier: 0
+  Description: Greatly decrease the time it takes to gather food from outside the
+    Inn.
+  PreferedToolTipSize: {x: 200, y: 80}

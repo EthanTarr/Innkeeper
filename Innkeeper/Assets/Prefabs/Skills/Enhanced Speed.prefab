@@ -45,4 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 100
   Level: 10
-  modifier: 0
+  Modifier: 0
+  Description: Greatly increase the speed of your movement.
+  PreferedToolTipSize: {x: 200, y: 60}

@@ -125,12 +125,39 @@ public class LevelManager : MonoBehaviour
     {
         Button btn1 = this.transform.GetChild(1).GetComponent<Button>();
         btn1.onClick.AddListener(Calls[Skill1]);
+        foreach(Transform skill in Skills)
+        {
+            if(skill.name.Equals(Skill1))
+            {
+                btn1.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
+                btn1.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
+                btn1.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+            }
+        }
         btn1.transform.GetChild(0).GetComponent<Text>().text = Skill1;
         Button btn2 = this.transform.GetChild(3).GetComponent<Button>();
         btn2.onClick.AddListener(Calls[Skill2]);
+        foreach (Transform skill in Skills)
+        {
+            if (skill.name.Equals(Skill2))
+            {
+                btn2.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
+                btn2.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
+                btn2.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+            }
+        }
         btn2.transform.GetChild(0).GetComponent<Text>().text = Skill2;
         Button btn3 = this.transform.GetChild(5).GetComponent<Button>();
         btn3.onClick.AddListener(Calls[Skill3]);
+        foreach (Transform skill in Skills)
+        {
+            if (skill.name.Equals(Skill3))
+            {
+                btn3.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
+                btn3.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
+                btn3.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+            }
+        }
         btn3.transform.GetChild(0).GetComponent<Text>().text = Skill3;
 
     }

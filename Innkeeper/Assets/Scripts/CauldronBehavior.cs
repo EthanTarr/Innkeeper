@@ -193,5 +193,11 @@ public class CauldronBehavior : MonoBehaviour
     {
         Highlight.gameObject.SetActive(false);
         CauldronPopup.gameObject.SetActive(false);
+
+        GameObject Tooltip = GameObject.Find("Tool Tip");
+        if (Tooltip != null)
+        {
+            Tooltip.SetActive(false);
+        }
     }
 }
