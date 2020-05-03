@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +24,7 @@ public class TimerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void startCounting(float time)
@@ -91,6 +91,7 @@ public class TimerBehavior : MonoBehaviour
             }
 
             count++;
+
             yield return new WaitForSeconds(time / 8f);
         }
     }

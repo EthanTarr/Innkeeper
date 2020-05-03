@@ -92,15 +92,17 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
+            float SpawnTime;
             List<Transform> emptyTables = findEmptyTable();
-            if(emptyTables.Count > 0)
+            if (emptyTables.Count > 0)
             {
-                while(!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
+                while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
                 {
                     Debug.Log("Couldn't find a spot to spawn customers");
                 }
             }
-            float SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
+                
+            SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
             yield return new WaitForSeconds(SpawnTime); //wait for spawntime
         }
     }

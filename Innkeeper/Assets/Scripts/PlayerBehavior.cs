@@ -106,18 +106,14 @@ public class PlayerBehavior : MonoBehaviour
                 moveHandObject(105, 99);
             }
 
-            //Vector2 move = Vector2.MoveTowards(transform.position, Destination, 100000 * Time.deltaTime);
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
-            //transform.position = move; //move player towards destination
-            //moveHandObject(105, 105);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if(Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             LevelChoices.gameObject.SetActive(true);
         }
@@ -138,7 +134,7 @@ public class PlayerBehavior : MonoBehaviour
                             LeftHandObject.transform.localScale = new Vector2(5, 5);
                             StorageObject.GetComponent<StorageBehaviour>().PlaceObject(LeftHandObject);
                             MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                            LeftHandObject = null; 
+                            LeftHandObject = null;
                             checkHand();
                         }
                         else
@@ -189,11 +185,11 @@ public class PlayerBehavior : MonoBehaviour
                     }
                 }
             }
-            else if(Cauldron != null)
+            else if (Cauldron != null)
             {
-                if(Cauldron.GetComponent<CauldronBehavior>().isEmpty)
+                if (Cauldron.GetComponent<CauldronBehavior>().isEmpty)
                 {
-                    if(LeftHandObject != null && LeftHandObject.name.Equals("Water")) 
+                    if (LeftHandObject != null && LeftHandObject.name.Equals("Water"))
                     {
                         LeftHandObject.GetComponent<ItemBehavior>().ItemCount += -1;
                         MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0);
@@ -208,7 +204,7 @@ public class PlayerBehavior : MonoBehaviour
                         Cauldron.GetComponent<CauldronBehavior>().getWater();
                     }
                 }
-                else if(Cauldron.GetComponent<CauldronBehavior>().isCookedPasta && (LeftHandObject == null || RightHandObject == null))
+                else if (Cauldron.GetComponent<CauldronBehavior>().isCookedPasta && (LeftHandObject == null || RightHandObject == null))
                 {
                     Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
                 }
@@ -221,7 +217,7 @@ public class PlayerBehavior : MonoBehaviour
                 LeftHandObject.GetComponent<ItemBehavior>().ItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount / 2 + LeftHandObject.GetComponent<ItemBehavior>().ItemCount % 2;
                 RightHandObject.transform.localScale = new Vector2(3, 3);
                 checkHand();
-            } 
+            }
             else if (LeftHandObject == null && RightHandObject != null)
             {
                 LeftHandObject = Instantiate(RightHandObject, this.transform.position - HandOffset, RightHandObject.rotation);

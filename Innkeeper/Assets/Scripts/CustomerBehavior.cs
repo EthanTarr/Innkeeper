@@ -124,17 +124,18 @@ public class CustomerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if customer is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
-            Vector2 moveTowards = Destination - (Vector2) transform.position;
-            if(Mathf.Abs(moveTowards.x) > Mathf.Abs(moveTowards.y))
+            Vector2 moveTowards = Destination - (Vector2)transform.position;
+            if (Mathf.Abs(moveTowards.x) > Mathf.Abs(moveTowards.y))
             {
                 this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 1];
                 if (moveTowards.x < 0)
                 {
                     this.GetComponent<SpriteRenderer>().flipX = true;
-                } 
+                }
                 else
                 {
                     this.GetComponent<SpriteRenderer>().flipX = false;
@@ -155,7 +156,7 @@ public class CustomerBehavior : MonoBehaviour
             }
             transform.position = move; //move customer towards destination
         }
-        else if(Path.Count > node && !returning)
+        else if (Path.Count > node && !returning)
         {
             Destination = Path[node];
             node++;
@@ -165,7 +166,7 @@ public class CustomerBehavior : MonoBehaviour
             Destination = Path[node];
             node--;
         }
-        else if(hasntArrived)
+        else if (hasntArrived)
         {
             hasntArrived = !hasntArrived;
             ArrivedAtDestination();
