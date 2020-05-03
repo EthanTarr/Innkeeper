@@ -45,4 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 50
   Level: 6
-  modifier: 0
+  Modifier: 0
+  Description: Goblins will be more likely to visit your inn than other customers.
+  PreferedToolTipSize: {x: 200, y: 80}

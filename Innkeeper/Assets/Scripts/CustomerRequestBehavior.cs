@@ -30,15 +30,57 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
-    public void SetItem(List<Sprite> Items)
+    private void Update()
+    {
+        if (Popup.activeSelf)
+        {
+            Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
+            Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
+            if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+            {
+                this.GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+        }
+    }
+
+    public Sprite SetItem(List<Sprite> Items)
     {
         if (Items.Count > 0)
         {
             Sprite RequestedItem = Items[UnityEngine.Random.Range(0, Items.Count)];
             this.GetComponent<Image>().sprite = RequestedItem;
+            float randomNum = UnityEngine.Random.Range(0, 100);
+
+            if(randomNum < (50 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "1";
+            }
+            else if (randomNum < (80 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "2";
+            }
+            else if (randomNum < (110 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "3";
+            }
+            else if (randomNum < (140 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "4";
+            }
+            else if (randomNum < (170 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "5";
+            }
+            return RequestedItem;
         } else
         {
             Debug.LogError(name + " did not recieve a list of desired items.");
+            return null;
         }
     }
 
@@ -49,8 +91,8 @@ public class CustomerRequestBehavior : MonoBehaviour
         Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
         if (LeftPlayerObject != null || RightPlayerObject != null)
         {
-            if(LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) || 
-                RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+            if((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
             {
                 if (Customer == null)
                 {
@@ -58,10 +100,46 @@ public class CustomerRequestBehavior : MonoBehaviour
                 }
                 else
                 {
+                    int RequestCount = int.Parse(this.transform.GetChild(0).GetComponent<Text>().text);
+                    if (LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+                    {
+                        int HandCount = LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount;
+                        if(RequestCount - HandCount > 0)
+                        {
+                            this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
+                            LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
+                            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
+                            return;
+                        }
+                        LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                    }
+                    else
+                    {
+                        int HandCount = RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount;
+                        if (RequestCount - HandCount > 0)
+                        {
+                            this.transform.GetChild(0).GetComponent<Text>().text += -HandCount;
+                            RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
+                            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
+                            return;
+                        }
+                        RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                    }
+                    Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
+                    Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
+
+
+
                     if (this.transform.parent.transform.childCount <= 1) //if this is the last request
                     {
                         Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
-                        Player.GetComponent<PlayerBehavior>().xp += xpGain;
+                        Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
                     }
                     else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
                     {
@@ -87,17 +165,6 @@ public class CustomerRequestBehavior : MonoBehaviour
                         }
                         this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
                     }
-                    if (LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
-                    {
-                        LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
-                    }
-                    else
-                    {
-                        RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -1; //Remove an item from current hand
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight;
-                    }
-                    Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
             }

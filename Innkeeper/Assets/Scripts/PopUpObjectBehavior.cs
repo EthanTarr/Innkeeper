@@ -68,12 +68,20 @@ public class PopUpObjectBehavior : MonoBehaviour
                 Debug.LogError(name + " could not find Popup on collision exit");
             }
             Popup.gameObject.SetActive(false); //Turn off Popup UI object 
+            GameObject Tooltip = GameObject.Find("Tool Tip");
+            if (Tooltip != null)
+            {
+                Tooltip.SetActive(false);
+            }
         }
     }
 
     // TurnOff sets the popup object to off
     private void TurnOff()
     {
-        Popup.gameObject.SetActive(false); //Turn off Popup UI object
+        if (Popup != null)
+        {
+            Popup.gameObject.SetActive(false); //Turn off Popup UI object
+        }
     }
 }

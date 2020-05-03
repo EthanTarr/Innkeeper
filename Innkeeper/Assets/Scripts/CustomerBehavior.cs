@@ -29,11 +29,19 @@ public class CustomerBehavior : MonoBehaviour
     private bool returning = false;
     private List<Vector2> Path = null;
     private int node = 1;
-    
+
+    private Transform Player;
+    private int thisCustomer;
+
     // Start is called before the first frame update
     void Start()
     {
-        int thisCustomer;
+        Player = GameObject.Find("Player").transform;
+        if (Player == null)
+        {
+            Debug.LogError(name + " could not find Player on startup");
+        }
+
         int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
         if(CustomerChance < DrakeChance)
         {
@@ -41,11 +49,11 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if (CustomerChance < DrakeChance + GoblinChance)
         {
-            thisCustomer = 1;
+            thisCustomer = 3;
         }
         else
         {
-            thisCustomer = 2;
+            thisCustomer = 6;
         }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
         List<Sprite> Meals = new List<Sprite>();
@@ -54,40 +62,101 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            {
+                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            }
+            /*
             LifeTimer = LifeTimer;
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.8f, 5.6f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.4f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, 2.2f);
+            */
         }
-        else if(Customers[thisCustomer].name.Equals("antinium"))  //antinium
+        else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            {
+                Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = LifeTimer - 30f;
+            LifeTimer = LifeTimer - 15f;
+            /*
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.8f, 5.6f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.4f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, 2.2f);
+            */
         }
-        else if(Customers[thisCustomer].name.Equals("goblin")) //goblin
+        else if(Customers[thisCustomer].name.Equals("FrontGoblin")) //goblin
         {
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            {
+                Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
+            }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
-            LifeTimer = LifeTimer + 30f;
+            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            {
+                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+            }
+            LifeTimer = LifeTimer + 15f;
+            this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
+            this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
+            this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.1f);
+            this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, .5f);
         }
         for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
         {
-            GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+            if (Meals.Count > 0)
+            {
+                Sprite chosen = GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+                Meals.Remove(chosen);
+            }
         }
+
+        MovementSpeed += (Player.GetComponent<GameManager>().DayCount * .5f) + Player.GetComponent<GameManager>().TimelineCount * .05f;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if customer is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
+            Vector2 moveTowards = Destination - (Vector2)transform.position;
+            if (Mathf.Abs(moveTowards.x) > Mathf.Abs(moveTowards.y))
+            {
+                this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 1];
+                if (moveTowards.x < 0)
+                {
+                    this.GetComponent<SpriteRenderer>().flipX = true;
+                }
+                else
+                {
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+            }
+            else
+            {
+                if (moveTowards.y < 0)
+                {
+                    this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+                else
+                {
+                    this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 2];
+                    this.GetComponent<SpriteRenderer>().flipX = false;
+                }
+            }
             transform.position = move; //move customer towards destination
         }
-        else if(Path.Count > node && !returning)
+        else if (Path.Count > node && !returning)
         {
             Destination = Path[node];
             node++;
@@ -97,7 +166,7 @@ public class CustomerBehavior : MonoBehaviour
             Destination = Path[node];
             node--;
         }
-        else if(hasntArrived)
+        else if (hasntArrived)
         {
             hasntArrived = !hasntArrived;
             ArrivedAtDestination();
@@ -116,8 +185,9 @@ public class CustomerBehavior : MonoBehaviour
         if (!returning)
         {
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
+            Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
-            Invoke("SendCustomerAway", LifeTimer);
+            Invoke("DisapointedCustomer", LifeTimer);
         }
         else
         {
@@ -125,11 +195,18 @@ public class CustomerBehavior : MonoBehaviour
         }
     }
 
+    private void DisapointedCustomer()
+    {
+        Player.GetComponent<GameManager>().numOfDisSatisfiedCustomers++;
+        SendCustomerAway();
+    }
+
     public void SendCustomerAway()
     {
         CancelInvoke();
         if (myTimer != null)
         {
+            Player.GetComponent<GameManager>().Timers.Remove(myTimer);
             Destroy(myTimer.gameObject);
         }
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);

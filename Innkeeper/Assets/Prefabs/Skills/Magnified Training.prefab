@@ -45,4 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 100
   Level: 2
-  modifier: 0
+  Modifier: 0
+  Description: Increase the amount of XP gained.
+  PreferedToolTipSize: {x: 200, y: 40}

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5890716601929260685}
   - component: {fileID: 5890716601929260686}
   - component: {fileID: 4735965362591877328}
+  - component: {fileID: 4175820275143639705}
   m_Layer: 0
   m_Name: Blue Fruit Juice
   m_TagString: Untagged
@@ -95,4 +96,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemCount: 0
-  ItemWeight: 0.05
+  ItemWeight: 0.2
+--- !u!50 &4175820275143639705
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5890716601929260687}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 1
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4

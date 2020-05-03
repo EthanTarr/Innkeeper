@@ -6,5 +6,7 @@ public class SkillBehavior : MonoBehaviour
 {
     public int Base;
     public int Level;
-    public int modifier;
+    public int Modifier;
+    public string Description;
+    public Vector2 PreferedToolTipSize;
 }
