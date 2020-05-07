@@ -152,7 +152,7 @@ MonoBehaviour:
   LifeTimer: 60
   PossibleMeals:
   - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
-  - {fileID: 4257303612243312112, guid: 429f2830e2b74724f8800f33cc739df8, type: 3}
+  - {fileID: 8132216591011756052, guid: bf5ccd1bdec49c14b97cb291e4c06e29, type: 3}
   - {fileID: 8922452976765442218, guid: 77217b49dcf11aa48a5af42671e3328b, type: 3}
   - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
   - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}

@@ -9,6 +9,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public float MovementSpeed = 15f; //movement speed of the player character
     private Vector2 Destination;
+    private Vector2 PreviousDestination;
 
     public Transform LeftHandObject;
     public Transform RightHandObject;
@@ -72,6 +73,7 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (controlMovement)
         {
+            PreviousDestination = Destination;
             Destination = transform.position;
             if (Input.GetKey(KeyCode.W))
             {
@@ -107,6 +109,30 @@ public class PlayerBehavior : MonoBehaviour
             }
 
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
+
+            if((PreviousDestination - Destination).magnitude > .1f && !this.GetComponents<AudioSource>()[1].isPlaying)
+            {
+                this.GetComponents<AudioSource>()[1].pitch = 2.75f + ((PreviousDestination - Destination).magnitude - 1.75f);
+                this.GetComponents<AudioSource>()[1].Play();
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
+            }
+            else if((PreviousDestination - Destination).magnitude < .1f)
+            {
+                this.GetComponents<AudioSource>()[1].Stop();
+            }
+            else if(this.GetComponents<AudioSource>()[1].isPlaying)
+            {
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
+            }
+
+            if(LeftHandObject)
+            {
+                this.GetComponent<GameManager>().lifts += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+            }
+            if (RightHandObject)
+            {
+                this.GetComponent<GameManager>().lifts += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+            }
         }
     }
 

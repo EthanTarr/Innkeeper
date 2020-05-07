@@ -50,10 +50,11 @@ public class LevelManager : MonoBehaviour
     private void getChoices()
     {
         List<string> Skillchoice = new List<string>();
-        SortedList<int, Transform> skills = new SortedList<int, Transform>();
+        SortedList<float, Transform> skills = new SortedList<float, Transform>();
         foreach (Transform skill in Skills)
         {
-            int skillValue = skill.GetComponent<SkillBehavior>().Base + (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level) * 10;
+            float skillValue = skill.GetComponent<SkillBehavior>().Base + (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level) * 10 - 
+                skill.GetComponent<SkillBehavior>().Modifier;
             while(skills.ContainsKey(skillValue))
             {
                 skillValue++;
@@ -61,7 +62,7 @@ public class LevelManager : MonoBehaviour
             skills.Add(skillValue, skill);
         }
         for (int i = 0; i < 3; i++) {
-            float choice = Random.Range(0, 100);
+            float choice = Random.Range(0f, 100f);
             if (choice < 25)
             {
                 Skillchoice.Add(skills.Values[0].name);
@@ -69,54 +70,122 @@ public class LevelManager : MonoBehaviour
             }
             else if (choice < 45)
             {
-                Skillchoice.Add(skills.Values[1].name);
-                skills.RemoveAt(1);
+                if (skills.Count < 2)
+                {
+                    Skillchoice.Add(skills.Values[0].name);
+                    skills.RemoveAt(0);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[1].name);
+                    skills.RemoveAt(1);
+                }
             }
             else if (choice < 60)
             {
-                Skillchoice.Add(skills.Values[2].name);
-                skills.RemoveAt(2);
+                if (skills.Count < 3)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[2].name);
+                    skills.RemoveAt(2);
+                }
             }
-            else if (choice < 70)
+            else if (choice < 72)
             {
-                Skillchoice.Add(skills.Values[3].name);
-                skills.RemoveAt(3);
+                if (skills.Count < 4)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[3].name);
+                    skills.RemoveAt(3);
+                }
             }
-            else if (choice < 78)
+            else if (choice < 80)
             {
-                Skillchoice.Add(skills.Values[4].name);
-                skills.RemoveAt(4);
+                if (skills.Count < 5)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[4].name);
+                    skills.RemoveAt(4);
+                }
             }
-            else if (choice < 85)
+            else if (choice < 86)
             {
-                Skillchoice.Add(skills.Values[5].name);
-                skills.RemoveAt(5);
+                if (skills.Count < 6)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[5].name);
+                    skills.RemoveAt(5);
+                }
             }
-            else if (choice < 90)
+            else if (choice < 91)
             {
-                Skillchoice.Add(skills.Values[6].name);
-                skills.RemoveAt(6);
+                if (skills.Count < 7)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[6].name);
+                    skills.RemoveAt(6);
+                }
             }
-            else if (choice < 94)
+            else if (choice < 95)
             {
-                Skillchoice.Add(skills.Values[7].name);
-                skills.RemoveAt(7);
+                if (skills.Count < 8)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[7].name);
+                    skills.RemoveAt(7);
+                }
             }
-            else if (choice < 97)
+            else if (choice < 98)
             {
-                Skillchoice.Add(skills.Values[8].name);
-                skills.RemoveAt(8);
-            }
-            else if (choice < 99)
-            {
-                Skillchoice.Add(skills.Values[9].name);
-                skills.RemoveAt(9);
+                if (skills.Count < 9)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[8].name);
+                    skills.RemoveAt(8);
+                }
             }
             else
             {
-                Skillchoice.Add(skills.Values[10].name);
-                skills.RemoveAt(10);
+                if (skills.Count < 10)
+                {
+                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
+                    skills.RemoveAt(skills.Count - 1);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[9].name);
+                    skills.RemoveAt(9);
+                }
             }
+            Debug.Log("Random Value: " + choice);
         }
         PopulateChoices(Skillchoice[0], Skillchoice[1], Skillchoice[2]);
     }
@@ -164,6 +233,7 @@ public class LevelManager : MonoBehaviour
 
     private void CheckForMoreSkills()
     {
+        GameObject.Find("Tool Tip").SetActive(false);
         numOfSkilUps--;
         if (numOfSkilUps > 0)
         {
@@ -244,7 +314,8 @@ public class LevelManager : MonoBehaviour
         Player.GetComponent<ResourceManager>().BlueFruitJuiceGain = 1 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Blue Fruit Juice created with each create action
         Player.GetComponent<ResourceManager>().AcidFlyGain = 10 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Acid Flys created with each create action
         Player.GetComponent<ResourceManager>().SlicedBlueFruitGain = 2 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Sliced Blue Fruit created with each create action
-        Player.GetComponent<ResourceManager>().PastaGain = 1 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Patsa created with each create action
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().PastaGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Patsa created with each create action
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().WaterGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Patsa created with each create action
         Player.GetComponent<ResourceManager>().NoodleGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Noodles created with each create action
         Player.GetComponent<ResourceManager>().DeAcidFlyGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Extra Portion"))

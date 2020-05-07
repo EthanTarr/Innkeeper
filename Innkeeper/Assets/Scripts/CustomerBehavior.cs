@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CustomerBehavior : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class CustomerBehavior : MonoBehaviour
     private Transform Player;
     private int thisCustomer;
 
+    private float sitTime;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +44,8 @@ public class CustomerBehavior : MonoBehaviour
         {
             Debug.LogError(name + " could not find Player on startup");
         }
+
+        Player.GetComponent<GameManager>().Customers.Add(this.transform);
 
         int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
         if(CustomerChance < DrakeChance)
@@ -66,6 +71,7 @@ public class CustomerBehavior : MonoBehaviour
             {
                 Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+            Player.GetComponent<GameManager>().drakes++;
             /*
             LifeTimer = LifeTimer;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -82,6 +88,7 @@ public class CustomerBehavior : MonoBehaviour
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Player.GetComponent<GameManager>().antinium++;
             LifeTimer = LifeTimer - 15f;
             /*
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -103,6 +110,7 @@ public class CustomerBehavior : MonoBehaviour
             {
                 Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+            Player.GetComponent<GameManager>().goblins++;
             LifeTimer = LifeTimer + 15f;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
             this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
@@ -187,10 +195,12 @@ public class CustomerBehavior : MonoBehaviour
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
+            sitTime = Time.time;
             Invoke("DisapointedCustomer", LifeTimer);
         }
         else
         {
+            Player.GetComponent<GameManager>().Customers.Remove(this.transform);
             Destroy(this.gameObject);
         }
     }
@@ -198,12 +208,20 @@ public class CustomerBehavior : MonoBehaviour
     private void DisapointedCustomer()
     {
         Player.GetComponent<GameManager>().numOfDisSatisfiedCustomers++;
+        for (int i = 0; i < Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters.Count; i++) {
+            if (Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color.a == (100/255f))
+            {
+                Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color = new Color(255, 255, 255, 255);
+                break;
+            }
+        }
         SendCustomerAway();
     }
 
     public void SendCustomerAway()
     {
         CancelInvoke();
+        Player.GetComponent<GameManager>().customerWait += Time.time - sitTime;
         if (myTimer != null)
         {
             Player.GetComponent<GameManager>().Timers.Remove(myTimer);

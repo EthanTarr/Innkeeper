@@ -17,36 +17,27 @@ public class CanMakeButton : MonoBehaviour
     {
         if (this.transform.parent.gameObject.activeSelf)
         {
-            if (this.GetComponent<Image>().sprite.name.Equals("pasta_cooked") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 3)
-            {
-                this.GetComponent<Button>().interactable = false;
-            }
-            else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
+            if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
             {
                 this.GetComponent<Button>().interactable = false;
             }
             else
             {
                 bool itemCraftable = false;
-                List<string> Ingredients = new List<string>();
+                Dictionary<string, int> Ingredients = new Dictionary<string, int>();
 
                 if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
                 {
-                    Ingredients.Add("Water");
-                    Ingredients.Add("Blue Fruit");
+                    Ingredients.Add("WaterGlass", 3);
+                    Ingredients.Add("Blue Fruit", 1);
                 }
                 else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
                 {
-                    Ingredients.Add("Blue Fruit");
+                    Ingredients.Add("Blue Fruit", 1);
                 }
                 else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
                 {
-                    Ingredients.Add("Acid Fly");
-                }
-                else if (this.GetComponent<Image>().sprite.name.Equals("pasta_cooked"))
-                {
-                    Ingredients.Add("Water");
-                    Ingredients.Add("Noodles");
+                    Ingredients.Add("Acid Fly", 1);
                 }
 
                 Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
@@ -67,12 +58,12 @@ public class CanMakeButton : MonoBehaviour
         }
     }
 
-    private bool Check(Transform Ingredient, List<string> DesiredIngredients, Transform CraftingSurface)
+    private bool Check(Transform Ingredient, Dictionary<string, int> DesiredIngredients, Transform CraftingSurface)
     {
-        if (Ingredient != null && DesiredIngredients.Contains(Ingredient.name))
+        if (Ingredient != null && DesiredIngredients.ContainsKey(Ingredient.name) && DesiredIngredients[Ingredient.name] <= Ingredient.GetComponent<ItemBehavior>().ItemCount)
         {
-            List<Transform> GatheredObjects = new List<Transform>();
-            GatheredObjects.Add(Ingredient);
+            Dictionary<Transform, int> GatheredObjects = new Dictionary<Transform, int>();
+            GatheredObjects.Add(Ingredient, DesiredIngredients[Ingredient.name]);
             DesiredIngredients.Remove(Ingredient.name);
             if (DesiredIngredients.Count == 0)
             {
@@ -85,23 +76,29 @@ public class CanMakeButton : MonoBehaviour
             else
             {
                 if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name);
                     return Check2(DesiredIngredients, GatheredObjects, CraftingSurface);
                 }
                 else if (CraftingSurface.GetComponent<StorageBehaviour>().RightObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().RightObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name);
                     return Check2(DesiredIngredients, GatheredObjects, CraftingSurface);
                 }
                 else if (CraftingSurface.GetComponent<StorageBehaviour>().LeftObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name);
                     Check2(DesiredIngredients, GatheredObjects, CraftingSurface);
                     return true;
@@ -112,24 +109,30 @@ public class CanMakeButton : MonoBehaviour
         return false;
     }
 
-    private bool Check2(List<string> DesiredIngredients, List<Transform> GatheredObjects, Transform CraftingSurface)
+    private bool Check2(Dictionary<string, int> DesiredIngredients, Dictionary<Transform, int> GatheredObjects, Transform CraftingSurface)
     {
         if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name]);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().RightObject != null &&
-            (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)))
+            (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().RightObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name]);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().LeftObject != null &&
-            (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)))
+            (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name]);
             return true;
         }
         return false;

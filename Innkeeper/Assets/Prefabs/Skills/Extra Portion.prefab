@@ -43,8 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086753edf18dbee41bd4d91d1fea2543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: 100
-  Level: 4
-  Modifier: 0
+  Base: 47
+  Level: 9
   Description: Increases the amount of food gained from all sources.
   PreferedToolTipSize: {x: 200, y: 60}

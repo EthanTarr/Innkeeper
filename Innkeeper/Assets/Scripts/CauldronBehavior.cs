@@ -14,9 +14,9 @@ public class CauldronBehavior : MonoBehaviour
     public Sprite PastaCauldron;
 
     public Transform GlassWater;
-    public int WaterGain;
+    public int WaterGain = 5;
     public Transform PastaBowl;
-    public int PastaGain;
+    public int PastaGain = 3;
 
     //Timer
     private Transform myTimer = null;
@@ -28,6 +28,8 @@ public class CauldronBehavior : MonoBehaviour
     public bool isBoiledWater = false;
     public bool isCookingPasta = false;
     public bool isCookedPasta = false;
+
+    public List<AudioClip> CauldronSounds;
 
     private Transform Player;
 
@@ -77,6 +79,9 @@ public class CauldronBehavior : MonoBehaviour
         isBoiledWater = false;
         isEmpty = true;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+        this.GetComponent<AudioSource>().clip = CauldronSounds[1];
+        this.GetComponent<AudioSource>().loop = false;
+        this.GetComponent<AudioSource>().Play();
     }
 
     public void grabPastaBowl()
@@ -95,6 +100,7 @@ public class CauldronBehavior : MonoBehaviour
         isCookedPasta = false;
         isEmpty = true;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+        this.GetComponent<AudioSource>().Stop();
     }
 
     public void MakePasta()
@@ -125,6 +131,10 @@ public class CauldronBehavior : MonoBehaviour
             isUnboiledWater = true;
             Highlight.gameObject.SetActive(false);
             this.GetComponent<SpriteRenderer>().sprite = WaterCauldron;
+            this.GetComponent<AudioSource>().clip = CauldronSounds[0];
+            this.GetComponent<AudioSource>().loop = true;
+            this.GetComponent<AudioSource>().Play();
+            Player.GetComponent<GameManager>().cooked++;
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);

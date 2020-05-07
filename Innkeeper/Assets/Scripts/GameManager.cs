@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public List<Transform> Tables;
+    public List<Transform> DisSatisfiedCustomerCounters;
 
     public float MinSpawnTime = 5f;
     public float MaxSpawnTime = 25f;
@@ -26,6 +27,17 @@ public class GameManager : MonoBehaviour
     public Transform GameOverScreen;
 
     [HideInInspector] public List<Transform> Timers;
+    [HideInInspector] public List<Transform> Customers = new List<Transform>();
+
+    public float steps = 0;
+    public float lifts = 0;
+    public float chopped = 0;
+    public float gathered = 0;
+    public float cooked = 0;
+    public float drakes = 0;
+    public float antinium = 0;
+    public float goblins = 0;
+    public float customerWait = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +60,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(TimelineCount > 200)
+        if(TimelineCount > 500)
         {
             this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
             this.transform.position = new Vector2(-385, 32);
@@ -73,6 +85,17 @@ public class GameManager : MonoBehaviour
             Debug.Log("GAME OVER!");
             BlackBackground.gameObject.SetActive(true);
             GameOverScreen.gameObject.SetActive(true);
+        }
+
+        AudioSource crowdSound = GameObject.Find("AmbientCrowdSound").GetComponent<AudioSource>();
+        crowdSound.volume = Customers.Count * .2f;
+        if (Customers.Count > 1 && !crowdSound.isPlaying)
+        {
+            crowdSound.Play();
+        }
+        else if (Customers.Count <= 1)
+        {
+            crowdSound.Stop();
         }
     }
 
