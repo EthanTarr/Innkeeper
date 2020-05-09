@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemCount: 1
-  ItemWeight: 0.04
+  ItemWeight: 0.08
 --- !u!50 &6428625167886931230
 Rigidbody2D:
   serializedVersion: 4

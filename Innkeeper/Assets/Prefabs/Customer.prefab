@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5933590265604029105}
   - component: {fileID: -6148196329642490862}
   - component: {fileID: 3241138680102036579}
+  - component: {fileID: 5006616294835904503}
   m_Layer: 0
   m_Name: Customer
   m_TagString: Untagged
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8ffb35868c33314fbe997ff4ae045c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -116,7 +117,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.78, y: 5.55}
+    oldSize: {x: 3.2, y: 6.4}
     newSize: {x: 2.78, y: 5.55}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -139,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   Customers:
-  - {fileID: 21300000, guid: a23b63b75e8204e43b7c860d857fc05d, type: 3}
+  - {fileID: 21300000, guid: f8ffb35868c33314fbe997ff4ae045c3, type: 3}
   - {fileID: 21300000, guid: 785cabbcfc65b2c43bf014102195832a, type: 3}
   - {fileID: 21300000, guid: 476d2b0c5e70832419a8d56ca9c8cd54, type: 3}
   - {fileID: 21300000, guid: 323c6ee581dfb0e43b098d041588162c, type: 3}
@@ -149,7 +150,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d1cc3a9671298b54399bc09a67c1bbba, type: 3}
   - {fileID: 21300000, guid: 0a79f7dbcd33c844aab5ea452ffb77da, type: 3}
   MovementSpeed: 30
-  LifeTimer: 60
+  LifeTimer: 80
   PossibleMeals:
   - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
   - {fileID: 8132216591011756052, guid: bf5ccd1bdec49c14b97cb291e4c06e29, type: 3}
@@ -163,6 +164,9 @@ MonoBehaviour:
   DrakeChance: 33
   GoblinChance: 33
   AntiniumChance: 33
+  DrakeController: {fileID: 9100000, guid: 02271ca693153764fa8ef3f6012f6f8b, type: 2}
+  GoblinController: {fileID: 9100000, guid: 376ee9758c0628c479c097579371edc5, type: 2}
+  AntiniumController: {fileID: 9100000, guid: 26443ec754b0c7142999a60bec9281ba, type: 2}
 --- !u!61 &3241138680102036579
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -180,7 +184,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.78, y: 5.55}
+    oldSize: {x: 3.2, y: 6.4}
     newSize: {x: 2.78, y: 5.55}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -189,3 +193,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.6, y: 2.173172}
   m_EdgeRadius: 0
+--- !u!95 &5006616294835904503
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286162701436057464}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

@@ -43,16 +43,16 @@ public class PlayerBehavior : MonoBehaviour
     void Start()
     {
         LevelMilestones = new int[10];
-        LevelMilestones[0] = 150;
-        LevelMilestones[1] = 500;
-        LevelMilestones[2] = 1000;
-        LevelMilestones[3] = 2200;
-        LevelMilestones[4] = 4800;
-        LevelMilestones[5] = 10000;
-        LevelMilestones[6] = 15000;
-        LevelMilestones[7] = 21000;
-        LevelMilestones[8] = 28500;
-        LevelMilestones[9] = 37000;
+        LevelMilestones[0] = 500;
+        LevelMilestones[1] = 1000;
+        LevelMilestones[2] = 2200;
+        LevelMilestones[3] = 4800;
+        LevelMilestones[4] = 10000;
+        LevelMilestones[5] = 15000;
+        LevelMilestones[6] = 21000;
+        LevelMilestones[7] = 28500;
+        LevelMilestones[8] = 37000;
+        LevelMilestones[9] = 45000;
 
 
         Destination = transform.position; //find destination position
@@ -80,6 +80,9 @@ public class PlayerBehavior : MonoBehaviour
                 Destination += new Vector2(0, MovementSpeed);
                 this.GetComponent<SpriteRenderer>().sprite = BackErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", true);
+                this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
                 moveHandObject(99, 99);
             }
@@ -88,6 +91,9 @@ public class PlayerBehavior : MonoBehaviour
                 Destination += new Vector2(-MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = true;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
                 moveHandObject(99, 105);
             }
@@ -96,6 +102,9 @@ public class PlayerBehavior : MonoBehaviour
                 Destination += new Vector2(0, -MovementSpeed);
                 this.GetComponent<SpriteRenderer>().sprite = FrontErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", true);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
                 moveHandObject(105, 105);
             }
@@ -104,23 +113,29 @@ public class PlayerBehavior : MonoBehaviour
                 Destination += new Vector2(MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
                 moveHandObject(105, 99);
             }
 
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 
-            if((PreviousDestination - Destination).magnitude > .1f && !this.GetComponents<AudioSource>()[1].isPlaying)
+            this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
+            this.GetComponent<Animator>().speed = (2.75f + ((PreviousDestination - Destination).magnitude - 1.75f)) / 1.5f;
+
+            if ((PreviousDestination - Destination).magnitude > .1f && !this.GetComponent<AudioSource>().isPlaying)
             {
-                this.GetComponents<AudioSource>()[1].pitch = 2.75f + ((PreviousDestination - Destination).magnitude - 1.75f);
-                this.GetComponents<AudioSource>()[1].Play();
+                this.GetComponent<AudioSource>().pitch = 2.75f + ((PreviousDestination - Destination).magnitude - 1.75f);
+                this.GetComponent<AudioSource>().Play();
                 this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
             }
             else if((PreviousDestination - Destination).magnitude < .1f)
             {
-                this.GetComponents<AudioSource>()[1].Stop();
+                this.GetComponent<AudioSource>().Stop();
             }
-            else if(this.GetComponents<AudioSource>()[1].isPlaying)
+            else if(this.GetComponent<AudioSource>().isPlaying)
             {
                 this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
             }
@@ -194,7 +209,7 @@ public class PlayerBehavior : MonoBehaviour
                         {
                             LeftHandObject = tableObject;
                             StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
-                            LeftHandObject.transform.position = this.transform.position - HandOffset;
+                            LeftHandObject.transform.position = this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0);
                             LeftHandObject.transform.localScale = new Vector2(3, 3);
                             MovementSpeed += -Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                             checkHand();
@@ -246,7 +261,7 @@ public class PlayerBehavior : MonoBehaviour
             }
             else if (LeftHandObject == null && RightHandObject != null)
             {
-                LeftHandObject = Instantiate(RightHandObject, this.transform.position - HandOffset, RightHandObject.rotation);
+                LeftHandObject = Instantiate(RightHandObject, this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0), RightHandObject.rotation);
                 LeftHandObject.name = RightHandObject.name;
                 LeftHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2;
                 RightHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2 + RightHandObject.GetComponent<ItemBehavior>().ItemCount % 2;

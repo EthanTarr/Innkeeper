@@ -53,13 +53,16 @@ public class LevelManager : MonoBehaviour
         SortedList<float, Transform> skills = new SortedList<float, Transform>();
         foreach (Transform skill in Skills)
         {
-            float skillValue = skill.GetComponent<SkillBehavior>().Base + (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level) * 10 - 
-                skill.GetComponent<SkillBehavior>().Modifier;
-            while(skills.ContainsKey(skillValue))
+            if (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level > -3)
             {
-                skillValue++;
+                float skillValue = skill.GetComponent<SkillBehavior>().Base + (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level) * 10 -
+                skill.GetComponent<SkillBehavior>().Modifier;
+                while (skills.ContainsKey(skillValue))
+                {
+                    skillValue++;
+                }
+                skills.Add(skillValue, skill);
             }
-            skills.Add(skillValue, skill);
         }
         for (int i = 0; i < 3; i++) {
             float choice = Random.Range(0f, 100f);
@@ -249,7 +252,7 @@ public class LevelManager : MonoBehaviour
 
     void LesserStrength()
     {
-        Player.GetComponent<PlayerBehavior>().strength = Player.GetComponent<PlayerBehavior>().Level * .005f;
+        Player.GetComponent<PlayerBehavior>().strength = Player.GetComponent<PlayerBehavior>().Level * .02f;
         if(!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Strength"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Strength");
@@ -259,7 +262,7 @@ public class LevelManager : MonoBehaviour
 
     private void BasicCooking()
     {
-        Player.GetComponent<ResourceManager>().CookingTimeDelay = 10 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().TimeDelay = 20 - (Player.GetComponent<PlayerBehavior>().Level * 1f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Cooking"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Cooking");
@@ -269,7 +272,7 @@ public class LevelManager : MonoBehaviour
 
     private void LesserSpeed()
     {
-        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .01f;
+        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .05f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Speed"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Speed");
@@ -279,7 +282,7 @@ public class LevelManager : MonoBehaviour
 
     void EnhancedStrength()
     {
-        Player.GetComponent<PlayerBehavior>().strength = Player.GetComponent<PlayerBehavior>().Level * .015f;
+        Player.GetComponent<PlayerBehavior>().strength = Player.GetComponent<PlayerBehavior>().Level * .04f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Strength"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Strength");
@@ -289,7 +292,7 @@ public class LevelManager : MonoBehaviour
 
     private void AdvancedCooking()
     {
-        Player.GetComponent<ResourceManager>().CookingTimeDelay = 10 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().TimeDelay = 20 - (Player.GetComponent<PlayerBehavior>().Level * 2f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Cooking"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Cooking");
@@ -299,7 +302,7 @@ public class LevelManager : MonoBehaviour
 
     private void EnhancedSpeed()
     {
-        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .03f;
+        Player.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f + Player.GetComponent<PlayerBehavior>().Level * .1f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Speed"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Speed");
@@ -309,15 +312,13 @@ public class LevelManager : MonoBehaviour
 
     private void ExtraPortion()
     {
-        Player.GetComponent<ResourceManager>().FruitGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of fruits gained with each gather action
-        Player.GetComponent<ResourceManager>().WaterGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of water usages gained with each gather action
-        Player.GetComponent<ResourceManager>().BlueFruitJuiceGain = 1 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Blue Fruit Juice created with each create action
-        Player.GetComponent<ResourceManager>().AcidFlyGain = 10 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Acid Flys created with each create action
+        Player.GetComponent<ResourceManager>().FruitGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of fruits gained with each gather action
+        Player.GetComponent<ResourceManager>().BlueFruitJuiceGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Blue Fruit Juice created with each create action
         Player.GetComponent<ResourceManager>().SlicedBlueFruitGain = 2 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Sliced Blue Fruit created with each create action
         GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().PastaGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Patsa created with each create action
-        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().WaterGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Patsa created with each create action
-        Player.GetComponent<ResourceManager>().NoodleGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Noodles created with each create action
-        Player.GetComponent<ResourceManager>().DeAcidFlyGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5;
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().WaterGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Water created with each create action
+        Player.GetComponent<ResourceManager>().NoodleGain = 3 + Player.GetComponent<PlayerBehavior>().Level / 5; //number of Noodles created with each create action
+        Player.GetComponent<ResourceManager>().DeAcidFlyGain = 5 + Player.GetComponent<PlayerBehavior>().Level / 5;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Extra Portion"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Extra Portion");
@@ -327,9 +328,9 @@ public class LevelManager : MonoBehaviour
 
     private void CustomerPreferenceDrake()
     {
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += Player.GetComponent<PlayerBehavior>().Level * 2;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += - Player.GetComponent<PlayerBehavior>().Level;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += - Player.GetComponent<PlayerBehavior>().Level;
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += Player.GetComponent<PlayerBehavior>().Level * 4;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Drake"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Drake");
@@ -339,9 +340,9 @@ public class LevelManager : MonoBehaviour
 
     private void CustomerPreferenceGoblin()
     {
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += - Player.GetComponent<PlayerBehavior>().Level;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance +=  Player.GetComponent<PlayerBehavior>().Level * 2;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += - Player.GetComponent<PlayerBehavior>().Level;
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance +=  Player.GetComponent<PlayerBehavior>().Level * 4;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Goblin"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Goblin");
@@ -351,9 +352,9 @@ public class LevelManager : MonoBehaviour
 
     private void CustomerPreferenceAntinium()
     {
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += - Player.GetComponent<PlayerBehavior>().Level;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += - Player.GetComponent<PlayerBehavior>().Level;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += Player.GetComponent<PlayerBehavior>().Level * 2;
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += - Player.GetComponent<PlayerBehavior>().Level * 2;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += Player.GetComponent<PlayerBehavior>().Level * 4;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Antinium"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Antinium");
@@ -363,7 +364,7 @@ public class LevelManager : MonoBehaviour
 
     private void MagnifiedTraining()
     {
-        CustomerPopup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().xpGain = 50 + Player.GetComponent<PlayerBehavior>().Level * 10;
+        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().xpGain = 20 + Player.GetComponent<PlayerBehavior>().Level * 2;
         Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus = 50 + Player.GetComponent<PlayerBehavior>().Level * 10;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Magnified Training"))
         {
@@ -374,7 +375,7 @@ public class LevelManager : MonoBehaviour
 
     private void InnCalmingAura()
     {
-        Customer.GetComponent<CustomerBehavior>().LifeTimer = 60 + Player.GetComponent<PlayerBehavior>().Level * 4;
+        Customer.GetComponent<CustomerBehavior>().LifeTimer = 80 + Player.GetComponent<PlayerBehavior>().Level * 4;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Calming Aura"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Calming Aura");
@@ -384,7 +385,7 @@ public class LevelManager : MonoBehaviour
 
     private void BasicChopping()
     {
-        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .1f);
+        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Chopping"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Chopping");
@@ -394,7 +395,7 @@ public class LevelManager : MonoBehaviour
 
     private void AdvancedChopping()
     {
-        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .2f);
+        Player.GetComponent<ResourceManager>().CraftingTimeDelay = 5 - (Player.GetComponent<PlayerBehavior>().Level * .4f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Chopping"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Chopping");

@@ -111,6 +111,29 @@ public class CauldronBehavior : MonoBehaviour
             isCookingPasta = true;
             Highlight.gameObject.SetActive(false);
             this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
+            Transform left = Player.GetComponent<PlayerBehavior>().LeftHandObject;
+            Transform right = Player.GetComponent<PlayerBehavior>().RightHandObject;
+            int NoodleLoss = 3;
+            if (left && left.name.Equals("Noodles"))
+            {
+                if(left.GetComponent<ItemBehavior>().ItemCount > NoodleLoss)
+                {
+                    left.GetComponent<ItemBehavior>().ItemCount += -NoodleLoss;
+                    NoodleLoss = 0;
+                }
+                else
+                {
+                    NoodleLoss += -left.GetComponent<ItemBehavior>().ItemCount;
+                    left.GetComponent<ItemBehavior>().ItemCount = 0;
+                }
+                Player.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(left.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength, 0) * (3 - NoodleLoss);
+            }
+            if (right && right.name.Equals("Noodles") && NoodleLoss > 0)
+            {
+                right.GetComponent<ItemBehavior>().ItemCount += -NoodleLoss;
+                Player.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(right.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength, 0) * NoodleLoss;
+            }
+            Player.GetComponent<PlayerBehavior>().checkHand();
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
@@ -175,20 +198,25 @@ public class CauldronBehavior : MonoBehaviour
                 CauldronPopup.gameObject.SetActive(true);
                 if (LeftHand == null || RightHand == null)
                 {
-                    CauldronPopup.GetChild(1).GetComponent<Button>().interactable = true;
+                    CauldronPopup.GetChild(4).GetComponent<Button>().interactable = true;
                 }
                 else
                 {
-                    CauldronPopup.GetChild(1).GetComponent<Button>().interactable = false;
+                    CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
                 }
+
+                int requiredNoodleCount = 3;
                 if ((Player.GetComponent<PlayerBehavior>().Level > 2) &&
-                    ((LeftHand != null && LeftHand.name.Equals("Noodles")) || (RightHand != null && RightHand.name.Equals("Noodles"))))
+                    ((LeftHand != null && LeftHand.name.Equals("Noodles") && LeftHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) || 
+                    (RightHand != null && RightHand.name.Equals("Noodles") && RightHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) ||
+                    (LeftHand != null && RightHand != null && LeftHand.name.Equals("Noodles") && RightHand.name.Equals("Noodles") && 
+                    ((LeftHand.GetComponent<ItemBehavior>().ItemCount + RightHand.GetComponent<ItemBehavior>().ItemCount) >= requiredNoodleCount))))
                 {
-                    CauldronPopup.GetChild(0).GetComponent<Button>().interactable = true;
+                    CauldronPopup.GetChild(3).GetComponent<Button>().interactable = true;
                 }
                 else
                 {
-                    CauldronPopup.GetChild(0).GetComponent<Button>().interactable = false;
+                    CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
                 }
             }
         }

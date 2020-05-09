@@ -117,11 +117,11 @@ public class TableBehavior : MonoBehaviour
 
             int RequestAmount;
             float rand = Random.Range(0f, 100f);
-            if (rand < ((70 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
+            if (rand < ((90 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
             {
                 RequestAmount = 0;
             }
-            else if (rand < (110 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
+            else if (rand < (160 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
             {
                 RequestAmount = 1;
             }
@@ -129,23 +129,25 @@ public class TableBehavior : MonoBehaviour
             {
                 RequestAmount = 2;
             }
-            if (RequestAmount > 0)
-            {
-                popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<CustomerRequestBehavior>().ChangeToMultiple(); //set UI to have multiple requests
-            }
+
             for (int i = 0; i < RequestAmount; i++)
             {
-                GameObject popupChild = popup.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject; //grab request object
-                GameObject newRequest = Instantiate(popupChild, popup.transform.position +
-                    new Vector3((popupChild.GetComponent<RectTransform>().sizeDelta.x * (i + 1)) - (popupChild.GetComponent<RectTransform>().sizeDelta.x * .5f), 0, 0), popupChild.transform.rotation); //create new reqeust
+                GameObject popupChild = popup.transform.GetChild(3).gameObject; //grab request object
+                GameObject newRequest = Instantiate(popupChild, popupChild.transform.position, popupChild.transform.rotation); //create new reqeust
                 newRequest.transform.SetParent(popupChild.transform.parent);
-                if (i > 0)
+                newRequest.GetComponent<RectTransform>().localScale = new Vector3(1,1,1);
+                newRequest.GetComponent<RectTransform>().localPosition = new Vector2(newRequest.GetComponent<RectTransform>().sizeDelta.x * .5f * (i + 1), 0);
+                popup.transform.GetChild(2).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 
+                    popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x + newRequest.GetComponent<RectTransform>().sizeDelta.x); //expand UI scrollview to have two or more requests
+                popup.transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2((popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x + 
+                    popup.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta.x) * -.5f, 0);
+                popup.transform.GetChild(1).GetComponent<RectTransform>().localPosition = new Vector2((popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
+                    popup.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta.x) * .5f, 0);
+                foreach (Transform child in popupChild.transform.parent)
                 {
-                    popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x +
-                        popupChild.GetComponent<RectTransform>().sizeDelta.x, popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //increase UI content size to hold more requests
-                    foreach (Transform child in popupChild.transform.parent)
+                    if (!(child.gameObject.name.Equals("Left Background") || child.gameObject.name.Equals("Right Background") || child.gameObject.name.Equals("Center Background") || child.Equals(newRequest.transform)))
                     {
-                        child.GetComponent<RectTransform>().position = child.GetComponent<RectTransform>().position + new Vector3(-popupChild.transform.parent.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move the requests to fit in UI
+                        child.GetComponent<RectTransform>().localPosition += new Vector3(-child.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move the requests to fit in UI
                     }
                 }
             }

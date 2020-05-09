@@ -12,7 +12,6 @@ public class ResourceManager : MonoBehaviour
     //public float TimeDelay = 4f; //length of gathering time in seconds
 
     public float CraftingTimeDelay = 5f;
-    public float CookingTimeDelay = 10f;
     public float GatheringTimeDelay = 3f;
 
     public int FruitGain = 5; //number of fruits gained with each gather action

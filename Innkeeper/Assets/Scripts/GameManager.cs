@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GameManager : MonoBehaviour
     public Transform EndOfDayScreen;
     public Transform BlackBackground;
     public Transform GameOverScreen;
+    public GameObject VoiceSlider;
+    public GameObject DayCounter;
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -87,21 +90,23 @@ public class GameManager : MonoBehaviour
             GameOverScreen.gameObject.SetActive(true);
         }
 
-        AudioSource crowdSound = GameObject.Find("AmbientCrowdSound").GetComponent<AudioSource>();
-        crowdSound.volume = Customers.Count * .2f;
-        if (Customers.Count > 1 && !crowdSound.isPlaying)
+        GameObject crowdSound = GameObject.Find("AmbientCrowdSound");
+        crowdSound.GetComponent<SoundManager>().MaxVolume = Customers.Count * .2f;
+        crowdSound.GetComponent<SoundManager>().AudioControl(VoiceSlider.GetComponent<Slider>().value);
+        if (Customers.Count > 1 && !crowdSound.GetComponent<AudioSource>().isPlaying)
         {
-            crowdSound.Play();
+            crowdSound.GetComponent<AudioSource>().Play();
         }
         else if (Customers.Count <= 1)
         {
-            crowdSound.Stop();
+            crowdSound.GetComponent<AudioSource>().Stop();
         }
     }
 
     public void start()
     {
         DayCount++;
+        DayCounter.GetComponent<Text>().text = DayCount + "";
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         numOfSatisfiedCustomers = 0;
         numOfDisSatisfiedCustomers = 0;

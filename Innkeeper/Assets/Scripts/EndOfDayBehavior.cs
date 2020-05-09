@@ -78,7 +78,6 @@ public class EndOfDayBehavior : MonoBehaviour
         }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
-        this.transform.GetChild(1).GetComponent<Image>().color = this.transform.GetChild(3).GetComponent<Button>().colors.normalColor;
     }
 
     public void closeEndofDay()
