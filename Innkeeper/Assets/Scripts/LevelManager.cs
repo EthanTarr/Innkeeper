@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
     public Transform Player;
     public Transform Customer;
     public GameObject CustomerPopup;
+    public Transform Tooltip;
 
     [HideInInspector] public Dictionary<string, UnityEngine.Events.UnityAction> Calls;
     [HideInInspector] public int numOfSkilUps = 0;
@@ -236,7 +237,7 @@ public class LevelManager : MonoBehaviour
 
     private void CheckForMoreSkills()
     {
-        GameObject.Find("Tool Tip").SetActive(false);
+        Tooltip.gameObject.SetActive(false);
         numOfSkilUps--;
         if (numOfSkilUps > 0)
         {

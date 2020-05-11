@@ -121,7 +121,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                         int HandCount = RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount;
                         if (RequestCount - HandCount > 0)
                         {
-                            this.transform.GetChild(0).GetComponent<Text>().text += -HandCount;
+                            this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
                             RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
                             Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
                             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
@@ -143,7 +143,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                     }
                     else
                     {
-                        ChangeToSingle(); //change UI to single request look
+                        ReduceSize(); //change UI to fit less items
                     }
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
@@ -152,7 +152,7 @@ public class CustomerRequestBehavior : MonoBehaviour
     }
 
 
-    public void ChangeToSingle()
+    public void ReduceSize()
     {
         Popup.transform.GetChild(2).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x - 
             this.GetComponent<RectTransform>().sizeDelta.x); //reduce UI view
@@ -160,9 +160,6 @@ public class CustomerRequestBehavior : MonoBehaviour
                     Popup.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta.x) * -.5f, 0);
         Popup.transform.GetChild(1).GetComponent<RectTransform>().localPosition = new Vector2((Popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
             Popup.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta.x) * .5f, 0);
-        Debug.Log("test");
-        //this.transform.parent.GetComponent<RectTransform>().right = Vector3.zero; //reduce content to one reqeust
-        //this.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, this.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //reduce it more
         foreach (Transform child in this.transform.parent) //search for siblings
         {
             if (!(child.gameObject.name.Equals("Left Background") || child.gameObject.name.Equals("Right Background") || child.gameObject.name.Equals("Center Background") || child.Equals(this.transform))) //find sibling

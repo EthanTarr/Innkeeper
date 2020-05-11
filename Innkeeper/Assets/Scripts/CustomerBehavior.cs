@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor.Animations;
 
 public class CustomerBehavior : MonoBehaviour
 {
@@ -25,9 +24,9 @@ public class CustomerBehavior : MonoBehaviour
     public int GoblinChance = 33;
     public int AntiniumChance = 33;
 
-    public AnimatorController DrakeController;
-    public AnimatorController GoblinController;
-    public AnimatorController AntiniumController;
+    public RuntimeAnimatorController DrakeController;
+    public RuntimeAnimatorController GoblinController;
+    public RuntimeAnimatorController AntiniumController;
 
     private Vector2 Destination;
 
@@ -230,9 +229,9 @@ public class CustomerBehavior : MonoBehaviour
     {
         Player.GetComponent<GameManager>().numOfDisSatisfiedCustomers++;
         for (int i = 0; i < Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters.Count; i++) {
-            if (Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color.a == (100/255f))
+            if (Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color.a == 1)
             {
-                Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color = new Color(255, 255, 255, 255);
+                Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color = new Color32(255, 255, 255, 100);
                 break;
             }
         }

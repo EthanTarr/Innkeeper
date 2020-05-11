@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
     public float goblins = 0;
     public float customerWait = 0;
 
+    private float startingIncreaseAmount;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +59,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError(name + " could not find Black Background on startup");
         }
-        start();
+        startingIncreaseAmount = SpawnTimerIncreaseAmount;
     }
 
     // Update is called once per frame
@@ -65,18 +67,20 @@ public class GameManager : MonoBehaviour
     {
         if(TimelineCount > 500)
         {
+            BlackBackground.gameObject.SetActive(true);
+            EndOfDayScreen.gameObject.SetActive(true);
+            this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
+            EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
+                this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
             this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
+            this.GetComponent<Animator>().SetFloat("Speed", 0);
+            this.GetComponent<AudioSource>().Stop();
             this.transform.position = new Vector2(-385, 32);
             GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
             ResetInn();
             StopAllCoroutines();
             TimelineCount = 0;
             Debug.Log("GAME OVER!");
-            BlackBackground.gameObject.SetActive(true);
-            EndOfDayScreen.gameObject.SetActive(true);
-            this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
-            EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
-                this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
         }
 
         if(numOfDisSatisfiedCustomers >= 3)
@@ -88,6 +92,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("GAME OVER!");
             BlackBackground.gameObject.SetActive(true);
             GameOverScreen.gameObject.SetActive(true);
+            GameOverScreen.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = "Too many angry customers. The Inn is ruined! And in only " + DayCount + " day(s)";
         }
 
         GameObject crowdSound = GameObject.Find("AmbientCrowdSound");
@@ -108,16 +113,26 @@ public class GameManager : MonoBehaviour
         DayCount++;
         DayCounter.GetComponent<Text>().text = DayCount + "";
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
-        numOfSatisfiedCustomers = 0;
-        numOfDisSatisfiedCustomers = 0;
         StartCoroutine(CountTimeline());
         StartCoroutine(SpawnIncrease());
         StartCoroutine(SpawnCustomer());
         this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
+        this.gameObject.GetComponent<CapsuleCollider2D>().enabled = true;
+        SpawnTimerIncreaseAmount += -.01f;
+    }
+
+    public void restart()
+    {
+        DayCount = 0;
+        this.GetComponent<PlayerBehavior>().PreviousXp = 0;
+        this.GetComponent<PlayerBehavior>().xp = 0;
+        SpawnTimerIncreaseAmount = startingIncreaseAmount;
+        ResetInn();
     }
 
     IEnumerator SpawnCustomer()
     {
+        yield return new WaitForSeconds(30); //wait for spawntime
         while (true)
         {
             float SpawnTime;
@@ -171,65 +186,25 @@ public class GameManager : MonoBehaviour
     public void ResetInn()
     {
         this.GetComponent<ResourceManager>().stopInvokes();
+
+        Customers = new List<Transform>();
+
+        numOfSatisfiedCustomers = 0;
+        numOfDisSatisfiedCustomers = 0;
+
+        GameObject customerCounterParent = GameObject.Find("Upset Customer Counter");
+        for (int i = 0; i <  GameObject.Find("Upset Customer Counter").transform.childCount; i++)
+        {
+            customerCounterParent.transform.GetChild(i).GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+        }
+
         Customer.GetComponent<CustomerBehavior>().DrakeChance = Customer.GetComponent<CustomerBehavior>().OriginalDrakeChance;
         Customer.GetComponent<CustomerBehavior>().GoblinChance = Customer.GetComponent<CustomerBehavior>().OriginalGoblinChance;
         Customer.GetComponent<CustomerBehavior>().AntiniumChance = Customer.GetComponent<CustomerBehavior>().OriginalAntiniumChance;
-        foreach(Transform table in Tables)
-        {
-            if (table.GetComponent<TableBehavior>().CurrentCustomer != null)
-            {
-                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
-                if (table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
-                {
-                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
-                }
-            }
-            if (table.GetComponent<TableBehavior>().CurrentCustomer1 != null)
-            {
-                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.gameObject);
-                if (table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
-                {
-                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
-                }
-            }
-            if (table.GetComponent<TableBehavior>().CurrentCustomer2 != null)
-            {
-                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.gameObject);
-                if (table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject != null)
-                {
-                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
-                }
-            }
-        }
-        foreach (Transform storage in StorageTables)
-        {
-            if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
-            }
-            else if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
-            }
-            else if (storage.GetComponent<StorageBehaviour>().RightObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
-            }
-        }
-        foreach (Transform timer in Timers)
-        {
-            if (timer != null)
-            {
-                Destroy(timer.gameObject);
-            }
-            else
-            {
-                Timers.Remove(timer);
-            }
-        }
+
         if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
         {
-            this.GetComponent<PlayerBehavior>().MovementSpeed += -Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - 
+            this.GetComponent<PlayerBehavior>().MovementSpeed += -Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight -
                 this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
             this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
         }
@@ -240,5 +215,77 @@ public class GameManager : MonoBehaviour
             this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
         }
         this.GetComponent<PlayerBehavior>().checkHand();
+
+        foreach (Transform table in Tables)
+        {
+            if (table.GetComponent<TableBehavior>().CurrentCustomer != null)
+            {
+                if (table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer.gameObject);
+            }
+            if (table.GetComponent<TableBehavior>().CurrentCustomer1 != null)
+            {
+                if (table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer1.gameObject);
+            }
+            if (table.GetComponent<TableBehavior>().CurrentCustomer2 != null)
+            {
+                if (table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup != null)
+                {
+                    Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
+                }
+                Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.gameObject);
+            }
+        }
+
+        foreach (Transform storage in StorageTables)
+        {
+            if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
+            }
+            if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
+            }
+            if (storage.GetComponent<StorageBehaviour>().RightObject != null)
+            {
+                Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
+            }
+        }
+
+        GameObject.Find("CraftingTable").GetComponent<AudioSource>().Stop();
+        GameObject.Find("Door Creak").GetComponent<AudioSource>().Stop();
+
+        GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().ResetCauldron();
+
+        this.transform.position = new Vector2(-385, 32);
+        this.GetComponent<SpriteRenderer>().sprite = this.GetComponent<PlayerBehavior>().FrontErin;
+        this.GetComponent<SpriteRenderer>().flipX = false;
+        this.GetComponent<Animator>().SetBool("Forward", true);
+        this.GetComponent<Animator>().SetBool("Backward", false);
+        this.GetComponent<Animator>().SetBool("Sideways", false);
+
+        foreach (Transform timer in Timers)
+        {
+            if (timer != null)
+            {
+                Destroy(timer.gameObject);
+            }
+        }
+        Timers = new List<Transform>();
+
+        this.GetComponent<PlayerBehavior>().MovementSpeed = 1.5f;
+
+        foreach (string skill in this.GetComponent<PlayerBehavior>().PlayerSkills)
+        {
+            this.GetComponent<PlayerBehavior>().LevelChoices.GetComponent<LevelManager>().Calls[skill]();
+        }
     }
 }

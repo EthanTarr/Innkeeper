@@ -55,6 +55,27 @@ public class CanMakeButton : MonoBehaviour
                 }
                 this.GetComponent<Button>().interactable = itemCraftable;
             }
+
+
+            if (this.name.Equals("DeAcid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.2f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Slice Blue Fruit Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.08f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 2))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Blue Fruit Juice Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.4f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 1))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                this.GetComponent<Button>().interactable = true;
+            }
         }
     }
 

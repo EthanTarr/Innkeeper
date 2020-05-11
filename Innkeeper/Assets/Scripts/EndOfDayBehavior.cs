@@ -38,9 +38,6 @@ public class EndOfDayBehavior : MonoBehaviour
         {
             this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = SatisfiedCustomers + "";
             yield return new WaitForSeconds(1f);
-        
-            this.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
-            yield return new WaitForSeconds(1f);
         }
 
         if (DisSatisfiedCustomers > 0)
@@ -88,8 +85,6 @@ public class EndOfDayBehavior : MonoBehaviour
             GameObject.Find("Player").transform.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
         }
         this.transform.GetChild(2).GetComponent<Button>().interactable = false;
-        this.transform.GetChild(1).GetComponent<Image>().color = this.transform.GetChild(3).GetComponent<Button>().colors.disabledColor;
-        this.transform.GetChild(3).GetChild(2).gameObject.SetActive(false);
         this.gameObject.SetActive(false);
     }
 }

@@ -33,6 +33,8 @@ public class CauldronBehavior : MonoBehaviour
 
     private Transform Player;
 
+    private bool isCollidingWithPlayer = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +65,19 @@ public class CauldronBehavior : MonoBehaviour
         Player.GetComponent<PlayerBehavior>().checkHand();
     }
 
+    public void ResetCauldron()
+    {
+        isEmpty = true;
+        isUnboiledWater = false;
+        isBoiledWater = false;
+        isCookingPasta = false;
+        isCookedPasta = false;
+        this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+        this.GetComponent<AudioSource>().Stop();
+        this.GetComponent<Animator>().StopPlayback();
+        CancelInvoke();
+    }
+
     public void grabGlassWater()
     {
         Transform thisGlassWater = Instantiate(GlassWater, Player.position, GlassWater.rotation); //create gathered object on player
@@ -78,6 +93,7 @@ public class CauldronBehavior : MonoBehaviour
 
         isBoiledWater = false;
         isEmpty = true;
+        this.GetComponent<Animator>().enabled = false;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
         this.GetComponent<AudioSource>().clip = CauldronSounds[1];
         this.GetComponent<AudioSource>().loop = false;
@@ -99,6 +115,7 @@ public class CauldronBehavior : MonoBehaviour
 
         isCookedPasta = false;
         isEmpty = true;
+        this.GetComponent<Animator>().enabled = false;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
         this.GetComponent<AudioSource>().Stop();
     }
@@ -110,6 +127,7 @@ public class CauldronBehavior : MonoBehaviour
             isBoiledWater = false;
             isCookingPasta = true;
             Highlight.gameObject.SetActive(false);
+            this.GetComponent<Animator>().enabled = false;
             this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
             Transform left = Player.GetComponent<PlayerBehavior>().LeftHandObject;
             Transform right = Player.GetComponent<PlayerBehavior>().RightHandObject;
@@ -154,8 +172,8 @@ public class CauldronBehavior : MonoBehaviour
             isUnboiledWater = true;
             Highlight.gameObject.SetActive(false);
             this.GetComponent<SpriteRenderer>().sprite = WaterCauldron;
-            this.GetComponent<AudioSource>().clip = CauldronSounds[0];
-            this.GetComponent<AudioSource>().loop = true;
+            this.GetComponent<AudioSource>().clip = CauldronSounds[1];
+            this.GetComponent<AudioSource>().loop = false;
             this.GetComponent<AudioSource>().Play();
             Player.GetComponent<GameManager>().cooked++;
 
@@ -174,15 +192,25 @@ public class CauldronBehavior : MonoBehaviour
     {
         isUnboiledWater = false;
         isBoiledWater = true;
-        //this.GetComponent<SpriteRenderer>().sprite = BoilingWaterCauldron;
-        checkForHighlights();
+        this.GetComponent<SpriteRenderer>().sprite = BoilingWaterCauldron;
+        this.GetComponent<Animator>().enabled = true;
+        this.GetComponent<AudioSource>().clip = CauldronSounds[0];
+        this.GetComponent<AudioSource>().loop = true;
+        this.GetComponent<AudioSource>().Play();
+        if (isCollidingWithPlayer)
+        {
+            checkForHighlights();
+        }
     }
 
     private void CookedPasta()
     {
         isCookingPasta = false;
         isCookedPasta = true;
-        checkForHighlights();
+        if (isCollidingWithPlayer)
+        {
+            checkForHighlights();
+        }
     }
 
     private void checkForHighlights()
@@ -190,13 +218,15 @@ public class CauldronBehavior : MonoBehaviour
         Transform LeftHand = Player.GetComponent<PlayerBehavior>().LeftHandObject;
         Transform RightHand = Player.GetComponent<PlayerBehavior>().RightHandObject;
         if ((isEmpty && ((LeftHand != null && LeftHand.name.Equals("Water")) || (RightHand != null && RightHand.name.Equals("Water")))) ||
-            isBoiledWater || (isCookedPasta && (LeftHand == null || RightHand == null)))
+            isBoiledWater || (isCookedPasta && (LeftHand == null || RightHand == null || LeftHand.name.Equals("Pasta") || RightHand.name.Equals("Pasta")) &&
+                    GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.3f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 3)))
         {
             Highlight.gameObject.SetActive(true);
             if (isBoiledWater)
             {
                 CauldronPopup.gameObject.SetActive(true);
-                if (LeftHand == null || RightHand == null)
+                if ((LeftHand == null || RightHand == null || LeftHand.name.Equals("WaterGlass") || RightHand.name.Equals("WaterGlass")) && 
+                    GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
                 {
                     CauldronPopup.GetChild(4).GetComponent<Button>().interactable = true;
                 }
@@ -225,12 +255,14 @@ public class CauldronBehavior : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         checkForHighlights();
+        isCollidingWithPlayer = true;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         Highlight.gameObject.SetActive(false);
         CauldronPopup.gameObject.SetActive(false);
+        isCollidingWithPlayer = false;
 
         GameObject Tooltip = GameObject.Find("Tool Tip");
         if (Tooltip != null)

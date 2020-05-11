@@ -232,7 +232,8 @@ public class ResourceManager : MonoBehaviour
 
     public void CreateSlicedBlueFruit(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("Sliced Blue Fruit") ||
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("Sliced Blue Fruit"))) //Check for if timer isnt running
         {
             bool Created = false;
             Dictionary<string, int> Ingredients = new Dictionary<string, int>();
@@ -254,7 +255,8 @@ public class ResourceManager : MonoBehaviour
 
     public void CreateDeAcidFlys(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("DeAcid Fly") || 
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("DeAcid Fly"))) //Check for if timer isnt running
         {
             bool Created = false;
             Dictionary<string, int> Ingredients = new Dictionary<string, int>();
@@ -277,7 +279,8 @@ public class ResourceManager : MonoBehaviour
     // places timer on Table Area and calls function to increase Water
     public void CreateBlueFruitJuice(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("Blue Fruit Juice") ||
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("Blue Fruit Juice"))) //Check for if timer isnt running
         {
             bool Created = false;
             Dictionary<string, int> Ingredients = new Dictionary<string, int>();

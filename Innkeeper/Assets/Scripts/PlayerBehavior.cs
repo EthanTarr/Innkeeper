@@ -73,6 +73,11 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (controlMovement)
         {
+            if(MovementSpeed < 0)
+            {
+                MovementSpeed = 0;
+            }
+
             PreviousDestination = Destination;
             Destination = transform.position;
             if (Input.GetKey(KeyCode.W))

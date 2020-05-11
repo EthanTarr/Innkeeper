@@ -114,6 +114,7 @@ public class TableBehavior : MonoBehaviour
             GameObject popup = Instantiate(CustomerPopup, Camera.main.WorldToScreenPoint(customer.transform.position), CustomerPopup.transform.rotation); //create popup object
             popup.transform.SetParent(GameObject.Find("Canvas").transform, false); //place popup in canvas
             popup.transform.SetAsFirstSibling();
+            popup.transform.position = GameObject.Find("Main Camera").GetComponent<Camera>().WorldToScreenPoint(customer.position);
 
             int RequestAmount;
             float rand = Random.Range(0f, 100f);

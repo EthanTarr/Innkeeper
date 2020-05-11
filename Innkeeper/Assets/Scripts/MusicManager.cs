@@ -13,13 +13,19 @@ public class MusicManager : MonoBehaviour
     void Start()
     {
         track = Random.Range(0, Music.Count);
-        StartCoroutine(PlaySong());
+        playSong();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void playSong()
+    {
+        StopAllCoroutines();
+        StartCoroutine(PlaySong());
     }
 
     IEnumerator PlaySong()

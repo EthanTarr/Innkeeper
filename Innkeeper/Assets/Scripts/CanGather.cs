@@ -45,6 +45,32 @@ public class CanGather : MonoBehaviour
                     this.GetComponent<Button>().interactable = true;
                 }
             }
+
+
+            if(this.name.Equals("Noodle Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed < 
+                ((.16f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 3))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Acid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 1))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Water Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.4f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 1))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Blue Fruit Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.2f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 3))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                this.GetComponent<Button>().interactable = true;
+            }
         }
     }
 }

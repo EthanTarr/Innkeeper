@@ -24,6 +24,8 @@ public class PauseTime : MonoBehaviour
     public void StopTime ()
     {
         Time.timeScale = 0;
+        GameObject.Find("Player").GetComponent<AudioSource>().Stop();
+        GameObject.Find("CraftingTable").GetComponent<AudioSource>().Stop();
     }
 
     public void ToggleScreen()
