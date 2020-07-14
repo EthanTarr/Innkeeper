@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemCount: 0
+  ItemMax: 2
   ItemWeight: 0.4
 --- !u!50 &-5924410091079529582
 Rigidbody2D:

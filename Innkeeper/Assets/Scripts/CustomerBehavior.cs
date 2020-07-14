@@ -17,9 +17,6 @@ public class CustomerBehavior : MonoBehaviour
 
     public Transform Table;
 
-    [HideInInspector] public int OriginalDrakeChance = 33;
-    [HideInInspector] public int OriginalGoblinChance = 33;
-    [HideInInspector] public int OriginalAntiniumChance = 33;
     public int DrakeChance = 33;
     public int GoblinChance = 33;
     public int AntiniumChance = 33;
