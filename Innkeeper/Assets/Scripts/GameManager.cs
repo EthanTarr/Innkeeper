@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public Transform UnlockedFoodScreen;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
+    public GameObject ToolTip;
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -55,6 +56,8 @@ public class GameManager : MonoBehaviour
         startingIncreaseAmount = SpawnTimerIncreaseAmount; //to use when reseting the game
 
         populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
+        ToolTip.SetActive(true); //fix lag bug from tooltip
+        ToolTip.SetActive(false);
     }
 
     // Update is called once per frame

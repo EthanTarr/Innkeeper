@@ -71,12 +71,14 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (controlMovement)
         {
+            //To prevent player from not being able to move
             float oldMovement = MovementSpeed;
             if (MovementSpeed < 0)
             {
                 MovementSpeed = 0.1f;
             }
 
+            //calculating where to move
             PreviousDestination = Destination;
             Destination = transform.position;
             if (Input.GetKey(KeyCode.W))
@@ -125,16 +127,19 @@ public class PlayerBehavior : MonoBehaviour
             }
             MovementSpeed = oldMovement;
 
+            //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 
+            //set moving animation
             this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
             this.GetComponent<Animator>().speed = (1f + (PreviousDestination - Destination).magnitude) / 1.5f;
 
+            //set moving audio
             if ((PreviousDestination - Destination).magnitude > .1f && !this.GetComponent<AudioSource>().isPlaying)
             {
                 this.GetComponent<AudioSource>().pitch = 1f + (PreviousDestination - Destination).magnitude;
                 this.GetComponent<AudioSource>().Play();
-                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude; //stat
             }
             else if((PreviousDestination - Destination).magnitude < .1f)
             {
@@ -142,9 +147,10 @@ public class PlayerBehavior : MonoBehaviour
             }
             else if(this.GetComponent<AudioSource>().isPlaying)
             {
-                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude;
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude; //stat
             }
 
+            //stat
             if(LeftHandObject)
             {
                 this.GetComponent<GameManager>().lifts += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
@@ -394,7 +400,6 @@ public class PlayerBehavior : MonoBehaviour
         }
         else
         {
-            //Debug.LogError(name + " had a full incompatible hand when trying to give object to player.");
             return false;
         }
     }
@@ -443,7 +448,6 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (LeftHandObject != null)
         {
-            //LeftHandObject.transform.position = Vector3.Lerp(LeftHandObject.transform.position, Destination + new Vector2(-HandOffset.x, HandOffset.y), .9f);
             LeftHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(-HandOffset.x, HandOffset.y));
             LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = leftLayer;
         }
