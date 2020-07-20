@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviour
 
     public int TimelineCount = 0;
     public int DayCount = 0;
+    public int DayTimeLimit = 80;
+    private int startingDayTimeLimit; 
+    public int DayStartDelay = 15;
+    private int startingDayStartDelay;
 
     public int numOfSatisfiedCustomers = 0;
     public int numOfDisSatisfiedCustomers = 0;
@@ -33,6 +37,9 @@ public class GameManager : MonoBehaviour
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject ToolTip;
+    public GameObject DoorPopup;
+    public GameObject CraftingPopup;
+    public GameObject CauldronPopup;
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -47,6 +54,7 @@ public class GameManager : MonoBehaviour
     public float antinium = 0;
     public float goblins = 0;
     public float customerWait = 0;
+    public float customerSteps = 0;
 
     
 
@@ -54,17 +62,25 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         startingIncreaseAmount = SpawnTimerIncreaseAmount; //to use when reseting the game
+        startingDayTimeLimit = DayTimeLimit;
+        startingDayStartDelay = DayStartDelay;
 
         populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
         ToolTip.SetActive(true); //fix lag bug from tooltip
         ToolTip.SetActive(false);
+        DoorPopup.SetActive(true);
+        DoorPopup.SetActive(false);
+        CraftingPopup.SetActive(true);
+        CraftingPopup.SetActive(false);
+        CauldronPopup.SetActive(true);
+        CauldronPopup.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         //Day ending catch
-        if (TimelineCount > 500)
+        if (TimelineCount > DayTimeLimit)
         {
             BlackBackground.gameObject.SetActive(true);
             EndOfDayScreen.gameObject.SetActive(true);
@@ -75,9 +91,9 @@ public class GameManager : MonoBehaviour
             this.transform.position = new Vector2(-385, 32);
             GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
-            ResetInn();
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
+            ResetInn();
             StopAllCoroutines();
             TimelineCount = 0;
             GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
@@ -117,6 +133,14 @@ public class GameManager : MonoBehaviour
     {
         DayCount++;
         DayCounter.GetComponent<Text>().text = DayCount + "";
+        if (DayCount == 2)
+        {
+            DayTimeLimit = 140;
+        }
+        else
+        {
+            DayTimeLimit += 20;
+        }
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         StartCoroutine(CountTimeline());
         StartCoroutine(SpawnIncrease());
@@ -132,6 +156,8 @@ public class GameManager : MonoBehaviour
         this.GetComponent<PlayerBehavior>().PreviousXp = 0;
         this.GetComponent<PlayerBehavior>().xp = 0;
         SpawnTimerIncreaseAmount = startingIncreaseAmount;
+        DayTimeLimit = startingDayTimeLimit;
+        DayStartDelay = startingDayStartDelay;
         UnlockableFoods = new Dictionary<int, Transform>();
         populateUnlockableFoods();
         ResetInn();
@@ -139,16 +165,22 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SpawnCustomer()
     {
-        yield return new WaitForSeconds(30); //30 second delay to start the day
+        yield return new WaitForSeconds(DayStartDelay); //delay to start the day
         while (true)
         {
             float SpawnTime;
             List<Transform> emptyTables = findEmptyTable();
+            int customerSpawn = Random.Range(1, (DayCount / 3) + 3);
+            int count = 0;
             if (emptyTables.Count > 0)
             {
-                while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
+                while (count < customerSpawn)
                 {
-                    Debug.Log("Couldn't find a spot to spawn customers");
+                    while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
+                    {
+                        Debug.Log("Couldn't find a spot to spawn customers");
+                    }
+                    count++;
                 }
             }
             SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
@@ -177,21 +209,26 @@ public class GameManager : MonoBehaviour
 
     private void populateUnlockableFoods()
     {
-        UnlockableFoods.Add(3, GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().PastaBowl);
+        UnlockableFoods.Add(3, GetComponent<ResourceManager>().PastaBowl);
         UnlockableFoods.Add(6, GetComponent<ResourceManager>().DeAcidFly);
     }
 
     private void findUnlockedFood()
     {
-        foreach(int level in UnlockableFoods.Keys)
+        int targetLevel = -1;
+        foreach (int level in UnlockableFoods.Keys)
         {
             if(GetComponent<PlayerBehavior>().Level >= level)
             {
-                UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockableFoods[level].name + "!";
-                UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockableFoods[level].GetComponent<SpriteRenderer>().sprite;
-                UnlockableFoods.Remove(level);
-                UnlockedFoodScreen.gameObject.SetActive(true);
+                targetLevel = level;
             }
+        }
+        if (targetLevel > -1)
+        {
+            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockableFoods[targetLevel].name + "!";
+            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockableFoods[targetLevel].GetComponent<SpriteRenderer>().sprite;
+            UnlockableFoods.Remove(targetLevel);
+            UnlockedFoodScreen.gameObject.SetActive(true);
         }
     }
 
@@ -295,6 +332,7 @@ public class GameManager : MonoBehaviour
 
         //reset cauldron
         GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().ResetCauldron();
+        GameObject.Find("Cauldron (1)").GetComponent<CauldronBehavior>().ResetCauldron();
 
         //reset player position and animations
         this.transform.position = new Vector2(-385, 32);

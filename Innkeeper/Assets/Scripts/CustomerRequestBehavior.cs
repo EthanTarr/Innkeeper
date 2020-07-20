@@ -108,13 +108,13 @@ public class CustomerRequestBehavior : MonoBehaviour
                         {
                             this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
                             LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
-                            Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
                             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
                             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                             return;
                         }
                         LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
                     }
                     else
                     {
@@ -123,13 +123,13 @@ public class CustomerRequestBehavior : MonoBehaviour
                         {
                             this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
                             RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
-                            Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
                             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
                             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                             return;
                         }
                         RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
                     }
                     Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
                     Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI

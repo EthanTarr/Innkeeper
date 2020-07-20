@@ -178,6 +178,7 @@ public class CustomerBehavior : MonoBehaviour
                     this.GetComponent<Animator>().SetBool("Sideways", false);
                 }
             }
+            Player.GetComponent<GameManager>().customerSteps += move.magnitude;
             transform.position = move; //move customer towards destination
         }
         else if (Path.Count > node && !returning)

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class CauldronBehavior : MonoBehaviour
 {
-    public Transform HeldItem;
     public Transform Highlight;
     public Transform CauldronPopup;
     public Sprite EmptyCauldron;
@@ -13,15 +12,10 @@ public class CauldronBehavior : MonoBehaviour
     public Sprite BoilingWaterCauldron;
     public Sprite PastaCauldron;
 
-    public Transform GlassWater;
-    public int WaterGain = 5;
-    public Transform PastaBowl;
-    public int PastaGain = 3;
-
     //Timer
     private Transform myTimer = null;
     public Transform Timer;
-    public float TimeDelay = 10f;
+    
 
     public bool isEmpty = true;
     public bool isUnboiledWater = false;
@@ -55,16 +49,6 @@ public class CauldronBehavior : MonoBehaviour
 
     }
 
-    public void grabItem()
-    {
-        bool check = Player.GetComponent<PlayerBehavior>().GiveObject(HeldItem);
-        if(check)
-        {
-            HeldItem = null;
-        }
-        Player.GetComponent<PlayerBehavior>().checkHand();
-    }
-
     public void ResetCauldron()
     {
         isEmpty = true;
@@ -72,17 +56,17 @@ public class CauldronBehavior : MonoBehaviour
         isBoiledWater = false;
         isCookingPasta = false;
         isCookedPasta = false;
+        this.GetComponent<Animator>().enabled = false;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
         this.GetComponent<AudioSource>().Stop();
-        this.GetComponent<Animator>().StopPlayback();
         CancelInvoke();
     }
 
     public void grabGlassWater()
     {
-        Transform thisGlassWater = Instantiate(GlassWater, Player.position, GlassWater.rotation); //create gathered object on player
-        thisGlassWater.name = GlassWater.name; //set new objects name to be the same as the original
-        thisGlassWater.GetComponent<ItemBehavior>().ItemCount = WaterGain; //Set new objects count to be the corresponding GatherGain
+        Transform thisGlassWater = Instantiate(Player.GetComponent<ResourceManager>().GlassWater, Player.position, Player.GetComponent<ResourceManager>().GlassWater.rotation); //create gathered object on player
+        thisGlassWater.name = Player.GetComponent<ResourceManager>().GlassWater.name; //set new objects name to be the same as the original
+        thisGlassWater.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().WaterGlassGain; //Set new objects count to be the corresponding GatherGain
         thisGlassWater.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
         bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisGlassWater); //set Player to hold object
         if (!check)
@@ -102,9 +86,9 @@ public class CauldronBehavior : MonoBehaviour
 
     public void grabPastaBowl()
     {
-        Transform thisPastaBowl = Instantiate(PastaBowl, Player.position, PastaBowl.rotation); //create gathered object on player
-        thisPastaBowl.name = PastaBowl.name; //set new objects name to be the same as the original
-        thisPastaBowl.GetComponent<ItemBehavior>().ItemCount = PastaGain; //Set new objects count to be the corresponding GatherGain
+        Transform thisPastaBowl = Instantiate(Player.GetComponent<ResourceManager>().PastaBowl, Player.position, Player.GetComponent<ResourceManager>().PastaBowl.rotation); //create gathered object on player
+        thisPastaBowl.name = Player.GetComponent<ResourceManager>().PastaBowl.name; //set new objects name to be the same as the original
+        thisPastaBowl.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().PastaGain; //Set new objects count to be the corresponding GatherGain
         thisPastaBowl.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
         bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisPastaBowl); //set Player to hold object
         if (!check)
@@ -155,8 +139,8 @@ public class CauldronBehavior : MonoBehaviour
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
-            myTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
-            Invoke("CookedPasta", TimeDelay);
+            myTimer.GetComponent<TimerBehavior>().startCounting(Player.GetComponent<ResourceManager>().CookingTimeDelay);
+            Invoke("CookedPasta", Player.GetComponent<ResourceManager>().CookingTimeDelay);
         }
         else
         {
@@ -179,8 +163,8 @@ public class CauldronBehavior : MonoBehaviour
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
-            myTimer.GetComponent<TimerBehavior>().startCounting(TimeDelay);
-            Invoke("boiledWater", TimeDelay);
+            myTimer.GetComponent<TimerBehavior>().startCounting(Player.GetComponent<ResourceManager>().CookingTimeDelay);
+            Invoke("boiledWater", Player.GetComponent<ResourceManager>().CookingTimeDelay);
         }
         else
         {

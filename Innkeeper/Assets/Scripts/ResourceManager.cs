@@ -13,6 +13,7 @@ public class ResourceManager : MonoBehaviour
 
     public float CraftingTimeDelay = 5f;
     public float GatheringTimeDelay = 3f;
+    public float CookingTimeDelay = 10f;
 
     public int FruitGain = 5; //number of fruits gained with each gather action
     public int WaterGain = 3; //number of water usages gained with each gather action
@@ -21,6 +22,8 @@ public class ResourceManager : MonoBehaviour
     public int SlicedBlueFruitGain = 2; //number of Sliced Blue Fruit created with each create action
     public int NoodleGain = 5; //number of Noodles created with each create action
     public int DeAcidFlyGain = 3; //number of DeAcid Flys created with each create action
+    public int WaterGlassGain = 5;
+    public int PastaGain = 3;
 
     public Transform BlueFruit;
     public Transform Water;
@@ -29,6 +32,8 @@ public class ResourceManager : MonoBehaviour
     public Transform BlueFruitSlice;
     public Transform Noodle;
     public Transform DeAcidFly;
+    public Transform GlassWater;
+    public Transform PastaBowl;
 
     private Transform Player; //Player Transform
     private Transform Cauldron;

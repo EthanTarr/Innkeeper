@@ -60,7 +60,11 @@ public class SkillBehavior : MonoBehaviour
         {
             return GameObject.Find("Player").GetComponent<PlayerBehavior>().xp / 100;
         }
-        Debug.LogError("Could not find" + this.gameObject.name);
+        else if (this.gameObject.name.Equals("Inn - Lethargic Steps"))
+        {
+            return player.customerSteps / 10;
+        }
+        Debug.LogError("Could not find " + this.gameObject.name);
         return 0;
     }
 }

@@ -26,7 +26,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public float strength = 0;
 
-    public List<string> PlayerSkills;
+    public List<string> PlayerSkills = new List<string>();
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);
 
@@ -40,17 +40,18 @@ public class PlayerBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LevelMilestones = new int[10];
-        LevelMilestones[0] = 500;
-        LevelMilestones[1] = 1000;
-        LevelMilestones[2] = 2200;
-        LevelMilestones[3] = 4800;
-        LevelMilestones[4] = 10000;
-        LevelMilestones[5] = 15000;
-        LevelMilestones[6] = 21000;
-        LevelMilestones[7] = 28500;
-        LevelMilestones[8] = 37000;
-        LevelMilestones[9] = 45000;
+        LevelMilestones = new int[11];
+        LevelMilestones[0] = -1;
+        LevelMilestones[1] = 100;
+        LevelMilestones[2] = 250;
+        LevelMilestones[3] = 450;
+        LevelMilestones[4] = 700;
+        LevelMilestones[5] = 1000;
+        LevelMilestones[6] = 1500;
+        LevelMilestones[7] = 2100;
+        LevelMilestones[8] = 2850;
+        LevelMilestones[9] = 3700;
+        LevelMilestones[10] = int.MaxValue;
 
 
         Destination = transform.position; //find destination position
@@ -283,7 +284,7 @@ public class PlayerBehavior : MonoBehaviour
                     Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
                 }
             }
-            else if (LeftHandObject != null && RightHandObject == null)
+            else if (LeftHandObject != null && RightHandObject == null && controlMovement)
             {
                 RightHandObject = Instantiate(LeftHandObject, this.transform.position + HandOffset, LeftHandObject.rotation);
                 RightHandObject.name = LeftHandObject.name;
@@ -292,7 +293,7 @@ public class PlayerBehavior : MonoBehaviour
                 RightHandObject.transform.localScale = new Vector2(3, 3);
                 checkHand();
             }
-            else if (LeftHandObject == null && RightHandObject != null)
+            else if (LeftHandObject == null && RightHandObject != null && controlMovement)
             {
                 LeftHandObject = Instantiate(RightHandObject, this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0), RightHandObject.rotation);
                 LeftHandObject.name = RightHandObject.name;

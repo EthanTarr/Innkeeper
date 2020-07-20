@@ -27,7 +27,6 @@ public class EndOfDayBehavior : MonoBehaviour
 
     public void SetUpEndOfDay(int SatisfiedCustomers, int DisSatisfiedCustomers, float PreviousXp, float CurrentXp)
     {
-
         StartCoroutine(SetUp(SatisfiedCustomers, DisSatisfiedCustomers, PreviousXp, CurrentXp));
 
     }
@@ -46,32 +45,35 @@ public class EndOfDayBehavior : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        int SkillUpCount = 0;
-        while (GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp) > GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp))
+        if (GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().Level != 10)
         {
-            this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(1, 7.5f);
-            yield return new WaitForSeconds(5f);
-            this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().resetXpBar();
-            PreviousXp = GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp)];
-            this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
-            "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
-            if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 1)
+            int SkillUpCount = 0;
+            while (GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp) > GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp))
             {
-                SkillUpCount++;
+                this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(1, 7.5f);
+                yield return new WaitForSeconds(5f);
+                this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().resetXpBar();
+                PreviousXp = GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(PreviousXp)];
+                this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
+                "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
+                if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
+                {
+                    SkillUpCount++;
+                }
             }
-        }
-        if (CurrentXp != PreviousXp)
-        {
-            this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(
-                (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)], 
-                7.5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
-            yield return new WaitForSeconds(5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
-        }
+            if (CurrentXp != PreviousXp)
+            {
+                this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(
+                    (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)],
+                    7.5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
+                yield return new WaitForSeconds(5f * (CurrentXp - PreviousXp) / GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().LevelMilestones[GameObject.Find("Player").transform.GetComponent<PlayerBehavior>().xpToLevels(CurrentXp)]);
+            }
 
-        if (SkillUpCount > 0)
-        {
-            LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
-            LevelChoicesScreen.gameObject.SetActive(true);
+            if (SkillUpCount > 0)
+            {
+                LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
+                LevelChoicesScreen.gameObject.SetActive(true);
+            }
         }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
