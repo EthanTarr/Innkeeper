@@ -43,8 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086753edf18dbee41bd4d91d1fea2543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: 50
-  Level: 6
-  Modifier: 0
+  Base: 43
+  Level: 7
   Description: Antinium will be more likely to visit your inn than other customers.
   PreferedToolTipSize: {x: 200, y: 80}

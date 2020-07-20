@@ -9,6 +9,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public float MovementSpeed = 15f; //movement speed of the player character
     private Vector2 Destination;
+    private Vector2 PreviousDestination;
 
     public Transform LeftHandObject;
     public Transform RightHandObject;
@@ -19,15 +20,13 @@ public class PlayerBehavior : MonoBehaviour
 
     public float PreviousXp = 0;
     public float xp = 0;
-    public int Level
-    {
-        get { return xpToLevels(xp); }
-    }
+    public int Level = 0;
+    
     [HideInInspector] public int[] LevelMilestones;
 
     public float strength = 0;
 
-    public List<string> PlayerSkills;
+    public List<string> PlayerSkills = new List<string>();
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);
 
@@ -41,17 +40,18 @@ public class PlayerBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LevelMilestones = new int[10];
-        LevelMilestones[0] = 150;
-        LevelMilestones[1] = 500;
-        LevelMilestones[2] = 1000;
-        LevelMilestones[3] = 2200;
-        LevelMilestones[4] = 4800;
-        LevelMilestones[5] = 10000;
-        LevelMilestones[6] = 15000;
-        LevelMilestones[7] = 21000;
-        LevelMilestones[8] = 28500;
-        LevelMilestones[9] = 37000;
+        LevelMilestones = new int[11];
+        LevelMilestones[0] = -1;
+        LevelMilestones[1] = 100;
+        LevelMilestones[2] = 250;
+        LevelMilestones[3] = 450;
+        LevelMilestones[4] = 700;
+        LevelMilestones[5] = 1000;
+        LevelMilestones[6] = 1500;
+        LevelMilestones[7] = 2100;
+        LevelMilestones[8] = 2850;
+        LevelMilestones[9] = 3700;
+        LevelMilestones[10] = int.MaxValue;
 
 
         Destination = transform.position; //find destination position
@@ -72,41 +72,94 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (controlMovement)
         {
+            //To prevent player from not being able to move
+            float oldMovement = MovementSpeed;
+            if (MovementSpeed < 0)
+            {
+                MovementSpeed = 0.1f;
+            }
+
+            //calculating where to move
+            PreviousDestination = Destination;
             Destination = transform.position;
             if (Input.GetKey(KeyCode.W))
             {
                 Destination += new Vector2(0, MovementSpeed);
                 this.GetComponent<SpriteRenderer>().sprite = BackErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", true);
+                this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
                 moveHandObject(99, 99);
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                Destination += new Vector2(0, -MovementSpeed);
+                this.GetComponent<SpriteRenderer>().sprite = FrontErin;
+                this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", true);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", false);
+                HandOffset.x = 3;
+                moveHandObject(105, 105);
             }
             if (Input.GetKey(KeyCode.A))
             {
                 Destination += new Vector2(-MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = true;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
                 moveHandObject(99, 105);
             }
-            if (Input.GetKey(KeyCode.S))
-            {
-                Destination += new Vector2(0, -MovementSpeed);
-                this.GetComponent<SpriteRenderer>().sprite = FrontErin;
-                this.GetComponent<SpriteRenderer>().flipX = false;
-                HandOffset.x = 3;
-                moveHandObject(105, 105);
-            }
-            if (Input.GetKey(KeyCode.D))
+            else if (Input.GetKey(KeyCode.D))
             {
                 Destination += new Vector2(MovementSpeed, 0);
                 this.GetComponent<SpriteRenderer>().sprite = SideErin;
                 this.GetComponent<SpriteRenderer>().flipX = false;
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
                 moveHandObject(105, 99);
             }
+            MovementSpeed = oldMovement;
 
+            //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
+
+            //set moving animation
+            this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
+            this.GetComponent<Animator>().speed = (1f + (PreviousDestination - Destination).magnitude) / 1.5f;
+
+            //set moving audio
+            if ((PreviousDestination - Destination).magnitude > .1f && !this.GetComponent<AudioSource>().isPlaying)
+            {
+                this.GetComponent<AudioSource>().pitch = 1f + (PreviousDestination - Destination).magnitude;
+                this.GetComponent<AudioSource>().Play();
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude; //stat
+            }
+            else if((PreviousDestination - Destination).magnitude < .1f)
+            {
+                this.GetComponent<AudioSource>().Stop();
+            }
+            else if(this.GetComponent<AudioSource>().isPlaying)
+            {
+                this.GetComponent<GameManager>().steps += (PreviousDestination - Destination).magnitude; //stat
+            }
+
+            //stat
+            if(LeftHandObject)
+            {
+                this.GetComponent<GameManager>().lifts += LeftHandObject.GetComponent<ItemBehavior>().ItemWeight * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+            }
+            if (RightHandObject)
+            {
+                this.GetComponent<GameManager>().lifts += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+            }
         }
     }
 
@@ -146,20 +199,42 @@ public class PlayerBehavior : MonoBehaviour
                             checkHand();
                         }
                     }
-                    else if (LeftHandObject != null && LeftHandObject.name.Equals(tableObject.name))
+                    else if (LeftHandObject != null && LeftHandObject.name.Equals(tableObject.name) && 
+                        (tableObject.GetComponent<ItemBehavior>().ItemCount < tableObject.GetComponent<ItemBehavior>().ItemMax))
                     {
-                        tableObject.GetComponent<ItemBehavior>().ItemCount += LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        Destroy(LeftHandObject.gameObject);
-                        LeftHandObject = null;
+                        if (tableObject.GetComponent<ItemBehavior>().ItemMax > tableObject.GetComponent<ItemBehavior>().ItemCount + LeftHandObject.GetComponent<ItemBehavior>().ItemCount)
+                        {
+                            tableObject.GetComponent<ItemBehavior>().ItemCount += LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            Destroy(LeftHandObject.gameObject);
+                            LeftHandObject = null;
+                        } 
+                        else
+                        {
+                            int ItemsSetDown = tableObject.GetComponent<ItemBehavior>().ItemMax - tableObject.GetComponent<ItemBehavior>().ItemCount;
+                            LeftHandObject.GetComponent<ItemBehavior>().ItemCount -= ItemsSetDown;
+                            tableObject.GetComponent<ItemBehavior>().ItemCount = tableObject.GetComponent<ItemBehavior>().ItemMax;
+                            MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemsSetDown;
+                        }
                         checkHand();
                     }
-                    else if (RightHandObject != null && RightHandObject.name.Equals(tableObject.name))
+                    else if (RightHandObject != null && RightHandObject.name.Equals(tableObject.name) &&
+                        (tableObject.GetComponent<ItemBehavior>().ItemCount < tableObject.GetComponent<ItemBehavior>().ItemMax))
                     {
-                        tableObject.GetComponent<ItemBehavior>().ItemCount += RightHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
-                        Destroy(RightHandObject.gameObject);
-                        RightHandObject = null;
+                        if (tableObject.GetComponent<ItemBehavior>().ItemMax > tableObject.GetComponent<ItemBehavior>().ItemCount + RightHandObject.GetComponent<ItemBehavior>().ItemCount)
+                        {
+                            tableObject.GetComponent<ItemBehavior>().ItemCount += RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                            Destroy(RightHandObject.gameObject);
+                            RightHandObject = null;
+                        }
+                        else
+                        {
+                            int ItemsSetDown = tableObject.GetComponent<ItemBehavior>().ItemMax - tableObject.GetComponent<ItemBehavior>().ItemCount;
+                            RightHandObject.GetComponent<ItemBehavior>().ItemCount -= ItemsSetDown;
+                            tableObject.GetComponent<ItemBehavior>().ItemCount = tableObject.GetComponent<ItemBehavior>().ItemMax;
+                            MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemsSetDown;
+                        }
                         checkHand();
                     }
                     else
@@ -168,7 +243,7 @@ public class PlayerBehavior : MonoBehaviour
                         {
                             LeftHandObject = tableObject;
                             StorageObject.GetComponent<StorageBehaviour>().RemoveObject();
-                            LeftHandObject.transform.position = this.transform.position - HandOffset;
+                            LeftHandObject.transform.position = this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0);
                             LeftHandObject.transform.localScale = new Vector2(3, 3);
                             MovementSpeed += -Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                             checkHand();
@@ -209,7 +284,7 @@ public class PlayerBehavior : MonoBehaviour
                     Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
                 }
             }
-            else if (LeftHandObject != null && RightHandObject == null)
+            else if (LeftHandObject != null && RightHandObject == null && controlMovement)
             {
                 RightHandObject = Instantiate(LeftHandObject, this.transform.position + HandOffset, LeftHandObject.rotation);
                 RightHandObject.name = LeftHandObject.name;
@@ -218,9 +293,9 @@ public class PlayerBehavior : MonoBehaviour
                 RightHandObject.transform.localScale = new Vector2(3, 3);
                 checkHand();
             }
-            else if (LeftHandObject == null && RightHandObject != null)
+            else if (LeftHandObject == null && RightHandObject != null && controlMovement)
             {
-                LeftHandObject = Instantiate(RightHandObject, this.transform.position - HandOffset, RightHandObject.rotation);
+                LeftHandObject = Instantiate(RightHandObject, this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0), RightHandObject.rotation);
                 LeftHandObject.name = RightHandObject.name;
                 LeftHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2;
                 RightHandObject.GetComponent<ItemBehavior>().ItemCount = RightHandObject.GetComponent<ItemBehavior>().ItemCount / 2 + RightHandObject.GetComponent<ItemBehavior>().ItemCount % 2;
@@ -256,7 +331,12 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool GiveObject(Transform ItemForPlayer)
     {
-        if (LeftHandObject == null)
+        if (ItemForPlayer.GetComponent<ItemBehavior>().ItemCount > ItemForPlayer.GetComponent<ItemBehavior>().ItemMax)
+        {
+            ItemForPlayer.GetComponent<ItemBehavior>().ItemCount = ItemForPlayer.GetComponent<ItemBehavior>().ItemMax;
+        }
+        if (LeftHandObject == null && !(RightHandObject != null && RightHandObject.name.Equals(ItemForPlayer.name) && 
+            (RightHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount <= RightHandObject.GetComponent<ItemBehavior>().ItemMax)))
         {
             LeftHandObject = ItemForPlayer;
             LeftHandObject.transform.position = this.transform.position + new Vector3(-HandOffset.x, HandOffset.y, 0);
@@ -272,10 +352,19 @@ public class PlayerBehavior : MonoBehaviour
             }
             return true;
         }
-        else if (LeftHandObject.name.Equals(ItemForPlayer.name))
+        else if ((LeftHandObject.name.Equals(ItemForPlayer.name) && (LeftHandObject.GetComponent<ItemBehavior>().ItemCount < LeftHandObject.GetComponent<ItemBehavior>().ItemMax)) &&
+            !(RightHandObject == null && LeftHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount > LeftHandObject.GetComponent<ItemBehavior>().ItemMax))
         {
-            LeftHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
-            MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            if(LeftHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount < ItemForPlayer.GetComponent<ItemBehavior>().ItemMax)
+            {
+                LeftHandObject.GetComponent<ItemBehavior>().ItemCount = LeftHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+                MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            } 
+            else
+            {
+                MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * (ItemForPlayer.GetComponent<ItemBehavior>().ItemMax - LeftHandObject.GetComponent<ItemBehavior>().ItemCount);
+                LeftHandObject.GetComponent<ItemBehavior>().ItemCount = ItemForPlayer.GetComponent<ItemBehavior>().ItemMax;
+            }
             Destroy(ItemForPlayer.gameObject);
             return true;
         }
@@ -287,24 +376,31 @@ public class PlayerBehavior : MonoBehaviour
             if (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(BackErin) ||
                 (this.gameObject.GetComponent<SpriteRenderer>().sprite.Equals(SideErin) && !this.gameObject.GetComponent<SpriteRenderer>().flipX))
             {
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 99;
             }
             else
             {
-                LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
+                RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = 105;
             }
             return true;
         }
-        else if (RightHandObject.name.Equals(ItemForPlayer.name))
+        else if (RightHandObject.name.Equals(ItemForPlayer.name) && (RightHandObject.GetComponent<ItemBehavior>().ItemCount < RightHandObject.GetComponent<ItemBehavior>().ItemMax))
         {
-            RightHandObject.GetComponent<ItemBehavior>().ItemCount += ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
-            MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            if (RightHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount < ItemForPlayer.GetComponent<ItemBehavior>().ItemMax)
+            {
+                RightHandObject.GetComponent<ItemBehavior>().ItemCount = Mathf.Min(RightHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount, ItemForPlayer.GetComponent<ItemBehavior>().ItemMax);
+                MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * ItemForPlayer.GetComponent<ItemBehavior>().ItemCount;
+            }
+            else
+            {
+                MovementSpeed += -Mathf.Max(ItemForPlayer.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * (ItemForPlayer.GetComponent<ItemBehavior>().ItemMax - RightHandObject.GetComponent<ItemBehavior>().ItemCount);
+                RightHandObject.GetComponent<ItemBehavior>().ItemCount = ItemForPlayer.GetComponent<ItemBehavior>().ItemMax;
+            }
             Destroy(ItemForPlayer.gameObject);
             return true;
         }
         else
         {
-            //Debug.LogError(name + " had a full incompatible hand when trying to give object to player.");
             return false;
         }
     }
@@ -353,7 +449,6 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (LeftHandObject != null)
         {
-            //LeftHandObject.transform.position = Vector3.Lerp(LeftHandObject.transform.position, Destination + new Vector2(-HandOffset.x, HandOffset.y), .9f);
             LeftHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(-HandOffset.x, HandOffset.y));
             LeftHandObject.GetComponent<SpriteRenderer>().sortingOrder = leftLayer;
         }

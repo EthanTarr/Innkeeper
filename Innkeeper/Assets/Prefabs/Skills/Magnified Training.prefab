@@ -43,8 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086753edf18dbee41bd4d91d1fea2543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: 100
-  Level: 2
-  Modifier: 0
+  Base: 32
+  Level: 5
   Description: Increase the amount of XP gained.
   PreferedToolTipSize: {x: 200, y: 40}

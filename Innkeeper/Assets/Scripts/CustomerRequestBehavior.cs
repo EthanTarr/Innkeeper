@@ -56,23 +56,23 @@ public class CustomerRequestBehavior : MonoBehaviour
             this.GetComponent<Image>().sprite = RequestedItem;
             float randomNum = UnityEngine.Random.Range(0, 100);
 
-            if(randomNum < (50 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            if(randomNum < (80 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "1";
             }
-            else if (randomNum < (80 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            else if (randomNum < (120 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "2";
             }
-            else if (randomNum < (110 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            else if (randomNum < (150 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "3";
             }
-            else if (randomNum < (140 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            else if (randomNum < (180 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "4";
             }
-            else if (randomNum < (170 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .3f)
+            else if (randomNum < (210 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "5";
             }
@@ -108,62 +108,42 @@ public class CustomerRequestBehavior : MonoBehaviour
                         {
                             this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
                             LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
-                            Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
                             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
                             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                             return;
                         }
                         LeftPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((LeftPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
                     }
                     else
                     {
                         int HandCount = RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount;
                         if (RequestCount - HandCount > 0)
                         {
-                            this.transform.GetChild(0).GetComponent<Text>().text += -HandCount;
+                            this.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(this.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
                             RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
-                            Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * HandCount;
+                            Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
                             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
                             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
                             return;
                         }
                         RightPlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
-                        Player.GetComponent<PlayerBehavior>().MovementSpeed += RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight * RequestCount;
+                        Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((RightPlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
                     }
                     Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
                     Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
 
 
 
-                    if (this.transform.parent.transform.childCount <= 1) //if this is the last request
+                    if (this.transform.parent.transform.childCount <= 4) //if this is the last request
                     {
                         Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
                         Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
                     }
-                    else if (this.transform.parent.transform.childCount == 2) //if there will be only one more request
-                    {
-                        ChangeToSingle(); //change UI to single request look
-                    }
                     else
                     {
-                        bool foundSelf = false; //bool for if self child is found
-                        foreach (Transform child in this.transform.parent) //search through this parents children
-                        {
-                            if (!foundSelf) //if not found self
-                            {
-                                if (child == this.transform)
-                                {
-                                    foundSelf = true; //found self
-                                }
-                                child.GetComponent<RectTransform>().position += new Vector3(25, 0, 0); //move request to the right
-                            }
-                            else
-                            {
-                                child.GetComponent<RectTransform>().position += new Vector3(-25, 0, 0); //move reqeust to the left
-                            }
-                        }
-                        this.transform.parent.GetComponent<RectTransform>().sizeDelta += new Vector2(-50, 0); //decrease content size
+                        ReduceSize(); //change UI to fit less items
                     }
                     Destroy(this.gameObject); //Destroy this gameobject
                 }
@@ -171,24 +151,27 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
-    public void ChangeToMultiple()
-    {
-        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 132); //expand UI scrollview to have two or more requests
-        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(132, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y); //expand box collider to new size
-        this.GetComponent<RectTransform>().position += new Vector3(-(this.GetComponent<RectTransform>().sizeDelta.x/2), 0, 0); //move this request to the left half my size
-    }
 
-    public void ChangeToSingle()
+    public void ReduceSize()
     {
-        Popup.transform.GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 66); //reduce UI scrollview to one request
-        Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size = new Vector2(66, Popup.transform.GetChild(0).GetComponent<BoxCollider2D>().size.y); //reduce box colldier to new size
-        this.transform.parent.GetComponent<RectTransform>().right = Vector3.zero; //reduce content to one reqeust
-        this.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, this.transform.parent.GetComponent<RectTransform>().sizeDelta.y); //reduce it more
-        foreach (Transform child in this.transform.parent) //search for brothers
+        Popup.transform.GetChild(2).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x - 
+            this.GetComponent<RectTransform>().sizeDelta.x); //reduce UI view
+        Popup.transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2((Popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
+                    Popup.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta.x) * -.5f, 0);
+        Popup.transform.GetChild(1).GetComponent<RectTransform>().localPosition = new Vector2((Popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
+            Popup.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta.x) * .5f, 0);
+        foreach (Transform child in this.transform.parent) //search for siblings
         {
-            if (child != this.transform) //find brother
+            if (!(child.gameObject.name.Equals("Left Background") || child.gameObject.name.Equals("Right Background") || child.gameObject.name.Equals("Center Background") || child.Equals(this.transform))) //find sibling
             {
-                child.GetComponent<RectTransform>().localPosition = new Vector2(33, child.GetComponent<RectTransform>().localPosition.y); //move brother to single request spot
+                if(child.GetComponent<RectTransform>().localPosition.x < this.GetComponent<RectTransform>().localPosition.x)
+                {
+                    child.GetComponent<RectTransform>().localPosition += new Vector3(child.GetComponent<RectTransform>().sizeDelta.x * .5f, 0, 0); //move sibling to fit
+                }
+                else
+                {
+                    child.GetComponent<RectTransform>().localPosition += new Vector3(child.GetComponent<RectTransform>().sizeDelta.x * -.5f, 0, 0); //move sibling to fit
+                }
             }
         }
     }

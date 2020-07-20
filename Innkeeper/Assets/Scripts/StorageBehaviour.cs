@@ -98,26 +98,32 @@ public class StorageBehaviour : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void moveHighlight(Collider2D collision)
     {
         Vector2 PlayerPosition = collision.transform.position;
-        if(PlayerPosition.x < this.transform.position.x - this.GetComponent<SpriteRenderer>().bounds.size.x / 6)
+        if (PlayerPosition.x < this.transform.position.x - this.GetComponent<SpriteRenderer>().bounds.size.x / 6)
         {
             Highlight.transform.position = new Vector2(this.transform.position.x - this.GetComponent<SpriteRenderer>().bounds.size.x / 3, Highlight.transform.position.y);
         }
         else if (PlayerPosition.x < this.transform.position.x + this.GetComponent<SpriteRenderer>().bounds.size.x / 6)
         {
             Highlight.transform.position = new Vector2(this.transform.position.x, Highlight.transform.position.y);
-        } 
+        }
         else
         {
             Highlight.transform.position = new Vector2(this.transform.position.x + this.GetComponent<SpriteRenderer>().bounds.size.x / 3, Highlight.transform.position.y);
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        moveHighlight(collision);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Highlight.gameObject.SetActive(true);
+        moveHighlight(collision);
     }
 
     private void OnTriggerExit2D(Collider2D collision)

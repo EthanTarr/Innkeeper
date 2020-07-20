@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CustomerBehavior : MonoBehaviour
 {
@@ -16,12 +17,13 @@ public class CustomerBehavior : MonoBehaviour
 
     public Transform Table;
 
-    [HideInInspector] public int OriginalDrakeChance = 33;
-    [HideInInspector] public int OriginalGoblinChance = 33;
-    [HideInInspector] public int OriginalAntiniumChance = 33;
     public int DrakeChance = 33;
     public int GoblinChance = 33;
     public int AntiniumChance = 33;
+
+    public RuntimeAnimatorController DrakeController;
+    public RuntimeAnimatorController GoblinController;
+    public RuntimeAnimatorController AntiniumController;
 
     private Vector2 Destination;
 
@@ -33,6 +35,8 @@ public class CustomerBehavior : MonoBehaviour
     private Transform Player;
     private int thisCustomer;
 
+    private float sitTime;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +45,8 @@ public class CustomerBehavior : MonoBehaviour
         {
             Debug.LogError(name + " could not find Player on startup");
         }
+
+        Player.GetComponent<GameManager>().Customers.Add(this.transform);
 
         int CustomerChance = Random.Range(0, DrakeChance + GoblinChance + AntiniumChance);
         if(CustomerChance < DrakeChance)
@@ -57,7 +63,7 @@ public class CustomerBehavior : MonoBehaviour
         }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
         List<Sprite> Meals = new List<Sprite>();
-        if (Customers[thisCustomer].name.Equals("drake")) //drake
+        if (Customers[thisCustomer].name.Equals("FrontDrake")) //drake
         {
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
@@ -66,6 +72,8 @@ public class CustomerBehavior : MonoBehaviour
             {
                 Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+            Player.GetComponent<GameManager>().drakes++;
+            this.GetComponent<Animator>().runtimeAnimatorController = DrakeController as RuntimeAnimatorController;
             /*
             LifeTimer = LifeTimer;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -76,12 +84,15 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
+            Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             if (Player.GetComponent<PlayerBehavior>().Level > 5)
             {
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
             Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Player.GetComponent<GameManager>().antinium++;
+            this.GetComponent<Animator>().runtimeAnimatorController = AntiniumController as RuntimeAnimatorController;
             LifeTimer = LifeTimer - 15f;
             /*
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -103,17 +114,19 @@ public class CustomerBehavior : MonoBehaviour
             {
                 Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+            Player.GetComponent<GameManager>().goblins++;
+            this.GetComponent<Animator>().runtimeAnimatorController = GoblinController as RuntimeAnimatorController;
             LifeTimer = LifeTimer + 15f;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
             this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
             this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.1f);
             this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, .5f);
         }
-        for(int i = 0; i < GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).childCount; i++)
+        for(int i = 3; i < GetComponent<PopUpObjectBehavior>().Popup.childCount; i++)
         {
             if (Meals.Count > 0)
             {
-                Sprite chosen = GetComponent<PopUpObjectBehavior>().Popup.GetChild(0).GetChild(0).GetChild(0).GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
+                Sprite chosen = GetComponent<PopUpObjectBehavior>().Popup.GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
                 Meals.Remove(chosen);
             }
         }
@@ -129,9 +142,14 @@ public class CustomerBehavior : MonoBehaviour
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             Vector2 moveTowards = Destination - (Vector2)transform.position;
+            this.GetComponent<Animator>().SetFloat("Speed", MovementSpeed * Time.deltaTime);
+            this.GetComponent<Animator>().speed = MovementSpeed * Time.deltaTime * 10;
             if (Mathf.Abs(moveTowards.x) > Mathf.Abs(moveTowards.y))
             {
                 this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 1];
+                this.GetComponent<Animator>().SetBool("Forward", false);
+                this.GetComponent<Animator>().SetBool("Backward", false);
+                this.GetComponent<Animator>().SetBool("Sideways", true);
                 if (moveTowards.x < 0)
                 {
                     this.GetComponent<SpriteRenderer>().flipX = true;
@@ -147,13 +165,20 @@ public class CustomerBehavior : MonoBehaviour
                 {
                     this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
                     this.GetComponent<SpriteRenderer>().flipX = false;
+                    this.GetComponent<Animator>().SetBool("Forward", true);
+                    this.GetComponent<Animator>().SetBool("Backward", false);
+                    this.GetComponent<Animator>().SetBool("Sideways", false);
                 }
                 else
                 {
                     this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer + 2];
                     this.GetComponent<SpriteRenderer>().flipX = false;
+                    this.GetComponent<Animator>().SetBool("Forward", false);
+                    this.GetComponent<Animator>().SetBool("Backward", true);
+                    this.GetComponent<Animator>().SetBool("Sideways", false);
                 }
             }
+            Player.GetComponent<GameManager>().customerSteps += move.magnitude;
             transform.position = move; //move customer towards destination
         }
         else if (Path.Count > node && !returning)
@@ -168,6 +193,7 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if (hasntArrived)
         {
+            this.GetComponent<Animator>().SetFloat("Speed", 0);
             hasntArrived = !hasntArrived;
             ArrivedAtDestination();
         }
@@ -187,10 +213,12 @@ public class CustomerBehavior : MonoBehaviour
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
+            sitTime = Time.time;
             Invoke("DisapointedCustomer", LifeTimer);
         }
         else
         {
+            Player.GetComponent<GameManager>().Customers.Remove(this.transform);
             Destroy(this.gameObject);
         }
     }
@@ -198,12 +226,20 @@ public class CustomerBehavior : MonoBehaviour
     private void DisapointedCustomer()
     {
         Player.GetComponent<GameManager>().numOfDisSatisfiedCustomers++;
+        for (int i = 0; i < Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters.Count; i++) {
+            if (Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color.a == 1)
+            {
+                Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters[i].GetComponent<Image>().color = new Color32(255, 255, 255, 100);
+                break;
+            }
+        }
         SendCustomerAway();
     }
 
     public void SendCustomerAway()
     {
         CancelInvoke();
+        Player.GetComponent<GameManager>().customerWait += Time.time - sitTime;
         if (myTimer != null)
         {
             Player.GetComponent<GameManager>().Timers.Remove(myTimer);

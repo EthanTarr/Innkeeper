@@ -30,8 +30,10 @@ public class CanGather : MonoBehaviour
                 Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
                 if (LeftPlayerObject != null && RightPlayerObject != null)
                 {
-                    if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
-                        (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+                    if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) && 
+                        LeftPlayerObject.GetComponent<ItemBehavior>().ItemCount < LeftPlayerObject.GetComponent<ItemBehavior>().ItemMax) ||
+                        (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) &&
+                        RightPlayerObject.GetComponent<ItemBehavior>().ItemCount < RightPlayerObject.GetComponent<ItemBehavior>().ItemMax))
                     {
                         this.GetComponent<Button>().interactable = true;
                     }
@@ -45,6 +47,28 @@ public class CanGather : MonoBehaviour
                     this.GetComponent<Button>().interactable = true;
                 }
             }
+
+           
+            /*if(this.name.Equals("Noodle Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed < 
+                ((.16f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * GameObject.Find("Player").GetComponent<ResourceManager>().NoodleGain))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Acid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * GameObject.Find("Player").GetComponent<ResourceManager>().AcidFlyGain))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Water Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.4f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * GameObject.Find("Player").GetComponent<ResourceManager>().WaterGain))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }
+            else if (this.name.Equals("Blue Fruit Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+                ((.2f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * GameObject.Find("Player").GetComponent<ResourceManager>().FruitGain))
+            {
+                this.GetComponent<Button>().interactable = false;
+            }*/
         }
     }
 }

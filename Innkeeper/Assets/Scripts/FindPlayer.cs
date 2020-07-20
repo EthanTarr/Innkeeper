@@ -9,20 +9,22 @@ public class FindPlayer : MonoBehaviour
     private Vector3 Velocity = Vector3.zero;
 
     public float smoothTime = .3f; //time it takes to smooth the motion
-    public float minYValue = -1; //min y value the camera is allowed to move
-    public float maxYValue = 1; //max y value the camera is allowed to move
-    public float minXValue = -1; //min x value the camera is allowed to move
-    public float maxXValue = 1; //max x value the camera is allowed to move
+    private float minYValue = -12; //min y value the camera is allowed to move
+    private float maxYValue = 194; //max y value the camera is allowed to move
+    private float minXValue = -503; //min x value the camera is allowed to move
+    private float maxXValue = -244;// - Screen.width / 20; //max x value the camera is allowed to move
 
     // Start is called before the first frame update
     void Start()
     {
         Player = GameObject.Find("Player").transform; //Finds player object
-        if(Player == null)
-        {
-            Debug.LogError(name + " could not find player on startup.");
-        }
+
         Destination = transform.position; //Find the player postion the first time
+
+        minYValue += GetComponent<Camera>().orthographicSize * ((float)Screen.height / Screen.width);
+        maxYValue -= GetComponent<Camera>().orthographicSize * ((float)Screen.height / Screen.width);
+        minXValue += GetComponent<Camera>().orthographicSize * ((float)Screen.width / Screen.height);
+        maxXValue -= GetComponent<Camera>().orthographicSize * ((float)Screen.width / Screen.height);
     }
 
     // Update is called once per frame

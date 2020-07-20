@@ -12,26 +12,28 @@ public class ResourceManager : MonoBehaviour
     //public float TimeDelay = 4f; //length of gathering time in seconds
 
     public float CraftingTimeDelay = 5f;
-    public float CookingTimeDelay = 10f;
     public float GatheringTimeDelay = 3f;
+    public float CookingTimeDelay = 10f;
 
     public int FruitGain = 5; //number of fruits gained with each gather action
     public int WaterGain = 3; //number of water usages gained with each gather action
     public int BlueFruitJuiceGain = 1; //number of Blue Fruit Juice created with each create action
     public int AcidFlyGain = 10; //number of Acid Flys created with each create action
     public int SlicedBlueFruitGain = 2; //number of Sliced Blue Fruit created with each create action
-    public int PastaGain = 1; //number of Patsa created with each create action
     public int NoodleGain = 5; //number of Noodles created with each create action
     public int DeAcidFlyGain = 3; //number of DeAcid Flys created with each create action
+    public int WaterGlassGain = 5;
+    public int PastaGain = 3;
 
     public Transform BlueFruit;
     public Transform Water;
     public Transform BlueFruitJuice;
     public Transform AcidFly;
     public Transform BlueFruitSlice;
-    public Transform Pasta;
     public Transform Noodle;
     public Transform DeAcidFly;
+    public Transform GlassWater;
+    public Transform PastaBowl;
 
     private Transform Player; //Player Transform
     private Transform Cauldron;
@@ -102,6 +104,7 @@ public class ResourceManager : MonoBehaviour
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
     private void Gather(Transform GatherObject, int GatherGain)
     {
+        GameObject.Find("CraftingTable").GetComponent<AudioSource>().Stop();
         Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
         Player.GetComponent<CapsuleCollider2D>().enabled = true;
         if (GatherObject == null) //Check for Gather Object
@@ -123,11 +126,11 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    private void CraftItem (List<Transform> Ingredients, string endCall, float TimeDelay)
+    private void CraftItem (Dictionary<Transform, int> Ingredients, string endCall, float TimeDelay)
     {
-        foreach(Transform ingredient in Ingredients)
+        foreach(Transform ingredient in Ingredients.Keys)
         {
-            ingredient.GetComponent<ItemBehavior>().ItemCount += -1;
+            ingredient.GetComponent<ItemBehavior>().ItemCount += -Ingredients[ingredient];
         }
 
         myTimer = Instantiate(Timer, Player.transform.position, Timer.rotation); //create timer
@@ -137,41 +140,49 @@ public class ResourceManager : MonoBehaviour
         Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
         Player.GetComponent<CapsuleCollider2D>().enabled = false;
 
+        GameObject.Find("CraftingTable").GetComponent<AudioSource>().Play();
+        this.GetComponent<GameManager>().chopped++;
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
     }
 
-    private bool checkObject2(List<string> DesiredIngredients, List<Transform> GatheredObjects, Transform CraftingSurface, string endcall)
+    private bool checkObject2(Dictionary<string, int> DesiredIngredients, Dictionary<Transform, int> GatheredObjects, Transform CraftingSurface, string endcall)
     {
         if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name]);
             CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().RightObject != null &&
-            (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)))
+            (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().RightObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name]);
             CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         else if (CraftingSurface.GetComponent<StorageBehaviour>().LeftObject != null &&
-            (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)))
+            (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount))
         {
-            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject);
+            GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name]);
             CraftItem(GatheredObjects, endcall, CraftingTimeDelay);
             return true;
         }
         return false;
     }
 
-    private bool checkObject (Transform Ingredient, List<string> DesiredIngredients, Transform CraftingSurface, string endcall)
+    private bool checkObject (Transform Ingredient, Dictionary<string, int> DesiredIngredients, Transform CraftingSurface, string endcall)
     {
-        if (Ingredient != null && DesiredIngredients.Contains(Ingredient.name))
+        if (Ingredient != null && DesiredIngredients.ContainsKey(Ingredient.name) && DesiredIngredients[Ingredient.name] <= Ingredient.GetComponent<ItemBehavior>().ItemCount)
         {
-            List<Transform> GatheredObjects = new List<Transform>();
-            GatheredObjects.Add(Ingredient);
+            Dictionary<Transform, int> GatheredObjects = new Dictionary<Transform, int>();
+            GatheredObjects.Add(Ingredient, DesiredIngredients[Ingredient.name]);
             DesiredIngredients.Remove(Ingredient.name);
             if (DesiredIngredients.Count == 0)
             {
@@ -185,23 +196,29 @@ public class ResourceManager : MonoBehaviour
             else
             {
                 if (CraftingSurface.GetComponent<StorageBehaviour>().CenterObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name)) && 
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name] <= 
+                    CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject.name);
                     return checkObject2(DesiredIngredients, GatheredObjects, CraftingSurface, endcall);
                 }
                 else if (CraftingSurface.GetComponent<StorageBehaviour>().RightObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().RightObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().RightObject.name);
                     return checkObject2(DesiredIngredients, GatheredObjects, CraftingSurface, endcall);
                 }
                 else if (CraftingSurface.GetComponent<StorageBehaviour>().LeftObject != null &&
-                    (DesiredIngredients.Contains(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)))
+                    (DesiredIngredients.ContainsKey(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name)) &&
+                    (DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name] <=
+                    CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount))
                 {
-                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject);
+                    GatheredObjects.Add(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, DesiredIngredients[CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name]);
                     DesiredIngredients.Remove(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject.name);
                     checkObject2(DesiredIngredients, GatheredObjects, CraftingSurface, endcall);
                     return true;
@@ -220,11 +237,12 @@ public class ResourceManager : MonoBehaviour
 
     public void CreateSlicedBlueFruit(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("Sliced Blue Fruit") ||
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("Sliced Blue Fruit"))) //Check for if timer isnt running
         {
             bool Created = false;
-            List<string> Ingredients = new List<string>();
-            Ingredients.Add("Blue Fruit");
+            Dictionary<string, int> Ingredients = new Dictionary<string, int>();
+            Ingredients.Add("Blue Fruit", 1);
             if (!Created)
             {
                 Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface, "endSlicedBlueFruitCreation");
@@ -242,11 +260,12 @@ public class ResourceManager : MonoBehaviour
 
     public void CreateDeAcidFlys(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("DeAcid Fly") || 
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("DeAcid Fly"))) //Check for if timer isnt running
         {
             bool Created = false;
-            List<string> Ingredients = new List<string>();
-            Ingredients.Add("Acid Fly");
+            Dictionary<string, int> Ingredients = new Dictionary<string, int>();
+            Ingredients.Add("Acid Fly", 1);
             if (!Created)
             {
                 Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface, "endDeAcidFlyCreation");
@@ -265,12 +284,13 @@ public class ResourceManager : MonoBehaviour
     // places timer on Table Area and calls function to increase Water
     public void CreateBlueFruitJuice(Transform CraftingSurface)
     {
-        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject == null)) //Check for if timer isnt running
+        if (myTimer == null && (Player.GetComponent<PlayerBehavior>().LeftHandObject == null || Player.GetComponent<PlayerBehavior>().LeftHandObject.name.Equals("Blue Fruit Juice") ||
+            Player.GetComponent<PlayerBehavior>().RightHandObject == null || Player.GetComponent<PlayerBehavior>().RightHandObject.name.Equals("Blue Fruit Juice"))) //Check for if timer isnt running
         {
             bool Created = false;
-            List<string> Ingredients = new List<string>();
-            Ingredients.Add("Blue Fruit");
-            Ingredients.Add("Water");
+            Dictionary<string, int> Ingredients = new Dictionary<string, int>();
+            Ingredients.Add("Blue Fruit", 1);
+            Ingredients.Add("WaterGlass", 3);
             if (!Created)
             {
                 Created = checkObject(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface, "endBlueFruitJuiceCreation");
@@ -296,6 +316,7 @@ public class ResourceManager : MonoBehaviour
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
+            this.GetComponent<GameManager>().gathered++;
             Invoke("endWaterGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
     }
@@ -310,6 +331,7 @@ public class ResourceManager : MonoBehaviour
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
+            this.GetComponent<GameManager>().gathered++;
             Invoke("endBlueFruitGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
     }
@@ -324,6 +346,7 @@ public class ResourceManager : MonoBehaviour
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
+            this.GetComponent<GameManager>().gathered++;
             Invoke("endAcidFlyGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
     }
@@ -338,6 +361,7 @@ public class ResourceManager : MonoBehaviour
             myTimer.GetComponent<TimerBehavior>().startCounting(GatheringTimeDelay);
             Player.GetComponent<PlayerBehavior>().controlMovement = false; //Disallow the player from moving the Player character
             Player.GetComponent<CapsuleCollider2D>().enabled = false;
+            this.GetComponent<GameManager>().gathered++;
             Invoke("endNoodleGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
     }
