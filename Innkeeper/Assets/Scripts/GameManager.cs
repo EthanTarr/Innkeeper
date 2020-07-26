@@ -36,10 +36,10 @@ public class GameManager : MonoBehaviour
     public Transform UnlockedFoodScreen;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
-    public GameObject ToolTip;
-    public GameObject DoorPopup;
-    public GameObject CraftingPopup;
-    public GameObject CauldronPopup;
+    public GameObject BlackFade;
+    public GameObject SkillList;
+
+
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -66,14 +66,6 @@ public class GameManager : MonoBehaviour
         startingDayStartDelay = DayStartDelay;
 
         populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
-        ToolTip.SetActive(true); //fix lag bug from tooltip
-        ToolTip.SetActive(false);
-        DoorPopup.SetActive(true);
-        DoorPopup.SetActive(false);
-        CraftingPopup.SetActive(true);
-        CraftingPopup.SetActive(false);
-        CauldronPopup.SetActive(true);
-        CauldronPopup.SetActive(false);
     }
 
     // Update is called once per frame
@@ -90,6 +82,7 @@ public class GameManager : MonoBehaviour
             this.GetComponent<AudioSource>().Stop();
             this.transform.position = new Vector2(-385, 32);
             GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
+            SkillList.SetActive(false);
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
@@ -101,8 +94,13 @@ public class GameManager : MonoBehaviour
             Debug.Log("Day Over!");
         }
 
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            BlackFade.GetComponent<FadeBehavior>().ToggleFade();
+        }
+
         //Fail day catch
-        if(numOfDisSatisfiedCustomers >= 3)
+        if (numOfDisSatisfiedCustomers >= 3)
         {
             this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
             this.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
@@ -135,7 +133,7 @@ public class GameManager : MonoBehaviour
         DayCounter.GetComponent<Text>().text = DayCount + "";
         if (DayCount == 2)
         {
-            DayTimeLimit = 140;
+            DayTimeLimit = 180;
         }
         else
         {
@@ -155,6 +153,8 @@ public class GameManager : MonoBehaviour
         DayCount = 0;
         this.GetComponent<PlayerBehavior>().PreviousXp = 0;
         this.GetComponent<PlayerBehavior>().xp = 0;
+        this.GetComponent<PlayerBehavior>().Level = 0;
+        this.GetComponent<PlayerBehavior>().PlayerSkills = new List<string>();
         SpawnTimerIncreaseAmount = startingIncreaseAmount;
         DayTimeLimit = startingDayTimeLimit;
         DayStartDelay = startingDayStartDelay;
@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour
         {
             float SpawnTime;
             List<Transform> emptyTables = findEmptyTable();
-            int customerSpawn = Random.Range(1, (DayCount / 3) + 3);
+            int customerSpawn = Random.Range(1, (DayCount / 4) + 3);
             int count = 0;
             if (emptyTables.Count > 0)
             {
@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
                         Debug.Log("Couldn't find a spot to spawn customers");
                     }
                     count++;
+                    yield return new WaitForSeconds(3);
                 }
             }
             SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);

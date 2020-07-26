@@ -42,15 +42,15 @@ public class PlayerBehavior : MonoBehaviour
     {
         LevelMilestones = new int[11];
         LevelMilestones[0] = -1;
-        LevelMilestones[1] = 100;
-        LevelMilestones[2] = 250;
-        LevelMilestones[3] = 450;
-        LevelMilestones[4] = 700;
-        LevelMilestones[5] = 1000;
-        LevelMilestones[6] = 1500;
-        LevelMilestones[7] = 2100;
-        LevelMilestones[8] = 2850;
-        LevelMilestones[9] = 3700;
+        LevelMilestones[1] = 150;
+        LevelMilestones[2] = 375;
+        LevelMilestones[3] = 675;
+        LevelMilestones[4] = 1050;
+        LevelMilestones[5] = 1500;
+        LevelMilestones[6] = 2250;
+        LevelMilestones[7] = 3150;
+        LevelMilestones[8] = 4350;
+        LevelMilestones[9] = 5550;
         LevelMilestones[10] = int.MaxValue;
 
 

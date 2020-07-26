@@ -515,10 +515,10 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().MovementSpeed -= ((currentLevel - pastLevel) * .05f);
+        Customer.GetComponent<CustomerBehavior>().MovementSpeed -= ((currentLevel - pastLevel) * .5f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Lethargic Steps"))
         {
-            Customer.GetComponent<CustomerBehavior>().MovementSpeed -= .5f;
+            Customer.GetComponent<CustomerBehavior>().MovementSpeed -= 5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Lethargic Steps");
             Debug.Log("Inn - Lethargic Steps");
         }

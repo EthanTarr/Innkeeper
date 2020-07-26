@@ -48,41 +48,6 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
-    public Sprite SetItem(List<Sprite> Items)
-    {
-        if (Items.Count > 0)
-        {
-            Sprite RequestedItem = Items[UnityEngine.Random.Range(0, Items.Count)];
-            this.GetComponent<Image>().sprite = RequestedItem;
-            float randomNum = UnityEngine.Random.Range(0, 100);
-
-            if(randomNum < (80 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
-            {
-                this.transform.GetChild(0).GetComponent<Text>().text = "1";
-            }
-            else if (randomNum < (120 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
-            {
-                this.transform.GetChild(0).GetComponent<Text>().text = "2";
-            }
-            else if (randomNum < (150 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
-            {
-                this.transform.GetChild(0).GetComponent<Text>().text = "3";
-            }
-            else if (randomNum < (180 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
-            {
-                this.transform.GetChild(0).GetComponent<Text>().text = "4";
-            }
-            else if (randomNum < (210 - (GameObject.Find("Player").transform.GetComponent<GameManager>().DayCount * 5)) - GameObject.Find("Player").transform.GetComponent<GameManager>().TimelineCount * .1f)
-            {
-                this.transform.GetChild(0).GetComponent<Text>().text = "5";
-            }
-            return RequestedItem;
-        } else
-        {
-            Debug.LogError(name + " did not recieve a list of desired items.");
-            return null;
-        }
-    }
 
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()
@@ -140,6 +105,19 @@ public class CustomerRequestBehavior : MonoBehaviour
                     {
                         Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
                         Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
+                        if (Customer.GetComponent<CustomerBehavior>().customer.Equals("drake"))
+                        {
+                            Customer.GetComponent<AudioSource>().clip = Customer.GetComponent<CustomerBehavior>().DrakeSounds[UnityEngine.Random.Range(1, 3)];
+                        }
+                        else if (Customer.GetComponent<CustomerBehavior>().customer.Equals("antinium"))
+                        {
+                            Customer.GetComponent<AudioSource>().clip = Customer.GetComponent<CustomerBehavior>().AntiniumSounds[UnityEngine.Random.Range(1, 3)];
+                        }
+                        else
+                        {
+                            Customer.GetComponent<AudioSource>().clip = Customer.GetComponent<CustomerBehavior>().GoblinSounds[UnityEngine.Random.Range(1, 3)];
+                        }
+                        Customer.GetComponent<AudioSource>().Play();
                     }
                     else
                     {

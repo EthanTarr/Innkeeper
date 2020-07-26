@@ -116,31 +116,18 @@ public class TableBehavior : MonoBehaviour
             popup.transform.SetAsFirstSibling();
             popup.transform.position = GameObject.Find("Main Camera").GetComponent<Camera>().WorldToScreenPoint(customer.position);
 
-            int RequestAmount;
-            float rand = Random.Range(0f, 100f);
-            if (rand < ((90 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .1f)))
-            {
-                RequestAmount = 0;
-            }
-            else if (rand < (160 - (Player.GetComponent<GameManager>().DayCount * 5)) - (Player.GetComponent<GameManager>().TimelineCount * Player.GetComponent<GameManager>().SpawnTimerIncreaseAmount * .05f))
-            {
-                RequestAmount = 1;
-            }
-            else
-            {
-                RequestAmount = 2;
-            }
-
-            for (int i = 0; i < RequestAmount; i++)
+            int RequestAmount = Mathf.Min(Random.Range(0, Player.GetComponent<GameManager>().DayCount / 2 + 1) + 1, 5);
+            customer.GetComponent<CustomerBehavior>().HungerValue = RequestAmount;
+            for(int i = 0; i < RequestAmount / 3; i++)
             {
                 GameObject popupChild = popup.transform.GetChild(3).gameObject; //grab request object
                 GameObject newRequest = Instantiate(popupChild, popupChild.transform.position, popupChild.transform.rotation); //create new reqeust
                 newRequest.transform.SetParent(popupChild.transform.parent);
-                newRequest.GetComponent<RectTransform>().localScale = new Vector3(1,1,1);
-                newRequest.GetComponent<RectTransform>().localPosition = new Vector2(newRequest.GetComponent<RectTransform>().sizeDelta.x * .5f * (i + 1), 0);
-                popup.transform.GetChild(2).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 
+                newRequest.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                newRequest.GetComponent<RectTransform>().localPosition = new Vector2(newRequest.GetComponent<RectTransform>().sizeDelta.x * .5f * (i+ 1), 0);
+                popup.transform.GetChild(2).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
                     popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x + newRequest.GetComponent<RectTransform>().sizeDelta.x); //expand UI scrollview to have two or more requests
-                popup.transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2((popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x + 
+                popup.transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2((popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
                     popup.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta.x) * -.5f, 0);
                 popup.transform.GetChild(1).GetComponent<RectTransform>().localPosition = new Vector2((popup.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta.x +
                     popup.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta.x) * .5f, 0);
