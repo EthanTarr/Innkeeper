@@ -116,7 +116,7 @@ public class TableBehavior : MonoBehaviour
             popup.transform.SetAsFirstSibling();
             popup.transform.position = GameObject.Find("Main Camera").GetComponent<Camera>().WorldToScreenPoint(customer.position);
 
-            int RequestAmount = Mathf.Min(Random.Range(0, Player.GetComponent<GameManager>().DayCount / 2 + 1) + 1, 5);
+            int RequestAmount = Mathf.Min(Random.Range(0, Player.GetComponent<GameManager>().DayCount / 3 + 2) + 1, 5);
             customer.GetComponent<CustomerBehavior>().HungerValue = RequestAmount;
             for(int i = 0; i < RequestAmount / 3; i++)
             {

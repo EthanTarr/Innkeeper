@@ -32,10 +32,13 @@ public class CustomerBehavior : MonoBehaviour
     public List<AudioClip> GoblinSounds;
     public List<AudioClip> AntiniumSounds;
 
+    public Transform MoodIndicator;
+
     private Vector2 Destination;
 
     private bool hasntArrived = true;
     private bool returning = false;
+    private bool turn = false;
     private List<Vector2> Path = null;
     private int node = 1;
 
@@ -44,9 +47,17 @@ public class CustomerBehavior : MonoBehaviour
 
     private float sitTime;
 
+    private Slider MasterSlider;
+    private Slider VoiceSlider;
+
     // Start is called before the first frame update
     void Start()
     {
+        MasterSlider = GameObject.Find("Player").GetComponent<GameManager>().PauseScreen.transform.GetChild(3).GetComponent<Slider>();
+        VoiceSlider = GameObject.Find("Player").GetComponent<GameManager>().PauseScreen.transform.GetChild(9).GetComponent<Slider>();
+
+        this.GetComponent<AudioSource>().volume = VoiceSlider.value * MasterSlider.value;
+
         Player = GameObject.Find("Player").transform;
         if (Player == null)
         {
@@ -179,7 +190,7 @@ public class CustomerBehavior : MonoBehaviour
     void Update()
     {
 
-        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if customer is farther than .1 from destination (Optimize)
+        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f && !turn) //if customer is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             Vector2 moveTowards = Destination - (Vector2)transform.position;
@@ -238,6 +249,13 @@ public class CustomerBehavior : MonoBehaviour
             hasntArrived = !hasntArrived;
             ArrivedAtDestination();
         }
+
+        if(turn)
+        {
+            turn = false;
+        }
+
+        this.GetComponent<AudioSource>().volume = VoiceSlider.value * MasterSlider.value;
     }
 
     public void setPath(List<Vector2> Path)
@@ -274,6 +292,9 @@ public class CustomerBehavior : MonoBehaviour
                 break;
             }
         }
+        Transform indicator = Instantiate(MoodIndicator, this.transform.position + new Vector3(0, 15, 0), MoodIndicator.transform.rotation);
+        indicator.GetChild(0).GetComponent<SpriteRenderer>().sprite = indicator.GetChild(0).GetComponent<MoodBehavior>().UnhappyIdicator;
+        indicator.parent = this.transform;
         SendCustomerAway();
     }
 
@@ -289,6 +310,7 @@ public class CustomerBehavior : MonoBehaviour
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
         this.GetComponent<BoxCollider2D>().enabled = false;
         returning = true;
+        turn = true;
         hasntArrived = true;
         node--;
         Destination = Path[node];

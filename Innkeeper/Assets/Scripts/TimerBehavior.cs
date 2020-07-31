@@ -6,6 +6,9 @@ public class TimerBehavior : MonoBehaviour
 {
     public List<Transform> Arrows;
 
+    public Sprite OrangeArrow;
+    public Sprite RedArrow;
+
     private int count = 0;
     private float time;
 
@@ -75,12 +78,20 @@ public class TimerBehavior : MonoBehaviour
                     arrow.localRotation = Quaternion.Euler(0, 0, 180);
                     arrow.GetComponent<SpriteRenderer>().flipX = false;
                     arrow.GetComponent<SpriteRenderer>().flipY = false;
+                    for(int i = 0; i < this.transform.childCount - 1; i++)
+                    {
+                        this.transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = OrangeArrow;
+                    }
                     break;
                 case 7:
                     arrow.localPosition = new Vector2(-.32f, .4f);
                     arrow.localRotation = Quaternion.Euler(0, 0, -90);
                     arrow.GetComponent<SpriteRenderer>().flipX = true;
                     arrow.GetComponent<SpriteRenderer>().flipY = false;
+                    for (int i = 0; i < this.transform.childCount - 1; i++)
+                    {
+                        this.transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = RedArrow;
+                    }
                     break;
             }
 

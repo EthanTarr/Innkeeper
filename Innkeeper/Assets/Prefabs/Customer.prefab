@@ -179,6 +179,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 823b9f0dbc76a5149a1cbaa82447c58a, type: 3}
   - {fileID: 8300000, guid: 520c53960cdd77a4aa61e5bac5102e67, type: 3}
   - {fileID: 8300000, guid: 088e36dbeb4746643868f2958248c00a, type: 3}
+  MoodIndicator: {fileID: 719970757434514794, guid: 7e989adac2590d64c838886d27e2f86c,
+    type: 3}
 --- !u!61 &3241138680102036579
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -104,6 +104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Arrows: []
+  OrangeArrow: {fileID: 21300000, guid: 5491291ce4b9f1941924004b22ab824d, type: 3}
+  RedArrow: {fileID: 21300000, guid: 21b57ada2a044c343a3a7a9f4222351e, type: 3}
 --- !u!1 &1265159523166342952
 GameObject:
   m_ObjectHideFlags: 0

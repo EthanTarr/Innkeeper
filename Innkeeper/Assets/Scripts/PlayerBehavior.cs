@@ -74,7 +74,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             //To prevent player from not being able to move
             float oldMovement = MovementSpeed;
-            if (MovementSpeed < 0)
+            if (MovementSpeed < 0.1f)
             {
                 MovementSpeed = 0.1f;
             }

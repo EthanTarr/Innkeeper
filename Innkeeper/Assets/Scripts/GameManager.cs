@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     public GameObject DayCounter;
     public GameObject BlackFade;
     public GameObject SkillList;
-
+    public GameObject PauseScreen;
 
 
     [HideInInspector] public List<Transform> Timers;
@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour
         {
             float SpawnTime;
             List<Transform> emptyTables = findEmptyTable();
-            int customerSpawn = Random.Range(1, (DayCount / 4) + 3);
+            int customerSpawn = Random.Range(1, (DayCount / 8) + 3);
             int count = 0;
             if (emptyTables.Count > 0)
             {

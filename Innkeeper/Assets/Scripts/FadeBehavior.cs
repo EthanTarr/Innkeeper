@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class FadeBehavior : MonoBehaviour
+public class FadeBehavior : MonoBehaviour, IPointerClickHandler
 {
     private SoundManager GameMusic;
     private float tempVolume;
@@ -58,5 +59,15 @@ public class FadeBehavior : MonoBehaviour
         }
         GameMusic.AudioControl(tempVolume);
         this.gameObject.SetActive(false);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            this.GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            GameMusic.AudioControl(tempVolume);
+            this.gameObject.SetActive(false);
+        }
     }
 }
