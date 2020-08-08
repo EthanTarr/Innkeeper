@@ -26,6 +26,8 @@ public class PlayerBehavior : MonoBehaviour
 
     public float strength = 0;
 
+    public int money = 0;
+
     public List<string> PlayerSkills = new List<string>();
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);

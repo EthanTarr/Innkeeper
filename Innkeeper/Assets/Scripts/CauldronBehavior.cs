@@ -137,6 +137,8 @@ public class CauldronBehavior : MonoBehaviour
             }
             Player.GetComponent<PlayerBehavior>().checkHand();
 
+            this.GetComponent<AudioSource>().Stop();
+
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(Player.GetComponent<ResourceManager>().CookingTimeDelay);
@@ -191,6 +193,9 @@ public class CauldronBehavior : MonoBehaviour
     {
         isCookingPasta = false;
         isCookedPasta = true;
+        this.GetComponent<AudioSource>().clip = CauldronSounds[0];
+        this.GetComponent<AudioSource>().loop = true;
+        this.GetComponent<AudioSource>().Play();
         if (isCollidingWithPlayer)
         {
             checkForHighlights();

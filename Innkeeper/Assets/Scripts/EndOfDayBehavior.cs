@@ -33,7 +33,9 @@ public class EndOfDayBehavior : MonoBehaviour
 
     IEnumerator SetUp(int SatisfiedCustomers, int DisSatisfiedCustomers, float PreviousXp, float CurrentXp)
     {
-        if(Player == null)
+        this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = "0";
+
+        if (Player == null)
         {
             Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
         }

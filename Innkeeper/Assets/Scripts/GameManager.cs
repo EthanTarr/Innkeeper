@@ -76,37 +76,19 @@ public class GameManager : MonoBehaviour
         {
             BlackBackground.gameObject.SetActive(true);
             EndOfDayScreen.gameObject.SetActive(true);
-            this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
-            this.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
-            this.GetComponent<Animator>().SetFloat("Speed", 0);
-            this.GetComponent<AudioSource>().Stop();
-            this.transform.position = new Vector2(-385, 32);
-            GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
-            SkillList.SetActive(false);
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
             ResetInn();
-            StopAllCoroutines();
-            TimelineCount = 0;
             GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
             findUnlockedFood();
             Debug.Log("Day Over!");
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            BlackFade.GetComponent<FadeBehavior>().ToggleFade();
-        }
-
         //Fail day catch
         if (numOfDisSatisfiedCustomers >= 3)
         {
-            this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
-            this.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
             ResetInn();
-            StopAllCoroutines();
-            TimelineCount = 0;
             Debug.Log("GAME OVER!");
             BlackBackground.gameObject.SetActive(true);
             GameOverScreen.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = "Too many angry customers. The Inn is ruined! And in only " + DayCount + " day(s)";
@@ -137,7 +119,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            DayTimeLimit += 20;
+            DayTimeLimit += 10;
         }
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         StartCoroutine(CountTimeline());
@@ -146,21 +128,30 @@ public class GameManager : MonoBehaviour
         this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
         this.gameObject.GetComponent<CapsuleCollider2D>().enabled = true;
         SpawnTimerIncreaseAmount += -.01f;
+        if(DayCount < 10 && DayCount % 3 == 0)
+        {
+            SpawnTimerIncreaseAmount += .02f;
+        }
+        else if (DayCount % 8 == 0)
+        {
+            SpawnTimerIncreaseAmount += .04f;
+        }
     }
 
     public void restart()
     {
+        ResetInn();
         DayCount = 0;
         this.GetComponent<PlayerBehavior>().PreviousXp = 0;
         this.GetComponent<PlayerBehavior>().xp = 0;
         this.GetComponent<PlayerBehavior>().Level = 0;
         this.GetComponent<PlayerBehavior>().PlayerSkills = new List<string>();
+        EndOfDayScreen.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().originalPercentage = 0;
         SpawnTimerIncreaseAmount = startingIncreaseAmount;
         DayTimeLimit = startingDayTimeLimit;
         DayStartDelay = startingDayStartDelay;
         UnlockableFoods = new Dictionary<int, Transform>();
         populateUnlockableFoods();
-        ResetInn();
     }
 
     IEnumerator SpawnCustomer()
@@ -249,6 +240,21 @@ public class GameManager : MonoBehaviour
 
     public void ResetInn()
     {
+        //reset player and camera position and disable them
+        this.GetComponent<Animator>().SetFloat("Speed", 0);
+        this.GetComponent<AudioSource>().Stop();
+        this.transform.position = new Vector2(-385, 32);
+        GameObject.Find("Main Camera").transform.position = new Vector2(-385, 32);
+        this.gameObject.GetComponent<PlayerBehavior>().controlMovement = false;
+        this.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
+
+        //turn off skills list if open
+        SkillList.SetActive(false);
+
+        //stop counitng time, and spawining customers
+        StopAllCoroutines();
+        TimelineCount = 0;
+
         //stop resource gathering or processing
         this.GetComponent<ResourceManager>().stopInvokes();
 

@@ -8,6 +8,8 @@ public class CustomerRequestBehavior : MonoBehaviour
 {
     public GameObject Popup; // parent Popup object
 
+    public Transform BronzeCoin;
+
     public float xpGain = 50;
 
     private Transform Customer; // customer Transform
@@ -100,8 +102,6 @@ public class CustomerRequestBehavior : MonoBehaviour
 
                     if (otherRequestCount <= 0)
                     {
-                        Player.GetComponent<PlayerBehavior>().xp += xpGain * originalOtherRequestCount;
-                        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
 
                         ReduceSize(); //change UI to fit less items
                         Destroy(this.transform.parent.transform.GetChild(otherItemIndex).gameObject); //Destroy this gameobject
@@ -109,8 +109,6 @@ public class CustomerRequestBehavior : MonoBehaviour
 
                     if (RequestCount <= 0)
                     {
-                        Player.GetComponent<PlayerBehavior>().xp += xpGain * OriginalRequestCount;
-                        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
 
                         if (this.transform.parent.transform.childCount <= 4 || otherRequestCount <= 0) //if this is the last request
                         {
@@ -148,19 +146,36 @@ public class CustomerRequestBehavior : MonoBehaviour
     private int satisfyRequest(Transform PlayerObject, Transform Request, int RequestCount)
     {
         int HandCount = PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount;
+        int CoinCount = HandCount;
         if (RequestCount - HandCount > 0)
         {
             Request.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(Request.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
             PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((PlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
-            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
+            Player.GetComponent<PlayerBehavior>().money += HandCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue;
         }
         else
         {
             PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((PlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
+            Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
+            if (Customer.GetComponent<CustomerBehavior>().myTimer != null)
+            {
+                Player.GetComponent<PlayerBehavior>().money += (RequestCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue) +
+                    ((7 - Customer.GetComponent<CustomerBehavior>().myTimer.GetComponent<TimerBehavior>().count) / 2);
+            }
+            else
+            {
+                Player.GetComponent<PlayerBehavior>().money += (RequestCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue) + 3;
+            }
+            CoinCount = RequestCount;
         }
+        for(int i = 0; i < CoinCount; i++)
+        {
+            Instantiate(BronzeCoin, PlayerObject.position + new Vector3(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(0, 5), 0), BronzeCoin.rotation);
+        }
+        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
         RequestCount -= HandCount;
         return RequestCount;
     }

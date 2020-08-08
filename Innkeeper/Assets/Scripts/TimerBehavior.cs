@@ -9,7 +9,7 @@ public class TimerBehavior : MonoBehaviour
     public Sprite OrangeArrow;
     public Sprite RedArrow;
 
-    private int count = 0;
+    [HideInInspector] public int count = 0;
     private float time;
 
     private Transform Player;

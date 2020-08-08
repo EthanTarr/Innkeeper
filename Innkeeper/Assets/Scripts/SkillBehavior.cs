@@ -12,11 +12,12 @@ public class SkillBehavior : MonoBehaviour
     }
     public string Description;
     public Vector2 PreferedToolTipSize;
+    public Transform PrerequisiteSkill;
 
     private float ModSkill()
     {
         GameManager player = GameObject.Find("Player").GetComponent<GameManager>();
-        if (this.gameObject.name.Equals("Lesser Speed") || this.gameObject.name.Equals("Enhanced Speed"))
+        if (this.gameObject.name.Equals("Quick Movement") || this.gameObject.name.Equals("Enhanced Movement"))
         {
             return player.steps / 20000;
         }
@@ -24,7 +25,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.lifts / 5000;
         }
-        else if (this.gameObject.name.Equals("Basic Chopping") || this.gameObject.name.Equals("Advanced Chopping"))
+        else if (this.gameObject.name.Equals("Basic Chopping") || this.gameObject.name.Equals("Skill Change - Basic Chopping - Advanced Chopping"))
         {
             return player.chopped / 10;
         }
@@ -52,7 +53,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return (player.gathered + player.cooked + player.chopped) / 30;
         }
-        else if (this.gameObject.name.Equals("Inn - Calming Aura"))
+        else if (this.gameObject.name.Equals("Inn - Calming Presence"))
         {
             return player.customerWait / 300;
         }

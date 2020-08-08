@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class XpBarBehavior : MonoBehaviour
 {
-    private float originalPercentage = 0;
+    public float originalPercentage = 0;
     private float goalPercentage = 0;
 
 

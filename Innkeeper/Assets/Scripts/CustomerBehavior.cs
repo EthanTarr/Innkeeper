@@ -8,7 +8,7 @@ public class CustomerBehavior : MonoBehaviour
     public string customer;
     
     //Timer
-    private Transform myTimer = null;
+    [HideInInspector] public Transform myTimer = null;
     public Transform Timer;
 
     public List<Sprite> Customers;

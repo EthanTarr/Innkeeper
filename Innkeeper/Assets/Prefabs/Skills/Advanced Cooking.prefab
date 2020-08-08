@@ -48,3 +48,5 @@ MonoBehaviour:
   Description: Greatly decrease the time it takes for water to boil and pasta to
     cook in the cauldron.
   PreferedToolTipSize: {x: 200, y: 100}
+  PrerequisiteSkill: {fileID: 7064210071677406911, guid: 7c0a11801b1e9564b9c4abd2dd3da323,
+    type: 3}

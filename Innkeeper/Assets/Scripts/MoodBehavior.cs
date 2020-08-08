@@ -15,10 +15,6 @@ public class MoodBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if(this.GetComponent<Animation>()["Indication"].normalizedTime >= 1)
-        {
-            Destroy(this.transform.parent.gameObject);
-        }*/
         if(!this.GetComponent<Animation>().isPlaying)
         {
             Destroy(this.transform.parent.gameObject);
