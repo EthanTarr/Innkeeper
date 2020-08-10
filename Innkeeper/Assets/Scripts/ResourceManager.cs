@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+[System.Serializable]
 public class ResourceManager : MonoBehaviour
 {
     //Timer
@@ -408,6 +409,11 @@ public class ResourceManager : MonoBehaviour
             this.GetComponent<GameManager>().gathered++;
             Invoke("endNoodleGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
+    }
+
+    public void FruitBasket()
+    {
+        FruitGain++;
     }
 
     public void stopInvokes()

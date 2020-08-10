@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
 public class GameManager : MonoBehaviour
 {
     public List<Transform> Tables;
@@ -83,6 +84,7 @@ public class GameManager : MonoBehaviour
             GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
             findUnlockedFood();
             Debug.Log("Day Over!");
+            //SaveLoad.Save();
         }
 
         //Fail day catch
@@ -107,6 +109,11 @@ public class GameManager : MonoBehaviour
         {
             crowdSound.GetComponent<AudioSource>().Stop();
         }
+    }
+
+    public void loadGame()
+    {
+        SaveLoad.Load();
     }
 
     public void start()
@@ -167,9 +174,11 @@ public class GameManager : MonoBehaviour
             {
                 while (count < customerSpawn)
                 {
-                    while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer())
+                    int bounds = 0;
+                    while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer() && bounds < emptyTables.Count)
                     {
                         Debug.Log("Couldn't find a spot to spawn customers");
+                        bounds++;
                     }
                     count++;
                     yield return new WaitForSeconds(3);
@@ -236,6 +245,44 @@ public class GameManager : MonoBehaviour
             }
         }
         return emptyTables;
+    }
+
+    public void FixTable()
+    {
+        Transform Table1 = GameObject.Find("Table").transform;
+        if (!Table1.GetComponent<SpriteRenderer>().sprite.Equals(Tables[0].GetComponent<SpriteRenderer>().sprite))
+        {
+            Table1.GetComponent<SpriteRenderer>().sprite = Tables[0].GetComponent<SpriteRenderer>().sprite;
+            Tables.Add(Table1);
+        }
+        else
+        {
+            Transform Table2 = GameObject.Find("Table (2)").transform;
+            Table2.GetComponent<SpriteRenderer>().sprite = Tables[0].GetComponent<SpriteRenderer>().sprite;
+            Tables.Add(Table2);
+        }
+    }
+
+    public void FixStool()
+    {
+        Transform Stool1 = GameObject.Find("Stool (2)").transform;
+        Transform Stool2 = GameObject.Find("Stool (3)").transform;
+        if (!Stool1.GetComponent<SpriteRenderer>().sprite.Equals(Tables[1].GetComponent<SpriteRenderer>().sprite))
+        {
+            Stool1.GetComponent<SpriteRenderer>().sprite = Tables[1].GetComponent<SpriteRenderer>().sprite;
+            Tables.Add(Stool1);
+        }
+        else if(!Stool2.GetComponent<SpriteRenderer>().sprite.Equals(Tables[1].GetComponent<SpriteRenderer>().sprite))
+        {
+            Stool2.GetComponent<SpriteRenderer>().sprite = Tables[1].GetComponent<SpriteRenderer>().sprite;
+            Tables.Add(Stool2);
+        }
+        else
+        {
+            Transform Stool3 = GameObject.Find("Stool (4)").transform;
+            Stool3.GetComponent<SpriteRenderer>().sprite = Tables[1].GetComponent<SpriteRenderer>().sprite;
+            Tables.Add(Stool3);
+        }
     }
 
     public void ResetInn()
@@ -339,7 +386,10 @@ public class GameManager : MonoBehaviour
 
         //reset cauldron
         GameObject.Find("Cauldron").GetComponent<CauldronBehavior>().ResetCauldron();
-        GameObject.Find("Cauldron (1)").GetComponent<CauldronBehavior>().ResetCauldron();
+        GameObject ExtraCauldron = GameObject.Find("Cauldron (1)");
+        if (ExtraCauldron != null) {
+            ExtraCauldron.GetComponent<CauldronBehavior>().ResetCauldron();
+        }
 
         //reset player position and animations
         this.transform.position = new Vector2(-385, 32);

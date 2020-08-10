@@ -315,8 +315,7 @@ public class LevelManager : MonoBehaviour
         {
             if (!Player.GetComponent<GameManager>().UnlockedFoodScreen.gameObject.activeSelf && this.gameObject.activeSelf)
             {
-                Player.GetComponent<GameManager>().start();
-                Player.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
+                GameObject.Find("Market Screen").transform.GetChild(3).GetComponent<Button>().interactable = true;
             }
             this.gameObject.SetActive(false);
         }

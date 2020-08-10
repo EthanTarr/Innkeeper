@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EndOfDayBehavior : MonoBehaviour
 {
     public Transform LevelChoicesScreen;
+    public Transform MarketScreen;
 
     private PlayerBehavior Player;
 
@@ -16,6 +17,10 @@ public class EndOfDayBehavior : MonoBehaviour
         if(LevelChoicesScreen == null)
         {
             Debug.LogError(name + " could not find Level Up Choice Selection Screen on Startup");
+        }
+        if (MarketScreen == null)
+        {
+            Debug.LogError(name + " could not find Market Screen on Startup");
         }
     }
 
@@ -85,20 +90,10 @@ public class EndOfDayBehavior : MonoBehaviour
             {
                 LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
                 LevelChoicesScreen.gameObject.SetActive(true);
+                MarketScreen.transform.GetChild(3).GetComponent<Button>().interactable = false;
             }
         }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
-    }
-
-    public void closeEndofDay()
-    {
-        if(!LevelChoicesScreen.gameObject.activeSelf)
-        {
-            GameObject.Find("Player").GetComponent<GameManager>().start();
-            GameObject.Find("Player").GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
-        }
-        this.transform.GetChild(2).GetComponent<Button>().interactable = false;
-        this.gameObject.SetActive(false);
     }
 }

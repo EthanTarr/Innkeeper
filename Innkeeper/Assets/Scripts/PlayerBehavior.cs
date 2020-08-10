@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
 public class PlayerBehavior : MonoBehaviour
 {
     [HideInInspector] public bool controlMovement = true;
@@ -129,7 +130,7 @@ public class PlayerBehavior : MonoBehaviour
                 moveHandObject(105, 99);
             }
             MovementSpeed = oldMovement;
-
+            
             //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 

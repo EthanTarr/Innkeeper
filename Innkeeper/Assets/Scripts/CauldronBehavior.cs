@@ -11,6 +11,7 @@ public class CauldronBehavior : MonoBehaviour
     public Sprite WaterCauldron;
     public Sprite BoilingWaterCauldron;
     public Sprite PastaCauldron;
+    public Sprite CookingPastaCauldron;
 
     //Timer
     private Transform myTimer = null;
@@ -112,7 +113,7 @@ public class CauldronBehavior : MonoBehaviour
             isCookingPasta = true;
             Highlight.gameObject.SetActive(false);
             this.GetComponent<Animator>().enabled = false;
-            this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
+            this.GetComponent<SpriteRenderer>().sprite = CookingPastaCauldron;
             Transform left = Player.GetComponent<PlayerBehavior>().LeftHandObject;
             Transform right = Player.GetComponent<PlayerBehavior>().RightHandObject;
             int NoodleLoss = 3;
@@ -193,6 +194,7 @@ public class CauldronBehavior : MonoBehaviour
     {
         isCookingPasta = false;
         isCookedPasta = true;
+        this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
         this.GetComponent<AudioSource>().clip = CauldronSounds[0];
         this.GetComponent<AudioSource>().loop = true;
         this.GetComponent<AudioSource>().Play();
