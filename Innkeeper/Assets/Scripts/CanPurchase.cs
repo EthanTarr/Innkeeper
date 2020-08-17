@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class CanPurchase : MonoBehaviour
 {
-    private int currentValue = 0;
     private PlayerBehavior Player;
 
     // Start is called before the first frame update

@@ -65,6 +65,26 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.customerSteps / 10;
         }
+        else if (this.gameObject.name.Equals("Discount Runner"))
+        {
+            return player.purchases / 3;
+        }
+        else if (this.gameObject.name.Equals("Fancy Food"))
+        {
+            return player.ExpensiveFood / 1.5f;
+        }
+        else if (this.gameObject.name.Equals("Proficiency - Haggling"))
+        {
+            return player.MarketTime / 200;
+        }
+        else if (this.gameObject.name.Equals("Local Landmark - Liscor"))
+        {
+            return player.numofDisatisfiedCustomers;
+        }
+        else if (this.gameObject.name.Equals("Generous Tippers"))
+        {
+            return player.numofSatisfiedCustomers / 3;
+        }
         Debug.LogError("Could not find " + this.gameObject.name);
         return 0;
     }

@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe360d0b4a97bd46a0902507908e8c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Popup: {fileID: 0}
+  Popup: {fileID: 939164177370711767, guid: 6dada5c10cbb08842a7113d62fedac05, type: 3}
   InitialTurnOffTimer: 5
 --- !u!61 &5933590265604029105
 BoxCollider2D:
@@ -140,6 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   customer: 
+  myTimer: {fileID: 0}
   Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   Customers:
   - {fileID: 21300000, guid: f8ffb35868c33314fbe997ff4ae045c3, type: 3}

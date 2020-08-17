@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 [System.Serializable]
 public class GameManager : MonoBehaviour
@@ -13,7 +14,9 @@ public class GameManager : MonoBehaviour
 
     //Spawning values
     public float MinSpawnTime = 60f;
+    private float OriginalMinSpawnTime = 60f;
     public float MaxSpawnTime = 80f;
+    private float OriginalMaxSpawnTime = 80f;
     public float SpawnTimerIncreaseRate = 40f;
     public float SpawnTimerIncreaseAmount = .92f;
     private float startingIncreaseAmount;
@@ -25,6 +28,8 @@ public class GameManager : MonoBehaviour
     public int DayStartDelay = 15;
     private int startingDayStartDelay;
 
+    private List<Transform> UnlockedFoods;
+
     public int numOfSatisfiedCustomers = 0;
     public int numOfDisSatisfiedCustomers = 0;
     public float CustomerSatisfactionXpBonus = 50f;
@@ -35,11 +40,16 @@ public class GameManager : MonoBehaviour
     public Transform BlackBackground;
     public Transform GameOverScreen;
     public Transform UnlockedFoodScreen;
+    public Transform LevelChoices;
+    public Transform TitleScreen;
+    public Transform MarketScreen;
+    public Transform PurchaseBoxPupup;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject BlackFade;
     public GameObject SkillList;
     public GameObject PauseScreen;
+
 
 
     [HideInInspector] public List<Transform> Timers;
@@ -56,8 +66,13 @@ public class GameManager : MonoBehaviour
     public float goblins = 0;
     public float customerWait = 0;
     public float customerSteps = 0;
+    public float purchases = 0;
+    public float ExpensiveFood = 0;
+    public float MarketTime = 0;
+    public float numofDisatisfiedCustomers = 0;
+    public float numofSatisfiedCustomers = 0;
 
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +82,7 @@ public class GameManager : MonoBehaviour
         startingDayStartDelay = DayStartDelay;
 
         populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
+
     }
 
     // Update is called once per frame
@@ -78,17 +94,18 @@ public class GameManager : MonoBehaviour
             BlackBackground.gameObject.SetActive(true);
             EndOfDayScreen.gameObject.SetActive(true);
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
+            numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
+            numofSatisfiedCustomers += numOfSatisfiedCustomers;
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
             ResetInn();
             GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
             findUnlockedFood();
             Debug.Log("Day Over!");
-            //SaveLoad.Save();
         }
 
         //Fail day catch
-        if (numOfDisSatisfiedCustomers >= 3)
+        if (numOfDisSatisfiedCustomers >= DisSatisfiedCustomerCounters.Count)
         {
             ResetInn();
             Debug.Log("GAME OVER!");
@@ -114,6 +131,7 @@ public class GameManager : MonoBehaviour
     public void loadGame()
     {
         SaveLoad.Load();
+        start();
     }
 
     public void start()
@@ -129,20 +147,15 @@ public class GameManager : MonoBehaviour
             DayTimeLimit += 10;
         }
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
+        OriginalMaxSpawnTime = MaxSpawnTime;
+        OriginalMinSpawnTime = MinSpawnTime;
         StartCoroutine(CountTimeline());
         StartCoroutine(SpawnIncrease());
         StartCoroutine(SpawnCustomer());
         this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
         this.gameObject.GetComponent<CapsuleCollider2D>().enabled = true;
         SpawnTimerIncreaseAmount += -.01f;
-        if(DayCount < 10 && DayCount % 3 == 0)
-        {
-            SpawnTimerIncreaseAmount += .02f;
-        }
-        else if (DayCount % 8 == 0)
-        {
-            SpawnTimerIncreaseAmount += .04f;
-        }
+        SaveLoad.Save();
     }
 
     public void restart()
@@ -175,7 +188,7 @@ public class GameManager : MonoBehaviour
                 while (count < customerSpawn)
                 {
                     int bounds = 0;
-                    while (!emptyTables[Random.Range(0, emptyTables.Count - 1)].GetComponent<TableBehavior>().SpawnCustomer() && bounds < emptyTables.Count)
+                    while (!emptyTables[Random.Range(0, emptyTables.Count)].GetComponent<TableBehavior>().SpawnCustomer() && bounds < emptyTables.Count)
                     {
                         Debug.Log("Couldn't find a spot to spawn customers");
                         bounds++;
@@ -217,19 +230,42 @@ public class GameManager : MonoBehaviour
     private void findUnlockedFood()
     {
         int targetLevel = -1;
+        UnlockedFoods = new List<Transform>();
+        List<int> removes = new List<int>();
         foreach (int level in UnlockableFoods.Keys)
         {
             if(GetComponent<PlayerBehavior>().Level >= level)
             {
                 targetLevel = level;
+                removes.Add(level);
+                UnlockedFoods.Add(UnlockableFoods[targetLevel]);
             }
         }
         if (targetLevel > -1)
         {
-            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockableFoods[targetLevel].name + "!";
-            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockableFoods[targetLevel].GetComponent<SpriteRenderer>().sprite;
-            UnlockableFoods.Remove(targetLevel);
+            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0].name + "!";
+            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockedFoods[0].GetComponent<SpriteRenderer>().sprite;
+            UnlockedFoods.Remove(UnlockedFoods[0]);
             UnlockedFoodScreen.gameObject.SetActive(true);
+        }
+        foreach(int lev in removes)
+        {
+            UnlockableFoods.Remove(lev);
+        }
+    }
+
+    public void Unlockfoods()
+    {
+        if (UnlockedFoods.Count > 0)
+        {
+            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0].name + "!";
+            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockedFoods[0].GetComponent<SpriteRenderer>().sprite;
+            UnlockedFoods.Remove(UnlockedFoods[0]);
+        }
+        else
+        {
+            UnlockedFoodScreen.gameObject.SetActive(false);
+            MarketScreen.GetChild(3).GetComponent<Button>().interactable = true;
         }
     }
 
@@ -301,6 +337,8 @@ public class GameManager : MonoBehaviour
         //stop counitng time, and spawining customers
         StopAllCoroutines();
         TimelineCount = 0;
+        MinSpawnTime = OriginalMinSpawnTime;
+        MaxSpawnTime = OriginalMaxSpawnTime;
 
         //stop resource gathering or processing
         this.GetComponent<ResourceManager>().stopInvokes();
@@ -319,20 +357,41 @@ public class GameManager : MonoBehaviour
             customerCounterParent.transform.GetChild(i).GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         }
 
-        //get rid of stuff in player hands
-        if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
+        //if the player doesn't have the Field of Preservation skill
+        if (!this.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Field of Preservation"))
         {
-            this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight -
-                this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
-            this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
+            //get rid of stuff in player hands
+            if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
+            {
+                this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight -
+                    this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
+            }
+            if (this.GetComponent<PlayerBehavior>().RightHandObject != null)
+            {
+                this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemWeight -
+                    this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
+            }
+            this.GetComponent<PlayerBehavior>().checkHand();
+
+            //get rid of objects on tables
+            foreach (Transform storage in StorageTables)
+            {
+                if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
+                {
+                    Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
+                }
+                if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
+                {
+                    Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
+                }
+                if (storage.GetComponent<StorageBehaviour>().RightObject != null)
+                {
+                    Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
+                }
+            }
         }
-        if (this.GetComponent<PlayerBehavior>().RightHandObject != null)
-        {
-            this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemWeight -
-                this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount;
-            this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
-        }
-        this.GetComponent<PlayerBehavior>().checkHand();
 
         //get rid of customers at tables
         foreach (Transform table in Tables)
@@ -360,23 +419,6 @@ public class GameManager : MonoBehaviour
                     Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
                 }
                 Destroy(table.GetComponent<TableBehavior>().CurrentCustomer2.gameObject);
-            }
-        }
-
-        //get rid of objects on tables
-        foreach (Transform storage in StorageTables)
-        {
-            if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
-            }
-            if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
-            }
-            if (storage.GetComponent<StorageBehaviour>().RightObject != null)
-            {
-                Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
             }
         }
 
@@ -412,7 +454,7 @@ public class GameManager : MonoBehaviour
         //check skills for level up increases
         foreach (string skill in this.GetComponent<PlayerBehavior>().PlayerSkills)
         {
-            this.GetComponent<PlayerBehavior>().LevelChoices.GetComponent<LevelManager>().Calls[skill]();
+            LevelChoices.GetComponent<LevelManager>().Calls[skill]();
         }
     }
 }

@@ -3,20 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using UnityEngine.UI;
 
 public static class SaveLoad
 {
     public static void Save()
     {
         Save save = new Save();
-        save.Player = GameObject.Find("Player");
-        save.Tables.Add(GameObject.Find("Table"));
-        save.Tables.Add(GameObject.Find("Table (2)"));
-        save.Tables.Add(GameObject.Find("Stool (2)"));
-        save.Tables.Add(GameObject.Find("Stool (3)"));
-        save.Tables.Add(GameObject.Find("Stool (4)"));
+        PlayerBehavior Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
+        save.PlayerSkills = Player.PlayerSkills;
+        save.Purchases = Player.Purchases;
+        save.PreviousXp = Player.PreviousXp;
+        save.xp = Player.xp;
+        save.Level = Player.Level;
+        save.money = Player.money;
 
-        BinaryFormatter bf = new BinaryFormatter();
+        GameManager Game = GameObject.Find("Player").GetComponent<GameManager>();
+        save.SpawnTimerIncreaseAmount = Game.SpawnTimerIncreaseAmount;
+        save.DayCount = Game.DayCount;
+        save.DayTimeLimit = Game.DayTimeLimit;
+
+        //stats
+        save.steps = Game.steps;
+        save.lifts = Game.lifts;
+        save.chopped = Game.chopped;
+        save.gathered = Game.gathered;
+        save.cooked = Game.cooked;
+        save.drakes = Game.drakes;
+        save.antinium = Game.antinium;
+        save.goblins = Game.goblins;
+        save.customerWait = Game.customerWait;
+        save.customerSteps = Game.customerSteps;
+        save.purchases = Game.purchases;
+        save.ExpensiveFood = Game.ExpensiveFood;
+        save.MarketTime = Game.MarketTime;
+        save.numofDisatisfiedCustomers = Game.numofDisatisfiedCustomers;
+        save.numofSatisfiedCustomers = Game.numofSatisfiedCustomers;
+
+    BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
         bf.Serialize(file, save);
         file.Close();
@@ -33,14 +57,52 @@ public static class SaveLoad
             Save save = (Save)bf.Deserialize(file);
             file.Close();
 
-            
-            save.Player.transform.parent = oldPlayer.transform.parent;
-            Object.Destroy(oldPlayer);
 
-            /*foreach(GameObject table in save.Tables)
+            PlayerBehavior Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
+            GameManager Game = GameObject.Find("Player").GetComponent<GameManager>();
+            LevelManager level = Game.LevelChoices.GetComponent<LevelManager>();
+            foreach (string skill in save.PlayerSkills)
             {
-                table.transform.parent = 
-            }*/
+                level.Calls[skill]();
+            }
+            Transform MarketPurchases = Game.EndOfDayScreen.GetComponent<EndOfDayBehavior>().MarketScreen.GetChild(1).GetChild(0).GetChild(0);
+            foreach (string purch in save.Purchases)
+            {
+                for(int i = 0; i < MarketPurchases.childCount; i++)
+                {
+                    if(MarketPurchases.GetChild(i).name.Equals(purch))
+                    {
+                        MarketPurchases.GetChild(i).GetChild(3).GetComponent<Button>().onClick.Invoke();
+                        break;
+                    }
+                }
+            }
+            Player.PreviousXp = save.PreviousXp;
+            Player.xp = save.xp;
+            Player.Level = save.Level;
+            Player.money = save.money;
+
+            
+            Game.SpawnTimerIncreaseAmount = save.SpawnTimerIncreaseAmount;
+            Game.DayCount = save.DayCount - 1;
+            Game.DayTimeLimit = save.DayTimeLimit;
+
+            //stats
+            Game.steps = save.steps;
+            Game.lifts = save.lifts;
+            Game.chopped = save.chopped;
+            Game.gathered = save.gathered;
+            Game.cooked = save.cooked;
+            Game.drakes = save.drakes;
+            Game.antinium = save.antinium;
+            Game.goblins = save.goblins;
+            Game.customerWait = save.customerWait;
+            Game.customerSteps = save.customerSteps;
+            Game.purchases = save.purchases;
+            Game.ExpensiveFood = save.ExpensiveFood;
+            Game.MarketTime = save.MarketTime;
+            Game.numofDisatisfiedCustomers = save.numofDisatisfiedCustomers;
+            Game.numofSatisfiedCustomers = save.numofSatisfiedCustomers;
         }
     }
 }

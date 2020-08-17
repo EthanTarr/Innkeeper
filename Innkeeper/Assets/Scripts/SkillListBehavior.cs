@@ -35,7 +35,7 @@ public class SkillListBehavior : MonoBehaviour
         {
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(0).GetComponent<Text>().text = skill;
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(1).GetComponent<Text>().text =
-                Player.GetComponent<PlayerBehavior>().LevelChoices.GetComponent<LevelManager>().SkillDictionary[skill].GetComponent<SkillBehavior>().Description;
+                Player.GetComponent<GameManager>().LevelChoices.GetComponent<LevelManager>().SkillDictionary[skill].GetComponent<SkillBehavior>().Description;
             skillNum++;
         }
     }

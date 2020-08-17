@@ -25,6 +25,10 @@ public class XpBarBehavior : MonoBehaviour
             {
                 originalPercentage = goalPercentage;
             }
+            else
+            {
+                originalPercentage = 0;
+            }
         }
     }
 
@@ -32,8 +36,9 @@ public class XpBarBehavior : MonoBehaviour
     {
         this.GetComponent<Animation>()["XP Bar"].normalizedSpeed = .5f;
         this.GetComponent<Animation>()["XP Bar"].time = originalPercentage;
+        Debug.Log("Orginally at " + originalPercentage + " Percent");
         originalPercentage = 0;
-        this.GetComponent<Animation>().Play();
+        this.GetComponent<Animation>().Play("XP Bar");
         this.goalPercentage = Percentage;
     }
 

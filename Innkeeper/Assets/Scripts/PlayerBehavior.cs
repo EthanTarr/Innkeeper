@@ -30,6 +30,7 @@ public class PlayerBehavior : MonoBehaviour
     public int money = 0;
 
     public List<string> PlayerSkills = new List<string>();
+    public List<string> Purchases = new List<string>();
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);
 
@@ -38,7 +39,7 @@ public class PlayerBehavior : MonoBehaviour
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
-    public Transform LevelChoices;
+    
     
     // Start is called before the first frame update
     void Start()
@@ -169,10 +170,6 @@ public class PlayerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            LevelChoices.gameObject.SetActive(true);
-        }
 
 
 
@@ -460,6 +457,11 @@ public class PlayerBehavior : MonoBehaviour
             RightHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(HandOffset.x, HandOffset.y));
             RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = RightLayer;
         }
+    }
+
+    public void addPurchase(string purchase)
+    {
+        Purchases.Add(purchase);
     }
 
     public int xpToLevels(float xp)

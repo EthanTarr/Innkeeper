@@ -12,6 +12,8 @@ public class CustomerRequestBehavior : MonoBehaviour
 
     public float xpGain = 50;
 
+    public int maxTip = 3;
+
     private Transform Customer; // customer Transform
     private Transform Player;
 
@@ -150,30 +152,34 @@ public class CustomerRequestBehavior : MonoBehaviour
         if (RequestCount - HandCount > 0)
         {
             Request.transform.GetChild(0).GetComponent<Text>().text = (int.Parse(Request.transform.GetChild(0).GetComponent<Text>().text) - HandCount) + "";
-            PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount = 0;
+            PlayerObject.GetComponent<ItemBehavior>().ItemCount = 0;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((PlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * HandCount, 0);
             Player.GetComponent<PlayerBehavior>().xp += xpGain * HandCount;
             Player.GetComponent<PlayerBehavior>().money += HandCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue;
         }
         else
         {
-            PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
+            PlayerObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((PlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
             Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
             if (Customer.GetComponent<CustomerBehavior>().myTimer != null)
             {
                 Player.GetComponent<PlayerBehavior>().money += (RequestCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue) +
-                    ((7 - Customer.GetComponent<CustomerBehavior>().myTimer.GetComponent<TimerBehavior>().count) / 2);
+                    (((maxTip * 2 + 1) - Customer.GetComponent<CustomerBehavior>().myTimer.GetComponent<TimerBehavior>().count) / 2);
             }
             else
             {
-                Player.GetComponent<PlayerBehavior>().money += (RequestCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue) + 3;
+                Player.GetComponent<PlayerBehavior>().money += (RequestCount * PlayerObject.gameObject.GetComponent<ItemBehavior>().ItemValue) + maxTip;
+            }
+            if(PlayerObject.GetComponent<ItemBehavior>().ItemValue > 1)
+            {
+                Player.GetComponent<GameManager>().ExpensiveFood++;
             }
             CoinCount = RequestCount;
         }
         for(int i = 0; i < CoinCount; i++)
         {
-            Instantiate(BronzeCoin, PlayerObject.position + new Vector3(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(0, 5), 0), BronzeCoin.rotation);
+            Instantiate(BronzeCoin, PlayerObject.position + new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(0, 1), 0), BronzeCoin.rotation);
         }
         Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand for UI
         RequestCount -= HandCount;

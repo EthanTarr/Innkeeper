@@ -22,6 +22,7 @@ public class MarketMoneyBehavior : MonoBehaviour
             moneyToCurrency(Player.money);
             currentValue = Player.money;
         }
+        Player.GetComponent<GameManager>().MarketTime += Time.deltaTime;
     }
 
     private void moneyToCurrency(int money)
