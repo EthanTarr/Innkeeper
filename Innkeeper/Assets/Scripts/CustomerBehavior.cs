@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class CustomerBehavior : MonoBehaviour
 {
+    public string customer;
+    
     //Timer
-    private Transform myTimer = null;
+    [HideInInspector] public Transform myTimer = null;
     public Transform Timer;
 
     public List<Sprite> Customers;
@@ -14,6 +16,7 @@ public class CustomerBehavior : MonoBehaviour
     public float MovementSpeed = 15f; //movement speed of the customer character
     public float LifeTimer = 60f; //seconds customer will live
     public List<Transform> PossibleMeals;
+    public int HungerValue;
 
     public Transform Table;
 
@@ -25,10 +28,17 @@ public class CustomerBehavior : MonoBehaviour
     public RuntimeAnimatorController GoblinController;
     public RuntimeAnimatorController AntiniumController;
 
+    public List<AudioClip> DrakeSounds;
+    public List<AudioClip> GoblinSounds;
+    public List<AudioClip> AntiniumSounds;
+
+    public Transform MoodIndicator;
+
     private Vector2 Destination;
 
     private bool hasntArrived = true;
     private bool returning = false;
+    private bool turn = false;
     private List<Vector2> Path = null;
     private int node = 1;
 
@@ -37,9 +47,17 @@ public class CustomerBehavior : MonoBehaviour
 
     private float sitTime;
 
+    private Slider MasterSlider;
+    private Slider VoiceSlider;
+
     // Start is called before the first frame update
     void Start()
     {
+        MasterSlider = GameObject.Find("Player").GetComponent<GameManager>().PauseScreen.transform.GetChild(3).GetComponent<Slider>();
+        VoiceSlider = GameObject.Find("Player").GetComponent<GameManager>().PauseScreen.transform.GetChild(9).GetComponent<Slider>();
+
+        this.GetComponent<AudioSource>().volume = VoiceSlider.value * MasterSlider.value;
+
         Player = GameObject.Find("Player").transform;
         if (Player == null)
         {
@@ -63,17 +81,26 @@ public class CustomerBehavior : MonoBehaviour
         }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
         List<Sprite> Meals = new List<Sprite>();
+        List<Sprite> Meals2 = new List<Sprite>();
         if (Customers[thisCustomer].name.Equals("FrontDrake")) //drake
         {
+            customer = "drake";
+
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Meals2.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             if (Player.GetComponent<PlayerBehavior>().Level > 2)
             {
-                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+                Meals2.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+
             Player.GetComponent<GameManager>().drakes++;
+
             this.GetComponent<Animator>().runtimeAnimatorController = DrakeController as RuntimeAnimatorController;
+
+            this.GetComponent<AudioSource>().clip = DrakeSounds[0];
+            this.GetComponent<AudioSource>().Play();
+            //this.GetComponent<AudioSource>().clip = DrakeSounds[Random.Range(1, 2)];
             /*
             LifeTimer = LifeTimer;
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
@@ -84,16 +111,25 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if(Customers[thisCustomer].name.Equals("FrontAntinium"))  //antinium
         {
+            customer = "antinium";
+
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             if (Player.GetComponent<PlayerBehavior>().Level > 5)
             {
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
-            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Meals2.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+
             Player.GetComponent<GameManager>().antinium++;
+
             this.GetComponent<Animator>().runtimeAnimatorController = AntiniumController as RuntimeAnimatorController;
+
             LifeTimer = LifeTimer - 15f;
+
+            this.GetComponent<AudioSource>().clip = AntiniumSounds[0];
+            this.GetComponent<AudioSource>().Play();
+            //this.GetComponent<AudioSource>().clip = AntiniumSounds[Random.Range(1, 2)];
             /*
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0f);
             this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.8f, 5.6f);
@@ -103,32 +139,48 @@ public class CustomerBehavior : MonoBehaviour
         }
         else if(Customers[thisCustomer].name.Equals("FrontGoblin")) //goblin
         {
+            customer = "goblin";
+
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             if (Player.GetComponent<PlayerBehavior>().Level > 5)
             {
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
-            Meals.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
+            Meals2.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
             if (Player.GetComponent<PlayerBehavior>().Level > 2)
             {
-                Meals.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
+                Meals2.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
+
             Player.GetComponent<GameManager>().goblins++;
+
             this.GetComponent<Animator>().runtimeAnimatorController = GoblinController as RuntimeAnimatorController;
+
             LifeTimer = LifeTimer + 15f;
+
             this.GetComponents<BoxCollider2D>()[0].offset = new Vector2(0f, 0.45f);
             this.GetComponents<BoxCollider2D>()[0].size = new Vector2(2.5f, 4f);
             this.GetComponents<BoxCollider2D>()[1].offset = new Vector2(0f, 1.1f);
             this.GetComponents<BoxCollider2D>()[1].size = new Vector2(1.6f, .5f);
+
+            this.GetComponent<AudioSource>().clip = GoblinSounds[0];
+            this.GetComponent<AudioSource>().Play();
+            //this.GetComponent<AudioSource>().clip = GoblinSounds[Random.Range(1,2)];
         }
-        for(int i = 3; i < GetComponent<PopUpObjectBehavior>().Popup.childCount; i++)
+        int popupIndex = 3;
+        if (HungerValue > 1)
         {
-            if (Meals.Count > 0)
-            {
-                Sprite chosen = GetComponent<PopUpObjectBehavior>().Popup.GetChild(i).GetComponent<CustomerRequestBehavior>().SetItem(Meals);
-                Meals.Remove(chosen);
-            }
+            Sprite RequestedItem = Meals2[UnityEngine.Random.Range(0, Meals2.Count)];
+            this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).GetComponent<Image>().sprite = RequestedItem;
+            this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).transform.GetChild(0).GetComponent<Text>().text = "" + HungerValue / 2;
+            popupIndex++;
+        }
+        if (HungerValue % 2 == 1)
+        {
+            Sprite RequestedItem = Meals[UnityEngine.Random.Range(0, Meals.Count)];
+            this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).GetComponent<Image>().sprite = RequestedItem;
+            this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).transform.GetChild(0).GetComponent<Text>().text = "1";
         }
 
         MovementSpeed += (Player.GetComponent<GameManager>().DayCount * .5f) + Player.GetComponent<GameManager>().TimelineCount * .05f;
@@ -138,7 +190,7 @@ public class CustomerBehavior : MonoBehaviour
     void Update()
     {
 
-        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f) //if customer is farther than .1 from destination (Optimize)
+        if (Mathf.Abs((transform.position - (Vector3)Destination).magnitude) > .1f && !turn) //if customer is farther than .1 from destination (Optimize)
         {
             Vector2 move = Vector2.MoveTowards(transform.position, Destination, MovementSpeed * Time.deltaTime);
             Vector2 moveTowards = Destination - (Vector2)transform.position;
@@ -197,6 +249,13 @@ public class CustomerBehavior : MonoBehaviour
             hasntArrived = !hasntArrived;
             ArrivedAtDestination();
         }
+
+        if(turn)
+        {
+            turn = false;
+        }
+
+        this.GetComponent<AudioSource>().volume = VoiceSlider.value * MasterSlider.value;
     }
 
     public void setPath(List<Vector2> Path)
@@ -233,6 +292,9 @@ public class CustomerBehavior : MonoBehaviour
                 break;
             }
         }
+        Transform indicator = Instantiate(MoodIndicator, this.transform.position + new Vector3(0, 15, 0), MoodIndicator.transform.rotation);
+        indicator.GetChild(0).GetComponent<SpriteRenderer>().sprite = indicator.GetChild(0).GetComponent<MoodBehavior>().UnhappyIdicator;
+        indicator.parent = this.transform;
         SendCustomerAway();
     }
 
@@ -248,6 +310,7 @@ public class CustomerBehavior : MonoBehaviour
         Destroy(this.GetComponent<PopUpObjectBehavior>().Popup.gameObject);
         this.GetComponent<BoxCollider2D>().enabled = false;
         returning = true;
+        turn = true;
         hasntArrived = true;
         node--;
         Destination = Path[node];

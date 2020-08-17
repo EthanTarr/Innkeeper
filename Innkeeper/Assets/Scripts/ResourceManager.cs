@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+[System.Serializable]
 public class ResourceManager : MonoBehaviour
 {
     //Timer
@@ -101,6 +102,26 @@ public class ResourceManager : MonoBehaviour
         Gather(DeAcidFly, DeAcidFlyGain);
     }
 
+    public void buyBlueFruit()
+    {
+        BuyFood(BlueFruit);
+    }
+
+    public void buyWater()
+    {
+        BuyFood(Water);
+    }
+
+    public void buyAcidFly()
+    {
+        BuyFood(AcidFly);
+    }
+
+    public void buyNoodle()
+    {
+        BuyFood(Noodle);
+    }
+
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
     private void Gather(Transform GatherObject, int GatherGain)
     {
@@ -143,6 +164,31 @@ public class ResourceManager : MonoBehaviour
         GameObject.Find("CraftingTable").GetComponent<AudioSource>().Play();
         this.GetComponent<GameManager>().chopped++;
         Invoke(endCall, TimeDelay); //run function endBlueFruitJuiceCreation() after TimerDelay time
+    }
+
+    private void BuyFood (Transform BuyObject)
+    {
+        Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
+        Player.GetComponent<CapsuleCollider2D>().enabled = true;
+        if (BuyObject == null) //Check for Gather Object
+        {
+            Debug.LogError(name + " BuyObject could not be found.");
+        }
+        else
+        {
+            Transform BoughtObject = Instantiate(BuyObject, Player.position, BuyObject.rotation); //create gathered object on player
+            BoughtObject.name = BuyObject.name; //set new objects name to be the same as the original
+            BoughtObject.GetComponent<ItemBehavior>().ItemCount = 1;
+            Player.GetComponent<PlayerBehavior>().money -= BoughtObject.GetComponent<ItemBehavior>().ItemValue;
+            Player.GetComponent<GameManager>().purchases++;
+            BoughtObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+            bool check = Player.GetComponent<PlayerBehavior>().GiveObject(BoughtObject); //set Player to hold object
+            if (!check)
+            {
+                Debug.LogError(name + " attempted to give player " + BoughtObject.name + " but player hand was full.");
+            }
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
+        }
     }
 
     private bool checkObject2(Dictionary<string, int> DesiredIngredients, Dictionary<Transform, int> GatheredObjects, Transform CraftingSurface, string endcall)
@@ -364,6 +410,16 @@ public class ResourceManager : MonoBehaviour
             this.GetComponent<GameManager>().gathered++;
             Invoke("endNoodleGather", GatheringTimeDelay); //run function endTime() after TimerDelay time
         }
+    }
+
+    public void FruitBasket()
+    {
+        FruitGain++;
+    }
+
+    public void Bucket()
+    {
+        WaterGain++;
     }
 
     public void stopInvokes()

@@ -21,4 +21,9 @@ public class SoundManager : MonoBehaviour
     {
         this.GetComponent<AudioSource>().volume = previousDesiredVolume * MasterSlider.GetComponent<Slider>().value * MaxVolume;
     }
+
+    public float RetrieveDesiredVolume ()
+    {
+        return this.GetComponent<AudioSource>().volume / (MasterSlider.GetComponent<Slider>().value * MaxVolume);
+    }
 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LevelManager : MonoBehaviour
 {
     public List<Transform> Skills;
+    public List<Transform> AvaliableSkills;
     [HideInInspector] public Dictionary<string, Transform> SkillDictionary;
 
     public Transform Player;
@@ -22,14 +23,14 @@ public class LevelManager : MonoBehaviour
         Calls = new Dictionary<string, UnityEngine.Events.UnityAction>();
         Calls.Add("Lesser Strength", LesserStrength);
         Calls.Add("Basic Cooking", BasicCooking);
-        Calls.Add("Lesser Speed", LesserSpeed);
+        Calls.Add("Quick Movement", QuickMovement);
         Calls.Add("Enhanced Strength", EnhancedStrength);
         Calls.Add("Advanced Cooking", AdvancedCooking);
-        Calls.Add("Enhanced Speed", EnhancedSpeed);
+        Calls.Add("Enhanced Movement", EnhancedMovement);
         Calls.Add("Customer Preference - Antinium", CustomerPreferenceAntinium);
         Calls.Add("Customer Preference - Goblin", CustomerPreferenceGoblin);
         Calls.Add("Customer Preference - Drake", CustomerPreferenceDrake);
-        Calls.Add("Inn - Calming Aura", InnCalmingAura);
+        Calls.Add("Inn - Calming Presence", InnCalmingPresence);
         Calls.Add("Magnified Training", MagnifiedTraining);
         Calls.Add("Extra Portion", ExtraPortion);
         Calls.Add("Basic Chopping", BasicChopping);
@@ -37,12 +38,35 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Basic Gathering", BasicGathering);
         Calls.Add("Advanced Gathering", AdvancedGathering);
         Calls.Add("Inn - Lethargic Steps", InnLethargicSteps);
+        Calls.Add("Discount Runner", DiscountRunner);
+        Calls.Add("Fancy Food", FancyFood);
+        Calls.Add("Proficiency - Haggling", ProficiencyHaggling);
+        Calls.Add("Local Landmark - Liscor", LocalLandmarkLiscor);
+        Calls.Add("Generous Tippers", GenerousTippers);
 
         SkillDictionary = new Dictionary<string, Transform>();
         foreach(Transform skill in Skills)
         {
             SkillDictionary.Add(skill.name, skill);
         }
+        /*
+        AvaliableSkills.Add(SkillDictionary["Lesser Strength"]);
+        AvaliableSkills.Add(SkillDictionary["Basic Cooking"]);
+        AvaliableSkills.Add(SkillDictionary["Quick Movement"]);
+        AvaliableSkills.Add(SkillDictionary["Basic Chopping"]);
+        AvaliableSkills.Add(SkillDictionary["Basic Gathering"]);
+        AvaliableSkills.Add(SkillDictionary["Inn - Lethargic Steps"]);
+        AvaliableSkills.Add(SkillDictionary["Magnified Training"]);
+        AvaliableSkills.Add(SkillDictionary["Extra Portion"]);
+        AvaliableSkills.Add(SkillDictionary["Customer Preference - Antinium"]);
+        AvaliableSkills.Add(SkillDictionary["Customer Preference - Goblin"]);
+        AvaliableSkills.Add(SkillDictionary["Customer Preference - Drake"]);
+        AvaliableSkills.Add(SkillDictionary["Inn - Calming Presence"]);
+        AvaliableSkills.Add(SkillDictionary["Discount Runner"]);
+        AvaliableSkills.Add(SkillDictionary["Fancy Food"]);
+        AvaliableSkills.Add(SkillDictionary["Proficiency - Haggling"]);
+        AvaliableSkills.Add(SkillDictionary["Local Landmark - Liscor"]);
+        AvaliableSkills.Add(SkillDictionary["Generous Tippers"]);*/
     }
 
     // Update is called once per frame
@@ -60,7 +84,7 @@ public class LevelManager : MonoBehaviour
     {
         List<string> Skillchoice = new List<string>();
         SortedList<float, Transform> skills = new SortedList<float, Transform>();
-        foreach (Transform skill in Skills)
+        foreach (Transform skill in AvaliableSkills)
         {
             if (skill.GetComponent<SkillBehavior>().Level - Player.GetComponent<PlayerBehavior>().Level > -3 && !Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains(skill.name))
             {
@@ -77,125 +101,168 @@ public class LevelManager : MonoBehaviour
             float choice = Random.Range(0f, 100f);
             if (choice < 25)
             {
-                Skillchoice.Add(skills.Values[0].name);
+                if (skills.Values[0].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[0].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[0].name);
+                }
+                else
+                {
+                    Skillchoice.Add(skills.Values[0].name);
+                }
                 skills.RemoveAt(0);
             }
             else if (choice < 45)
             {
+                int index = 1;
                 if (skills.Count < 2)
                 {
-                    Skillchoice.Add(skills.Values[0].name);
-                    skills.RemoveAt(0);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[1].name);
-                    skills.RemoveAt(1);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 60)
             {
+                int index = 2;
                 if (skills.Count < 3)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[2].name);
-                    skills.RemoveAt(2);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 72)
             {
+                int index = 3;
                 if (skills.Count < 4)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[3].name);
-                    skills.RemoveAt(3);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 80)
             {
+                int index = 4;
                 if (skills.Count < 5)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[4].name);
-                    skills.RemoveAt(4);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 86)
             {
+                int index = 5;
                 if (skills.Count < 6)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[5].name);
-                    skills.RemoveAt(5);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 91)
             {
+                int index = 6;
                 if (skills.Count < 7)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[6].name);
-                    skills.RemoveAt(6);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 95)
             {
+                int index = 7;
                 if (skills.Count < 8)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[7].name);
-                    skills.RemoveAt(7);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else if (choice < 98)
             {
+                int index = 8;
                 if (skills.Count < 9)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[8].name);
-                    skills.RemoveAt(8);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             else
             {
+                int index = 9;
                 if (skills.Count < 10)
                 {
-                    Skillchoice.Add(skills.Values[skills.Count - 1].name);
-                    skills.RemoveAt(skills.Count - 1);
+                    index = skills.Count - 1;
+                }
+                if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
                 }
                 else
                 {
-                    Skillchoice.Add(skills.Values[9].name);
-                    skills.RemoveAt(9);
+                    Skillchoice.Add(skills.Values[index].name);
                 }
+                skills.RemoveAt(index);
             }
             Debug.Log("Random Value: " + choice);
         }
@@ -214,9 +281,18 @@ public class LevelManager : MonoBehaviour
                 btn1.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
                 btn1.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
                 btn1.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+                if(skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    btn1.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill1;
+                }
+                else
+                {
+                    btn1.transform.GetChild(0).GetComponent<Text>().text = Skill1;
+                }
+                break;
             }
         }
-        btn1.transform.GetChild(0).GetComponent<Text>().text = Skill1;
+        
         Button btn2 = this.transform.GetChild(3).GetComponent<Button>();
         btn2.onClick.RemoveAllListeners();
         btn2.onClick.AddListener(Calls[Skill2]);
@@ -227,9 +303,18 @@ public class LevelManager : MonoBehaviour
                 btn2.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
                 btn2.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
                 btn2.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+                if (skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    btn2.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill2;
+                }
+                else
+                {
+                    btn2.transform.GetChild(0).GetComponent<Text>().text = Skill2;
+                }
+                break;
             }
         }
-        btn2.transform.GetChild(0).GetComponent<Text>().text = Skill2;
+
         Button btn3 = this.transform.GetChild(5).GetComponent<Button>();
         btn3.onClick.RemoveAllListeners();
         btn3.onClick.AddListener(Calls[Skill3]);
@@ -240,9 +325,17 @@ public class LevelManager : MonoBehaviour
                 btn3.GetComponent<Info>().Description = skill.GetComponent<SkillBehavior>().Description;
                 btn3.GetComponent<Info>().width = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.x;
                 btn3.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
+                if (skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
+                {
+                    btn3.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill3;
+                }
+                else
+                {
+                    btn3.transform.GetChild(0).GetComponent<Text>().text = Skill3;
+                }
+                break;
             }
         }
-        btn3.transform.GetChild(0).GetComponent<Text>().text = Skill3;
 
     }
 
@@ -258,8 +351,7 @@ public class LevelManager : MonoBehaviour
         {
             if (!Player.GetComponent<GameManager>().UnlockedFoodScreen.gameObject.activeSelf && this.gameObject.activeSelf)
             {
-                Player.GetComponent<GameManager>().start();
-                Player.GetComponent<GameManager>().BlackBackground.gameObject.SetActive(false);
+                GameObject.Find("Market Screen").transform.GetChild(3).GetComponent<Button>().interactable = true;
             }
             this.gameObject.SetActive(false);
         }
@@ -270,13 +362,15 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<PlayerBehavior>().strength += (currentLevel - pastLevel) * .01f;
         if(!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Strength"))
         {
+            pastLevel = 0;
             Player.GetComponent<PlayerBehavior>().strength += .1f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Strength");
-            Debug.Log("Lesser Strength");
+            AvaliableSkills.Remove(SkillDictionary["Lesser Strength"]);
+            AvaliableSkills.Add(SkillDictionary["Enhanced Strength"]);
         }
+        Player.GetComponent<PlayerBehavior>().strength += (currentLevel - pastLevel) * .01f;
         CheckForMoreSkills();
     }
 
@@ -284,27 +378,31 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().CookingTimeDelay -= (currentLevel - pastLevel) * .25f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Cooking"))
         {
+            pastLevel = 0;
             Player.GetComponent<ResourceManager>().CookingTimeDelay -= 2.5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Cooking");
-            Debug.Log("Basic Cooking");
+            AvaliableSkills.Remove(SkillDictionary["Basic Cooking"]);
+            AvaliableSkills.Add(SkillDictionary["Advanced Cooking"]);
         }
+        Player.GetComponent<ResourceManager>().CookingTimeDelay -= (currentLevel - pastLevel) * .25f;
         CheckForMoreSkills();
     }
 
-    private void LesserSpeed()
+    private void QuickMovement()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<PlayerBehavior>().MovementSpeed += (currentLevel - pastLevel) * .025f;
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Speed"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Movement"))
         {
+            pastLevel = 0;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += .5f;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Lesser Speed");
-            Debug.Log("Lesser Speed");
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Quick Movement");
+            AvaliableSkills.Remove(SkillDictionary["Quick Movement"]);
+            AvaliableSkills.Add(SkillDictionary["Enhanced Movement"]);
         }
+        Player.GetComponent<PlayerBehavior>().MovementSpeed += (currentLevel - pastLevel) * .025f;
         CheckForMoreSkills();
     }
 
@@ -312,12 +410,20 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<PlayerBehavior>().strength += (currentLevel - pastLevel) * .02f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Strength"))
         {
-            Player.GetComponent<PlayerBehavior>().strength += .2f;
+            Player.GetComponent<PlayerBehavior>().strength += ((currentLevel - pastLevel) * .01f);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Lesser Strength");
+
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().strength += .1f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Strength");
-            Debug.Log("Enhanced Strength");
+            AvaliableSkills.Remove(SkillDictionary["Enhanced Strength"]);
+            Player.GetComponent<PlayerBehavior>().strength += ((currentLevel - pastLevel) * .01f);
+        }
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().strength += (currentLevel - pastLevel) * .02f;
         }
         CheckForMoreSkills();
     }
@@ -326,26 +432,40 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().CookingTimeDelay -= (currentLevel - pastLevel) * .5f;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Cooking"))
         {
-            Player.GetComponent<ResourceManager>().CookingTimeDelay -= 5;
+            Player.GetComponent<ResourceManager>().CookingTimeDelay -= ((currentLevel - pastLevel) * .25f);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Cooking");
+            pastLevel = 0;
+            Player.GetComponent<ResourceManager>().CookingTimeDelay -= 2.5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Cooking");
-            Debug.Log("Advanced Cooking");
+            AvaliableSkills.Remove(SkillDictionary["Advanced Cooking"]);
+            Player.GetComponent<ResourceManager>().CookingTimeDelay -= ((currentLevel - pastLevel) * .25f);
+        }
+        else
+        {
+            Player.GetComponent<ResourceManager>().CookingTimeDelay -= (currentLevel - pastLevel) * .5f;
         }
         CheckForMoreSkills();
     }
 
-    private void EnhancedSpeed()
+    private void EnhancedMovement()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<PlayerBehavior>().MovementSpeed += (currentLevel - pastLevel) * .05f;
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Speed"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Movement"))
         {
-            Player.GetComponent<PlayerBehavior>().MovementSpeed += 1;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Speed");
-            Debug.Log("Enhanced Speed");
+            Player.GetComponent<PlayerBehavior>().MovementSpeed += ((currentLevel - pastLevel) * .025f);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Quick Movement");
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().MovementSpeed += .5f;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Movement");
+            AvaliableSkills.Remove(SkillDictionary["Enhanced Movement"]);
+            Player.GetComponent<PlayerBehavior>().MovementSpeed += ((currentLevel - pastLevel) * .025f);
+        }
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().MovementSpeed += (currentLevel - pastLevel) * .05f;
         }
         CheckForMoreSkills();
     }
@@ -354,6 +474,12 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Extra Portion"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Extra Portion");
+            AvaliableSkills.Remove(SkillDictionary["Extra Portion"]);
+        }
         int extraGain = (currentLevel / 5) - (pastLevel / 5);
         Player.GetComponent<ResourceManager>().FruitGain += extraGain; //number of fruits gained with each gather action
         Player.GetComponent<ResourceManager>().WaterGain += extraGain; //number of water gained with each gather action
@@ -363,11 +489,6 @@ public class LevelManager : MonoBehaviour
         Player.GetComponent<ResourceManager>().WaterGlassGain += extraGain; //number of Water created with each create action
         Player.GetComponent<ResourceManager>().NoodleGain += extraGain; //number of Noodles created with each create action
         Player.GetComponent<ResourceManager>().DeAcidFlyGain += extraGain;
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Extra Portion"))
-        {
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Extra Portion");
-            Debug.Log("Extra Portion");
-        }
         CheckForMoreSkills();
     }
 
@@ -375,17 +496,20 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += (currentLevel - pastLevel) * 2;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Drake"))
         {
+            pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().DrakeChance += 20;
             Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
             Customer.GetComponent<CustomerBehavior>().AntiniumChance -= 10;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Drake");
-            Debug.Log("Customer Preference - Drake");
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Drake"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Antinium"]);
         }
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += (currentLevel - pastLevel) * 2;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
         CheckForMoreSkills();
     }
 
@@ -393,17 +517,20 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += (currentLevel - pastLevel) * 2;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Goblin"))
         {
+            pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().DrakeChance -= 10;
             Customer.GetComponent<CustomerBehavior>().GoblinChance += 20;
             Customer.GetComponent<CustomerBehavior>().AntiniumChance -= 10;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Goblin");
-            Debug.Log("Customer Preference - Goblin");
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Drake"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Antinium"]);
         }
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += (currentLevel - pastLevel) * 2;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
         CheckForMoreSkills();
     }
 
@@ -411,17 +538,20 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += (currentLevel - pastLevel) * 2;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Antinium"))
         {
+            pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().DrakeChance -= 10;
             Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
             Customer.GetComponent<CustomerBehavior>().AntiniumChance += 20;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Antinium");
-            Debug.Log("Customer Preference - Antinium");
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Drake"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
+            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Antinium"]);
         }
+        Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance += (currentLevel - pastLevel) * 2;
         CheckForMoreSkills();
     }
 
@@ -429,29 +559,31 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().xpGain += (currentLevel - pastLevel) * 1;
-        Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus += (currentLevel - pastLevel) * 5;
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Magnified Training"))
         {
-            CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().xpGain += 10;
-            Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus += 50;
+            pastLevel = 0;
+            CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().xpGain += 8;
+            Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus += 40;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Magnified Training");
-            Debug.Log("Magnified Training");
+            AvaliableSkills.Remove(SkillDictionary["Magnified Training"]);
         }
+        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().xpGain += (currentLevel - pastLevel) * 1;
+        Player.GetComponent<GameManager>().CustomerSatisfactionXpBonus += (currentLevel - pastLevel) * 5;
         CheckForMoreSkills();
     }
 
-        private void InnCalmingAura()
+    private void InnCalmingPresence()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().LifeTimer += (currentLevel - pastLevel) * 2;
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Calming Aura"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Calming Presence"))
         {
+            pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().LifeTimer += 20;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Calming Aura");
-            Debug.Log("Inn - Calming Aura");
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Calming Presence");
+            AvaliableSkills.Remove(SkillDictionary["Inn - Calming Presence"]);
         }
+        Customer.GetComponent<CustomerBehavior>().LifeTimer += (currentLevel - pastLevel) * 2;
         CheckForMoreSkills();
     }
 
@@ -459,13 +591,15 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Chopping"))
         {
+            pastLevel = 0;
             Player.GetComponent<ResourceManager>().CraftingTimeDelay -= 1.5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Chopping");
-            Debug.Log("Basic Chopping");
+            AvaliableSkills.Remove(SkillDictionary["Basic Chopping"]);
+            AvaliableSkills.Add(SkillDictionary["Advanced Chopping"]);
         }
+        Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
         CheckForMoreSkills();
     }
 
@@ -473,12 +607,19 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .2f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Chopping"))
         {
-            Player.GetComponent<ResourceManager>().CraftingTimeDelay -= 3;
+            Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Chopping");
+            pastLevel = 0;
+            Player.GetComponent<ResourceManager>().CraftingTimeDelay -= 1.5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Chopping");
-            Debug.Log("Advanced Chopping");
+            AvaliableSkills.Remove(SkillDictionary["Advanced Chopping"]);
+            Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
+        }
+        else
+        {
+            Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .2f);
         }
         CheckForMoreSkills();
     }
@@ -487,26 +628,35 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Gathering"))
         {
+            pastLevel = 0;
             Player.GetComponent<ResourceManager>().GatheringTimeDelay -= 1;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Gathering");
-            Debug.Log("Basic Gathering");
+            AvaliableSkills.Remove(SkillDictionary["Basic Gathering"]);
+            AvaliableSkills.Add(SkillDictionary["Advanced Gathering"]);
         }
+        Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
         CheckForMoreSkills();
     }
 
-        private void AdvancedGathering()
+    private void AdvancedGathering()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .1f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Gathering"))
         {
-            Player.GetComponent<ResourceManager>().GatheringTimeDelay -= 2;
+            Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Gathering");
+            pastLevel = 0;
+            Player.GetComponent<ResourceManager>().GatheringTimeDelay -= 1;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Gathering");
-            Debug.Log("Advanced Gathering");
+            AvaliableSkills.Remove(SkillDictionary["Advanced Gathering"]);
+            Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
+        }
+        else
+        {
+            Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .1f);
         }
         CheckForMoreSkills();
     }
@@ -515,13 +665,157 @@ public class LevelManager : MonoBehaviour
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        Customer.GetComponent<CustomerBehavior>().MovementSpeed -= ((currentLevel - pastLevel) * .05f);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Lethargic Steps"))
         {
-            Customer.GetComponent<CustomerBehavior>().MovementSpeed -= .5f;
+            pastLevel = 0;
+            Customer.GetComponent<CustomerBehavior>().MovementSpeed -= 5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Lethargic Steps");
-            Debug.Log("Inn - Lethargic Steps");
+            AvaliableSkills.Remove(SkillDictionary["Inn - Lethargic Steps"]);
         }
+        Customer.GetComponent<CustomerBehavior>().MovementSpeed -= ((currentLevel - pastLevel) * .5f);
+        CheckForMoreSkills();
+    }
+
+    private void DiscountRunner()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Discount Runner"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Discount Runner");
+            AvaliableSkills.Remove(SkillDictionary["Discount Runner"]);
+        }
+        int discount = (currentLevel / 5) - (pastLevel / 5);
+        Player.GetComponent<ResourceManager>().BlueFruit.GetComponent<ItemBehavior>().ItemValue = 
+            Mathf.Max(1, Player.GetComponent<ResourceManager>().BlueFruit.GetComponent<ItemBehavior>().ItemValue - discount);
+        Player.GetComponent<GameManager>().PurchaseBoxPupup.GetChild(3).GetComponent<Info>().Description = 
+            "<b>Buy Blue Fruits</b> - Buy a Blue Fruit for <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().BlueFruit.GetComponent<ItemBehavior>().ItemValue + ")</color> copper coin(s).";
+        Player.GetComponent<ResourceManager>().Water.GetComponent<ItemBehavior>().ItemValue =
+            Mathf.Max(1, Player.GetComponent<ResourceManager>().Water.GetComponent<ItemBehavior>().ItemValue - discount);
+        Player.GetComponent<GameManager>().PurchaseBoxPupup.GetChild(4).GetComponent<Info>().Description =
+            "<b>Buy Water</b> - Buy a bucket of Water for <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().Water.GetComponent<ItemBehavior>().ItemValue + ")</color> copper coin(s).";
+        Player.GetComponent<ResourceManager>().Noodle.GetComponent<ItemBehavior>().ItemValue =
+            Mathf.Max(1, Player.GetComponent<ResourceManager>().Noodle.GetComponent<ItemBehavior>().ItemValue - discount);
+        Player.GetComponent<GameManager>().PurchaseBoxPupup.GetChild(5).GetComponent<Info>().Description =
+            "<b>Buy Acid Flys</b> - Buy a jar of captured Acid Flys for <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().Noodle.GetComponent<ItemBehavior>().ItemValue + ")</color> copper coin(s).";
+        Player.GetComponent<ResourceManager>().AcidFly.GetComponent<ItemBehavior>().ItemValue =
+            Mathf.Max(1, Player.GetComponent<ResourceManager>().AcidFly.GetComponent<ItemBehavior>().ItemValue - discount);
+        Player.GetComponent<GameManager>().PurchaseBoxPupup.GetChild(6).GetComponent<Info>().Description =
+            "<b>Buy Dried Noodles</b> - Buy Dried Noodle for <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().AcidFly.GetComponent<ItemBehavior>().ItemValue + ")</color> copper coin(s).";
+        CheckForMoreSkills();
+    }
+
+    private void FancyFood()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Fancy Food"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Fancy Food");
+            AvaliableSkills.Remove(SkillDictionary["Fancy Food"]);
+        }
+        int markup = (currentLevel / 5) - (pastLevel / 5);
+        Player.GetComponent<ResourceManager>().BlueFruitSlice.GetComponent<ItemBehavior>().ItemValue = Player.GetComponent<ResourceManager>().BlueFruitSlice.GetComponent<ItemBehavior>().ItemValue + markup;
+        Player.GetComponent<ResourceManager>().BlueFruitJuice.GetComponent<ItemBehavior>().ItemValue = Player.GetComponent<ResourceManager>().BlueFruitJuice.GetComponent<ItemBehavior>().ItemValue + markup;
+        Player.GetComponent<ResourceManager>().GlassWater.GetComponent<ItemBehavior>().ItemValue = Player.GetComponent<ResourceManager>().GlassWater.GetComponent<ItemBehavior>().ItemValue + markup;
+        Player.GetComponent<ResourceManager>().PastaBowl.GetComponent<ItemBehavior>().ItemValue = Player.GetComponent<ResourceManager>().PastaBowl.GetComponent<ItemBehavior>().ItemValue + markup;
+        Player.GetComponent<ResourceManager>().DeAcidFly.GetComponent<ItemBehavior>().ItemValue = Player.GetComponent<ResourceManager>().DeAcidFly.GetComponent<ItemBehavior>().ItemValue + markup;
+        CheckForMoreSkills();
+    }
+
+    private void ProficiencyHaggling()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Proficiency - Haggling"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Proficiency - Haggling");
+            AvaliableSkills.Remove(SkillDictionary["Proficiency - Haggling"]);
+        }
+        int discount = (currentLevel / 2) - (pastLevel / 2);
+        Transform content = Player.GetComponent<GameManager>().MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
+        for(int i = 0; i < content.childCount; i++)
+        {
+            if (content.GetChild(i).gameObject.activeSelf)
+            {
+                content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = Mathf.Max(1, content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost - discount);
+            }
+
+            content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) - discount + "";
+
+            if(int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) < 0)
+            {
+                discount = 0;
+                while(int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) < 0)
+                {
+                    content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) + 10 + "";
+                    discount++;
+                }
+                content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) - discount + "";
+
+                if(int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) < 0)
+                {
+                    discount = 0;
+                    while (int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) < 0)
+                    {
+                        content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) + 20 + "";
+                        discount++;
+                    }
+                    content.GetChild(i).GetChild(1).GetChild(1).GetComponent<Text>().text = Mathf.Max(int.Parse(content.GetChild(i).GetChild(1).GetChild(1).GetComponent<Text>().text) - discount, 0) + "";
+                }
+            }
+        }
+        CheckForMoreSkills();
+    }
+
+    private void LocalLandmarkLiscor()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Local Landmark - Liscor"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Local Landmark - Liscor");
+            AvaliableSkills.Remove(SkillDictionary["Local Landmark - Liscor"]);
+        }
+        if((currentLevel / 5) - (pastLevel / 5) > 0)
+        {
+            Transform customerCounter = GameObject.Find("Upset Customer Counter").transform.GetChild(0);
+            Transform newCounter = Instantiate(customerCounter, customerCounter.position + new Vector3(-50 * customerCounter.parent.childCount, 0, 0), customerCounter.transform.rotation);
+            newCounter.parent = customerCounter.parent;
+            Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters.Add(newCounter);
+        }
+        CheckForMoreSkills();
+    }
+
+    private void GenerousTippers()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Generous Tippers"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Generous Tippers");
+            AvaliableSkills.Remove(SkillDictionary["Generous Tippers"]);
+        }
+        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().maxTip += (currentLevel / 2) - (pastLevel / 2);
+        CheckForMoreSkills();
+    }
+
+    private void FieldOfPreservation()
+    {
+        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
+        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Field of Preservation"))
+        {
+            pastLevel = 0;
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Field of Preservation");
+            AvaliableSkills.Remove(SkillDictionary["Field of Preservation"]);
+        }
+        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().maxTip += (currentLevel / 2) - (pastLevel / 2);
         CheckForMoreSkills();
     }
 }

@@ -11,6 +11,7 @@ public class CauldronBehavior : MonoBehaviour
     public Sprite WaterCauldron;
     public Sprite BoilingWaterCauldron;
     public Sprite PastaCauldron;
+    public Sprite CookingPastaCauldron;
 
     //Timer
     private Transform myTimer = null;
@@ -112,7 +113,7 @@ public class CauldronBehavior : MonoBehaviour
             isCookingPasta = true;
             Highlight.gameObject.SetActive(false);
             this.GetComponent<Animator>().enabled = false;
-            this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
+            this.GetComponent<SpriteRenderer>().sprite = CookingPastaCauldron;
             Transform left = Player.GetComponent<PlayerBehavior>().LeftHandObject;
             Transform right = Player.GetComponent<PlayerBehavior>().RightHandObject;
             int NoodleLoss = 3;
@@ -136,6 +137,8 @@ public class CauldronBehavior : MonoBehaviour
                 Player.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(right.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength, 0) * NoodleLoss;
             }
             Player.GetComponent<PlayerBehavior>().checkHand();
+
+            this.GetComponent<AudioSource>().Stop();
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
@@ -191,6 +194,10 @@ public class CauldronBehavior : MonoBehaviour
     {
         isCookingPasta = false;
         isCookedPasta = true;
+        this.GetComponent<SpriteRenderer>().sprite = PastaCauldron;
+        this.GetComponent<AudioSource>().clip = CauldronSounds[0];
+        this.GetComponent<AudioSource>().loop = true;
+        this.GetComponent<AudioSource>().Play();
         if (isCollidingWithPlayer)
         {
             checkForHighlights();

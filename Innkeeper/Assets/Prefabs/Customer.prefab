@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -6148196329642490862}
   - component: {fileID: 3241138680102036579}
   - component: {fileID: 5006616294835904503}
+  - component: {fileID: -7469784706056739520}
   m_Layer: 0
   m_Name: Customer
   m_TagString: Untagged
@@ -98,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe360d0b4a97bd46a0902507908e8c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Popup: {fileID: 0}
+  Popup: {fileID: 939164177370711767, guid: 6dada5c10cbb08842a7113d62fedac05, type: 3}
   InitialTurnOffTimer: 5
 --- !u!61 &5933590265604029105
 BoxCollider2D:
@@ -138,6 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00b8d844cc667244ba6f4ca3fceb258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  customer: 
+  myTimer: {fileID: 0}
   Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   Customers:
   - {fileID: 21300000, guid: f8ffb35868c33314fbe997ff4ae045c3, type: 3}
@@ -149,7 +152,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 4d06ab49a54b12e48b188f4474f8a71a, type: 3}
   - {fileID: 21300000, guid: d1cc3a9671298b54399bc09a67c1bbba, type: 3}
   - {fileID: 21300000, guid: 0a79f7dbcd33c844aab5ea452ffb77da, type: 3}
-  MovementSpeed: 30
+  MovementSpeed: 20
   LifeTimer: 80
   PossibleMeals:
   - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
@@ -157,16 +160,28 @@ MonoBehaviour:
   - {fileID: 8922452976765442218, guid: 77217b49dcf11aa48a5af42671e3328b, type: 3}
   - {fileID: 5890716601929260685, guid: 34f6b54ccd2be124c89c00d4dc1a053e, type: 3}
   - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}
+  HungerValue: 0
   Table: {fileID: 0}
-  OriginalDrakeChance: 33
-  OriginalGoblinChance: 33
-  OriginalAntiniumChance: 33
   DrakeChance: 33
   GoblinChance: 33
   AntiniumChance: 33
   DrakeController: {fileID: 9100000, guid: 02271ca693153764fa8ef3f6012f6f8b, type: 2}
   GoblinController: {fileID: 9100000, guid: 376ee9758c0628c479c097579371edc5, type: 2}
   AntiniumController: {fileID: 9100000, guid: 26443ec754b0c7142999a60bec9281ba, type: 2}
+  DrakeSounds:
+  - {fileID: 8300000, guid: d882622c4fc0ce649987664696348e9e, type: 3}
+  - {fileID: 8300000, guid: b25dc697af313364490646586c359d24, type: 3}
+  - {fileID: 8300000, guid: ec5618b87263d1b42a750cbc0efa6876, type: 3}
+  GoblinSounds:
+  - {fileID: 8300000, guid: 7e19182716d810447a675856c1d4f168, type: 3}
+  - {fileID: 8300000, guid: 06b21ca74c5bec642872aa6131026787, type: 3}
+  - {fileID: 8300000, guid: 10f693ec51d91c6478437a3e40594665, type: 3}
+  AntiniumSounds:
+  - {fileID: 8300000, guid: 823b9f0dbc76a5149a1cbaa82447c58a, type: 3}
+  - {fileID: 8300000, guid: 520c53960cdd77a4aa61e5bac5102e67, type: 3}
+  - {fileID: 8300000, guid: 088e36dbeb4746643868f2958248c00a, type: 3}
+  MoodIndicator: {fileID: 719970757434514794, guid: 7e989adac2590d64c838886d27e2f86c,
+    type: 3}
 --- !u!61 &3241138680102036579
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -212,3 +227,99 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!82 &-7469784706056739520
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286162701436057464}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

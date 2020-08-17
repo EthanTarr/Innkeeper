@@ -47,3 +47,5 @@ MonoBehaviour:
   Level: 9
   Description: Greatly decrease the loss of speed from carrying items
   PreferedToolTipSize: {x: 200, y: 60}
+  PrerequisiteSkill: {fileID: 3919741674956137437, guid: 855e02726ec17bf449f62636250313bd,
+    type: 3}

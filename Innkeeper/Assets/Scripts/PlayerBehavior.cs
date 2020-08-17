@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
 public class PlayerBehavior : MonoBehaviour
 {
     [HideInInspector] public bool controlMovement = true;
@@ -26,7 +27,10 @@ public class PlayerBehavior : MonoBehaviour
 
     public float strength = 0;
 
+    public int money = 0;
+
     public List<string> PlayerSkills = new List<string>();
+    public List<string> Purchases = new List<string>();
 
     public Vector3 HandOffset = new Vector3(3, -1, 0);
 
@@ -35,22 +39,22 @@ public class PlayerBehavior : MonoBehaviour
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
-    public Transform LevelChoices;
+    
     
     // Start is called before the first frame update
     void Start()
     {
         LevelMilestones = new int[11];
         LevelMilestones[0] = -1;
-        LevelMilestones[1] = 100;
-        LevelMilestones[2] = 250;
-        LevelMilestones[3] = 450;
-        LevelMilestones[4] = 700;
-        LevelMilestones[5] = 1000;
-        LevelMilestones[6] = 1500;
-        LevelMilestones[7] = 2100;
-        LevelMilestones[8] = 2850;
-        LevelMilestones[9] = 3700;
+        LevelMilestones[1] = 150;
+        LevelMilestones[2] = 375;
+        LevelMilestones[3] = 675;
+        LevelMilestones[4] = 1050;
+        LevelMilestones[5] = 1500;
+        LevelMilestones[6] = 2250;
+        LevelMilestones[7] = 3150;
+        LevelMilestones[8] = 4350;
+        LevelMilestones[9] = 5550;
         LevelMilestones[10] = int.MaxValue;
 
 
@@ -74,7 +78,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             //To prevent player from not being able to move
             float oldMovement = MovementSpeed;
-            if (MovementSpeed < 0)
+            if (MovementSpeed < 0.1f)
             {
                 MovementSpeed = 0.1f;
             }
@@ -127,7 +131,7 @@ public class PlayerBehavior : MonoBehaviour
                 moveHandObject(105, 99);
             }
             MovementSpeed = oldMovement;
-
+            
             //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 
@@ -166,10 +170,6 @@ public class PlayerBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            LevelChoices.gameObject.SetActive(true);
-        }
 
 
 
@@ -457,6 +457,11 @@ public class PlayerBehavior : MonoBehaviour
             RightHandObject.GetComponent<Rigidbody2D>().MovePosition(Destination + new Vector2(HandOffset.x, HandOffset.y));
             RightHandObject.GetComponent<SpriteRenderer>().sortingOrder = RightLayer;
         }
+    }
+
+    public void addPurchase(string purchase)
+    {
+        Purchases.Add(purchase);
     }
 
     public int xpToLevels(float xp)

@@ -48,3 +48,5 @@ MonoBehaviour:
   Description: Greatly decrease the time it takes to gather food from outside the
     Inn.
   PreferedToolTipSize: {x: 200, y: 80}
+  PrerequisiteSkill: {fileID: 4499464433385202068, guid: 45bac2ce1dc718f479d85032ced3ab7f,
+    type: 3}
