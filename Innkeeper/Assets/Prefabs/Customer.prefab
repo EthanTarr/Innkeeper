@@ -162,9 +162,9 @@ MonoBehaviour:
   - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}
   HungerValue: 0
   Table: {fileID: 0}
-  DrakeChance: 33
-  GoblinChance: 33
-  AntiniumChance: 33
+  DrakeChance: 50
+  GoblinChance: 0
+  AntiniumChance: 50
   DrakeController: {fileID: 9100000, guid: 02271ca693153764fa8ef3f6012f6f8b, type: 2}
   GoblinController: {fileID: 9100000, guid: 376ee9758c0628c479c097579371edc5, type: 2}
   AntiniumController: {fileID: 9100000, guid: 26443ec754b0c7142999a60bec9281ba, type: 2}

@@ -16,6 +16,8 @@ public class ResourceManager : MonoBehaviour
     public float GatheringTimeDelay = 3f;
     public float CookingTimeDelay = 10f;
 
+    public Transform KitchenTable;
+
     public int FruitGain = 5; //number of fruits gained with each gather action
     public int WaterGain = 3; //number of water usages gained with each gather action
     public int BlueFruitJuiceGain = 1; //number of Blue Fruit Juice created with each create action
@@ -137,11 +139,35 @@ public class ResourceManager : MonoBehaviour
             Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
             GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
             GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-            GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-            bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
-            if (!check)
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Ready To Cook") && !KitchenTable.GetComponent<StorageBehaviour>().isFull())
             {
-                Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
+                GatheredObject.transform.localScale = new Vector2(5, 5); //adjust the size of the new object
+                if (KitchenTable.GetComponent<StorageBehaviour>().LeftObject == null)
+                {
+                    KitchenTable.GetComponent<StorageBehaviour>().LeftObject = GatheredObject;
+                    GatheredObject.position = new Vector2(KitchenTable.transform.position.x - KitchenTable.GetComponent<SpriteRenderer>().bounds.size.x / 3, 
+                        KitchenTable.GetComponent<StorageBehaviour>().Highlight.transform.position.y);
+                }
+                else if (KitchenTable.GetComponent<StorageBehaviour>().CenterObject == null)
+                {
+                    KitchenTable.GetComponent<StorageBehaviour>().CenterObject = GatheredObject;
+                    GatheredObject.position = new Vector2(KitchenTable.transform.position.x, KitchenTable.GetComponent<StorageBehaviour>().Highlight.transform.position.y);
+                }
+                else
+                {
+                    KitchenTable.GetComponent<StorageBehaviour>().RightObject = GatheredObject;
+                    GatheredObject.position = new Vector2(KitchenTable.transform.position.x + KitchenTable.GetComponent<SpriteRenderer>().bounds.size.x / 3, 
+                        KitchenTable.GetComponent<StorageBehaviour>().Highlight.transform.position.y);
+                }
+            }
+            else
+            {
+                GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
+                bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
+                if (!check)
+                {
+                    Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
+                }
             }
             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
         }
@@ -420,6 +446,30 @@ public class ResourceManager : MonoBehaviour
     public void Bucket()
     {
         WaterGain++;
+    }
+
+    public void Jar()
+    {
+        DeAcidFlyGain++;
+    }
+
+    public void Strainer()
+    {
+        BlueFruitJuiceGain++;
+    }
+
+    public void Flour()
+    {
+        PastaGain++;
+    }
+
+    public void Knives()
+    {
+        CraftingTimeDelay -= 1;
+        if(CraftingTimeDelay < 0)
+        {
+            CraftingTimeDelay = 0;
+        }
     }
 
     public void stopInvokes()

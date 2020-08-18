@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
     public float MarketTime = 0;
     public float numofDisatisfiedCustomers = 0;
     public float numofSatisfiedCustomers = 0;
+    public float leftovers = 0;
 
 
 
@@ -232,6 +233,7 @@ public class GameManager : MonoBehaviour
         int targetLevel = -1;
         UnlockedFoods = new List<Transform>();
         List<int> removes = new List<int>();
+        MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level);
         foreach (int level in UnlockableFoods.Keys)
         {
             if(GetComponent<PlayerBehavior>().Level >= level)
@@ -321,6 +323,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Sign()
+    {
+        Customer.GetComponent<CustomerBehavior>().DrakeChance -= 17;
+        Customer.GetComponent<CustomerBehavior>().GoblinChance += 33;
+        Customer.GetComponent<CustomerBehavior>().AntiniumChance -= 17;
+        if (this.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Antinium"))
+        {
+            Customer.GetComponent<CustomerBehavior>().GoblinChance -= 1 * this.GetComponent<PlayerBehavior>().Level;
+            Customer.GetComponent<CustomerBehavior>().AntiniumChance += 1 * this.GetComponent<PlayerBehavior>().Level;
+        }
+        else if (this.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Customer Preference - Drake"))
+        {
+            Customer.GetComponent<CustomerBehavior>().GoblinChance -= 1 * this.GetComponent<PlayerBehavior>().Level;
+            Customer.GetComponent<CustomerBehavior>().DrakeChance += 1 * this.GetComponent<PlayerBehavior>().Level;
+        }
+        else
+        {
+            LevelChoices.GetComponent<LevelManager>().AvaliableSkills.Add(LevelChoices.GetComponent<LevelManager>().SkillDictionary["Customer Preference - Goblin"]);
+        }
+    }
+
     public void ResetInn()
     {
         //reset player and camera position and disable them
@@ -363,12 +386,14 @@ public class GameManager : MonoBehaviour
             //get rid of stuff in player hands
             if (this.GetComponent<PlayerBehavior>().LeftHandObject != null)
             {
+                leftovers += this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                 this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemWeight -
                     this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
                 this.GetComponent<PlayerBehavior>().LeftHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
             }
             if (this.GetComponent<PlayerBehavior>().RightHandObject != null)
             {
+                leftovers += this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                 this.GetComponent<PlayerBehavior>().MovementSpeed += Mathf.Max(this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemWeight -
                     this.GetComponent<PlayerBehavior>().strength, 0) * this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount;
                 this.GetComponent<PlayerBehavior>().RightHandObject.GetComponent<ItemBehavior>().ItemCount = 0;
@@ -380,14 +405,17 @@ public class GameManager : MonoBehaviour
             {
                 if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
                 {
+                    leftovers += storage.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount;
                     Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
                 }
                 if (storage.GetComponent<StorageBehaviour>().CenterObject != null)
                 {
+                    leftovers += storage.GetComponent<StorageBehaviour>().CenterObject.GetComponent<ItemBehavior>().ItemCount;
                     Destroy(storage.GetComponent<StorageBehaviour>().CenterObject.gameObject);
                 }
                 if (storage.GetComponent<StorageBehaviour>().RightObject != null)
                 {
+                    leftovers += storage.GetComponent<StorageBehaviour>().RightObject.GetComponent<ItemBehavior>().ItemCount;
                     Destroy(storage.GetComponent<StorageBehaviour>().RightObject.gameObject);
                 }
             }

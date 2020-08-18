@@ -32,4 +32,5 @@ public class Save
     public float MarketTime = 0;
     public float numofDisatisfiedCustomers = 0;
     public float numofSatisfiedCustomers = 0;
+    public float leftovers = 0;
 }

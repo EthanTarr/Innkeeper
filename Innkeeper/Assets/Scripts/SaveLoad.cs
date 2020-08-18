@@ -39,6 +39,7 @@ public static class SaveLoad
         save.MarketTime = Game.MarketTime;
         save.numofDisatisfiedCustomers = Game.numofDisatisfiedCustomers;
         save.numofSatisfiedCustomers = Game.numofSatisfiedCustomers;
+        save.leftovers = Game.leftovers;
 
     BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
@@ -103,6 +104,7 @@ public static class SaveLoad
             Game.MarketTime = save.MarketTime;
             Game.numofDisatisfiedCustomers = save.numofDisatisfiedCustomers;
             Game.numofSatisfiedCustomers = save.numofSatisfiedCustomers;
+            Game.leftovers = save.leftovers;
         }
     }
 }

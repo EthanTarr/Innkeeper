@@ -43,6 +43,8 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Proficiency - Haggling", ProficiencyHaggling);
         Calls.Add("Local Landmark - Liscor", LocalLandmarkLiscor);
         Calls.Add("Generous Tippers", GenerousTippers);
+        Calls.Add("Field of Preservation", FieldOfPreservation);
+        Calls.Add("Ready To Cook", ReadyToCook);
 
         SkillDictionary = new Dictionary<string, Transform>();
         foreach(Transform skill in Skills)
@@ -500,16 +502,27 @@ public class LevelManager : MonoBehaviour
         {
             pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().DrakeChance += 20;
-            Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
+            if (AvaliableSkills.Contains(SkillDictionary["Customer Preference - Goblin"]))
+            {
+                Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
+                AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
+            }
             Customer.GetComponent<CustomerBehavior>().AntiniumChance -= 10;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Drake");
             AvaliableSkills.Remove(SkillDictionary["Customer Preference - Drake"]);
-            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
             AvaliableSkills.Remove(SkillDictionary["Customer Preference - Antinium"]);
         }
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += (currentLevel - pastLevel) * 2;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
+        if (Customer.GetComponent<CustomerBehavior>().GoblinChance == 0)
+        {
+            Customer.GetComponent<CustomerBehavior>().DrakeChance += (currentLevel - pastLevel) * 2;
+            Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 2;
+        }
+        else
+        {
+            Customer.GetComponent<CustomerBehavior>().DrakeChance += (currentLevel - pastLevel) * 2;
+            Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
+            Customer.GetComponent<CustomerBehavior>().AntiniumChance += -(currentLevel - pastLevel) * 1;
+        }
         CheckForMoreSkills();
     }
 
@@ -542,16 +555,27 @@ public class LevelManager : MonoBehaviour
         {
             pastLevel = 0;
             Customer.GetComponent<CustomerBehavior>().DrakeChance -= 10;
-            Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
+            if (AvaliableSkills.Contains(SkillDictionary["Customer Preference - Goblin"]))
+            {
+                Customer.GetComponent<CustomerBehavior>().GoblinChance -= 10;
+                AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
+            }
             Customer.GetComponent<CustomerBehavior>().AntiniumChance += 20;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Customer Preference - Antinium");
             AvaliableSkills.Remove(SkillDictionary["Customer Preference - Drake"]);
-            AvaliableSkills.Remove(SkillDictionary["Customer Preference - Goblin"]);
             AvaliableSkills.Remove(SkillDictionary["Customer Preference - Antinium"]);
         }
-        Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
-        Customer.GetComponent<CustomerBehavior>().AntiniumChance += (currentLevel - pastLevel) * 2;
+        if (Customer.GetComponent<CustomerBehavior>().GoblinChance == 0)
+        {
+            Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 2;
+            Customer.GetComponent<CustomerBehavior>().AntiniumChance += (currentLevel - pastLevel) * 2;
+        }
+        else
+        {
+            Customer.GetComponent<CustomerBehavior>().DrakeChance += -(currentLevel - pastLevel) * 1;
+            Customer.GetComponent<CustomerBehavior>().GoblinChance += -(currentLevel - pastLevel) * 1;
+            Customer.GetComponent<CustomerBehavior>().AntiniumChance += (currentLevel - pastLevel) * 2;
+        }
         CheckForMoreSkills();
     }
 
@@ -807,15 +831,21 @@ public class LevelManager : MonoBehaviour
 
     private void FieldOfPreservation()
     {
-        int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
-        int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Field of Preservation"))
         {
-            pastLevel = 0;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Field of Preservation");
             AvaliableSkills.Remove(SkillDictionary["Field of Preservation"]);
         }
-        CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().maxTip += (currentLevel / 2) - (pastLevel / 2);
+        CheckForMoreSkills();
+    }
+
+    private void ReadyToCook()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Ready To Cook"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Ready To Cook");
+            AvaliableSkills.Remove(SkillDictionary["Ready To Cook"]);
+        }
         CheckForMoreSkills();
     }
 }

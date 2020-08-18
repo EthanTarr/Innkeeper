@@ -71,7 +71,7 @@ public class CustomerBehavior : MonoBehaviour
         {
             thisCustomer = 0;
         }
-        else if (CustomerChance < DrakeChance + GoblinChance)
+        else if (CustomerChance < DrakeChance + AntiniumChance)
         {
             thisCustomer = 3;
         }

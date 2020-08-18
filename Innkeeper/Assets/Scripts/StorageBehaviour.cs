@@ -98,6 +98,11 @@ public class StorageBehaviour : MonoBehaviour
         }
     }
 
+    public bool isFull()
+    {
+        return LeftObject != null && CenterObject != null && RightObject != null;
+    }
+
     private void moveHighlight(Collider2D collision)
     {
         Vector2 PlayerPosition = collision.transform.position;

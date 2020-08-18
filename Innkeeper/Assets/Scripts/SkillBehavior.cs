@@ -29,7 +29,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.chopped / 10;
         }
-        else if (this.gameObject.name.Equals("Basic Gathering") || this.gameObject.name.Equals("Advanced Gathering"))
+        else if (this.gameObject.name.Equals("Basic Gathering") || this.gameObject.name.Equals("Advanced Gathering") || this.gameObject.name.Equals("Ready To Cook"))
         {
             return player.gathered / 10;
         }
@@ -84,6 +84,10 @@ public class SkillBehavior : MonoBehaviour
         else if (this.gameObject.name.Equals("Generous Tippers"))
         {
             return player.numofSatisfiedCustomers / 3;
+        }
+        else if (this.gameObject.name.Equals("Field of Preservation"))
+        {
+            return player.leftovers / 1.5f;
         }
         Debug.LogError("Could not find " + this.gameObject.name);
         return 0;

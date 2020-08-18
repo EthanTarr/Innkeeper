@@ -331,10 +331,12 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool GiveObject(Transform ItemForPlayer)
     {
+        /*   Forces items to be the max at most if given to the player
         if (ItemForPlayer.GetComponent<ItemBehavior>().ItemCount > ItemForPlayer.GetComponent<ItemBehavior>().ItemMax)
         {
             ItemForPlayer.GetComponent<ItemBehavior>().ItemCount = ItemForPlayer.GetComponent<ItemBehavior>().ItemMax;
         }
+        */
         if (LeftHandObject == null && !(RightHandObject != null && RightHandObject.name.Equals(ItemForPlayer.name) && 
             (RightHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount <= RightHandObject.GetComponent<ItemBehavior>().ItemMax)))
         {
@@ -462,6 +464,11 @@ public class PlayerBehavior : MonoBehaviour
     public void addPurchase(string purchase)
     {
         Purchases.Add(purchase);
+    }
+
+    public void Shoes()
+    {
+        MovementSpeed += .5f;
     }
 
     public int xpToLevels(float xp)
