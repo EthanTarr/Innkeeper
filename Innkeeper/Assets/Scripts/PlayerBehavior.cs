@@ -39,6 +39,8 @@ public class PlayerBehavior : MonoBehaviour
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
+    private bool canDash = true;
+
     
     
     // Start is called before the first frame update
@@ -82,7 +84,13 @@ public class PlayerBehavior : MonoBehaviour
             {
                 MovementSpeed = 0.1f;
             }
-
+            if(PlayerSkills.Contains("Diner Dash") && Input.GetKey(KeyCode.X) && canDash)
+            {
+                MovementSpeed += 2;
+                canDash = false;
+                this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+                StartCoroutine("DashRecharge");
+            }
             //calculating where to move
             PreviousDestination = Destination;
             Destination = transform.position;
@@ -303,6 +311,7 @@ public class PlayerBehavior : MonoBehaviour
                 checkHand();
             }
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -517,5 +526,12 @@ public class PlayerBehavior : MonoBehaviour
         {
             return 10;
         }
+    }
+
+    IEnumerator DashRecharge()
+    {
+        yield return new WaitForSeconds(15f - 1.4f * Level);
+        canDash = true;
+        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }
 }

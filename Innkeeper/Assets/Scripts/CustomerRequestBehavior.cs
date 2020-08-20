@@ -52,6 +52,7 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
+    
 
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()

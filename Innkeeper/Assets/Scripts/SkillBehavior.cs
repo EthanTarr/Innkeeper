@@ -17,7 +17,7 @@ public class SkillBehavior : MonoBehaviour
     private float ModSkill()
     {
         GameManager player = GameObject.Find("Player").GetComponent<GameManager>();
-        if (this.gameObject.name.Equals("Quick Movement") || this.gameObject.name.Equals("Enhanced Movement"))
+        if (this.gameObject.name.Equals("Quick Movement") || this.gameObject.name.Equals("Enhanced Movement") || this.gameObject.name.Equals("Diner Dash"))
         {
             return player.steps / 20000;
         }
@@ -77,7 +77,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.MarketTime / 200;
         }
-        else if (this.gameObject.name.Equals("Local Landmark - Liscor"))
+        else if (this.gameObject.name.Equals("Local Landmark - Liscor") || this.gameObject.name.Equals("Stay Awhile"))
         {
             return player.numofDisatisfiedCustomers;
         }

@@ -848,4 +848,26 @@ public class LevelManager : MonoBehaviour
         }
         CheckForMoreSkills();
     }
+
+    private void StayAwhile()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Stay Awhile"))
+        {
+            Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.SetActive(true);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Stay Awhile");
+            AvaliableSkills.Remove(SkillDictionary["Stay Awhile"]);
+        }
+        CheckForMoreSkills();
+    }
+
+    private void DinerDash()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Diner Dash"))
+        {
+            Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Diner Dash");
+            AvaliableSkills.Remove(SkillDictionary["Diner Dash"]);
+        }
+        CheckForMoreSkills();
+    }
 }

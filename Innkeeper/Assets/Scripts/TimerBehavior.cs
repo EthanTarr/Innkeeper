@@ -6,6 +6,7 @@ public class TimerBehavior : MonoBehaviour
 {
     public List<Transform> Arrows;
 
+    public Sprite GreenArrow;
     public Sprite OrangeArrow;
     public Sprite RedArrow;
 
@@ -28,6 +29,21 @@ public class TimerBehavior : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void reset()
+    {
+        StopAllCoroutines();
+        count = 0;
+        for (int i = 0; i < this.transform.childCount - 1; i++)
+        {
+            this.transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = GreenArrow;
+            this.transform.GetChild(i).localPosition = new Vector2(.32f, .4f);
+            this.transform.GetChild(i).localRotation = Quaternion.Euler(0, 0, 90);
+            this.transform.GetChild(i).GetComponent<SpriteRenderer>().flipX = false;
+            this.transform.GetChild(i).GetComponent<SpriteRenderer>().flipY = false;
+        }
+        startCounting(this.time);
     }
 
     public void startCounting(float time)

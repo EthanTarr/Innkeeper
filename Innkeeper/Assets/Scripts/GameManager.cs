@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     public Transform TitleScreen;
     public Transform MarketScreen;
     public Transform PurchaseBoxPupup;
+    public Transform DashIndicator;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject BlackFade;
