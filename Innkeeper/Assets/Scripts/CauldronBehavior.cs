@@ -163,6 +163,7 @@ public class CauldronBehavior : MonoBehaviour
             this.GetComponent<AudioSource>().loop = false;
             this.GetComponent<AudioSource>().Play();
             Player.GetComponent<GameManager>().cooked++;
+            Player.GetComponent<GameManager>().cauldronFilled++;
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
@@ -175,7 +176,8 @@ public class CauldronBehavior : MonoBehaviour
         }
     }
 
-    private void boiledWater()
+
+    public void boiledWater()
     {
         isUnboiledWater = false;
         isBoiledWater = true;
@@ -184,6 +186,7 @@ public class CauldronBehavior : MonoBehaviour
         this.GetComponent<AudioSource>().clip = CauldronSounds[0];
         this.GetComponent<AudioSource>().loop = true;
         this.GetComponent<AudioSource>().Play();
+        Player.GetComponent<GameManager>().cauldronBoiled++;
         if (isCollidingWithPlayer)
         {
             checkForHighlights();

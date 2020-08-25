@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public float CustomerSatisfactionXpBonus = 50f;
 
     public List<Transform> StorageTables;
+    public List<Transform> CauldronPopups;
     public Transform Customer;
     public Transform EndOfDayScreen;
     public Transform BlackBackground;
@@ -73,6 +74,8 @@ public class GameManager : MonoBehaviour
     public float numofDisatisfiedCustomers = 0;
     public float numofSatisfiedCustomers = 0;
     public float leftovers = 0;
+    public float cauldronFilled = 0;
+    public float cauldronBoiled = 0;
 
 
 

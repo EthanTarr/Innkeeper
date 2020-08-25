@@ -40,6 +40,8 @@ public static class SaveLoad
         save.numofDisatisfiedCustomers = Game.numofDisatisfiedCustomers;
         save.numofSatisfiedCustomers = Game.numofSatisfiedCustomers;
         save.leftovers = Game.leftovers;
+        save.cauldronFilled = Game.cauldronFilled;
+        save.cauldronBoiled = Game.cauldronBoiled;
 
     BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
@@ -105,6 +107,8 @@ public static class SaveLoad
             Game.numofDisatisfiedCustomers = save.numofDisatisfiedCustomers;
             Game.numofSatisfiedCustomers = save.numofSatisfiedCustomers;
             Game.leftovers = save.leftovers;
+            Game.cauldronFilled = save.cauldronFilled;
+            Game.cauldronBoiled = save.cauldronBoiled;
         }
     }
 }

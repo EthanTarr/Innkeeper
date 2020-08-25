@@ -45,6 +45,7 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Generous Tippers", GenerousTippers);
         Calls.Add("Field of Preservation", FieldOfPreservation);
         Calls.Add("Ready To Cook", ReadyToCook);
+        Calls.Add("Fill Container - Water", FillContainerWater);
 
         SkillDictionary = new Dictionary<string, Transform>();
         foreach(Transform skill in Skills)
@@ -867,6 +868,36 @@ public class LevelManager : MonoBehaviour
             Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Diner Dash");
             AvaliableSkills.Remove(SkillDictionary["Diner Dash"]);
+        }
+        CheckForMoreSkills();
+    }
+
+    private void FillContainerWater()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Fill Container - Water"))
+        {
+            Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Fill Container - Water");
+            AvaliableSkills.Remove(SkillDictionary["Fill Container - Water"]);
+            foreach(Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
+            {
+                popup.GetChild(5).gameObject.SetActive(true);
+            }
+        }
+        CheckForMoreSkills();
+    }
+
+    private void QuickBoiling()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Boiling"))
+        {
+            Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Quick Boiling");
+            AvaliableSkills.Remove(SkillDictionary["Quick Boiling"]);
+            foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
+            {
+                popup.GetChild(6).gameObject.SetActive(true);
+            }
         }
         CheckForMoreSkills();
     }

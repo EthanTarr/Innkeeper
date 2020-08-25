@@ -89,6 +89,14 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.leftovers / 1.5f;
         }
+        else if (this.gameObject.name.Equals("Fill Container - Water"))
+        {
+            return player.cauldronFilled;
+        }
+        else if (this.gameObject.name.Equals("Quick Boiling"))
+        {
+            return player.cauldronBoiled;
+        }
         Debug.LogError("Could not find " + this.gameObject.name);
         return 0;
     }

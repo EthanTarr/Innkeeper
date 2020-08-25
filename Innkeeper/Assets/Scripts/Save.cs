@@ -33,4 +33,6 @@ public class Save
     public float numofDisatisfiedCustomers = 0;
     public float numofSatisfiedCustomers = 0;
     public float leftovers = 0;
+    public float cauldronFilled = 0;
+    public float cauldronBoiled = 0;
 }
