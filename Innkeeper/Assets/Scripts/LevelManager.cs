@@ -46,6 +46,9 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Field of Preservation", FieldOfPreservation);
         Calls.Add("Ready To Cook", ReadyToCook);
         Calls.Add("Fill Container - Water", FillContainerWater);
+        Calls.Add("Quick Boiling", QuickBoiling);
+        Calls.Add("Any Meal Will Do", AnyMealWillDo);
+        Calls.Add("Inn, My Hand", InnMyHand);
 
         SkillDictionary = new Dictionary<string, Transform>();
         foreach(Transform skill in Skills)
@@ -869,6 +872,8 @@ public class LevelManager : MonoBehaviour
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Diner Dash");
             AvaliableSkills.Remove(SkillDictionary["Diner Dash"]);
         }
+        Player.GetComponent<PlayerBehavior>().canDash = true;
+        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
         CheckForMoreSkills();
     }
 
@@ -898,6 +903,29 @@ public class LevelManager : MonoBehaviour
             {
                 popup.GetChild(6).gameObject.SetActive(true);
             }
+        }
+        CheckForMoreSkills();
+    }
+
+    private void AnyMealWillDo()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do"))
+        {
+            Player.GetComponent<GameManager>().AnyMealWillDoIndicator.gameObject.SetActive(true);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Any Meal Will Do");
+            AvaliableSkills.Remove(SkillDictionary["Any Meal Will Do"]);
+        }
+        Player.GetComponent<GameManager>().canAnyMeal = true;
+        Player.GetComponent<GameManager>().AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        CheckForMoreSkills();
+    }
+
+    private void InnMyHand()
+    {
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand"))
+        {
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn, My Hand");
+            AvaliableSkills.Remove(SkillDictionary["Inn, My Hand"]);
         }
         CheckForMoreSkills();
     }

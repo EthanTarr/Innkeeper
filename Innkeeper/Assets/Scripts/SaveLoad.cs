@@ -42,6 +42,7 @@ public static class SaveLoad
         save.leftovers = Game.leftovers;
         save.cauldronFilled = Game.cauldronFilled;
         save.cauldronBoiled = Game.cauldronBoiled;
+        save.mealsServed = Game.mealsServed;
 
     BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
@@ -109,6 +110,7 @@ public static class SaveLoad
             Game.leftovers = save.leftovers;
             Game.cauldronFilled = save.cauldronFilled;
             Game.cauldronBoiled = save.cauldronBoiled;
+            Game.mealsServed = save.mealsServed;
         }
     }
 }

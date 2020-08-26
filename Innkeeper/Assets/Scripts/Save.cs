@@ -35,4 +35,5 @@ public class Save
     public float leftovers = 0;
     public float cauldronFilled = 0;
     public float cauldronBoiled = 0;
+    public float mealsServed = 0;
 }

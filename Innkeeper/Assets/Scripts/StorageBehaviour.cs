@@ -103,6 +103,28 @@ public class StorageBehaviour : MonoBehaviour
         return LeftObject != null && CenterObject != null && RightObject != null;
     }
 
+    public bool contains(Sprite Object)
+    {
+        return LeftObject.GetComponent<SpriteRenderer>().sprite.Equals(Object) || CenterObject.GetComponent<SpriteRenderer>().sprite.Equals(Object) || RightObject.GetComponent<SpriteRenderer>().sprite.Equals(Object);
+    }
+
+    public Transform retrieve(Sprite Object)
+    {
+        if(LeftObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return LeftObject;
+        }
+        else if (CenterObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return CenterObject;
+        }
+        else if (RightObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return RightObject;
+        }
+        return null;
+    }
+
     private void moveHighlight(Collider2D collision)
     {
         Vector2 PlayerPosition = collision.transform.position;

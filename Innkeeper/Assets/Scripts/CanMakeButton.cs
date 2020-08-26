@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class CanMakeButton : MonoBehaviour
 {
+    private Transform Player;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Player = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
@@ -17,7 +18,7 @@ public class CanMakeButton : MonoBehaviour
     {
         if (this.transform.parent.gameObject.activeSelf)
         {
-            if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
+            if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && Player.GetComponent<PlayerBehavior>().Level < 6)
             {
                 this.GetComponent<Button>().interactable = false;
             }
@@ -57,17 +58,17 @@ public class CanMakeButton : MonoBehaviour
             }
 
 
-            if (this.name.Equals("DeAcid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+            if (this.name.Equals("DeAcid Fly Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.2f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
             {
                 this.GetComponent<Button>().interactable = false;
             }
-            else if (this.name.Equals("Slice Blue Fruit Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+            else if (this.name.Equals("Slice Blue Fruit Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.08f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 2))
             {
                 this.GetComponent<Button>().interactable = false;
             }
-            else if (this.name.Equals("Blue Fruit Juice Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+            else if (this.name.Equals("Blue Fruit Juice Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.4f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 1))
             {
                 this.GetComponent<Button>().interactable = false;

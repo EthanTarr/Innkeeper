@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     public int numOfDisSatisfiedCustomers = 0;
     public float CustomerSatisfactionXpBonus = 50f;
 
+    public bool canAnyMeal = false;
+
     public List<Transform> StorageTables;
     public List<Transform> CauldronPopups;
     public Transform Customer;
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
     public Transform MarketScreen;
     public Transform PurchaseBoxPupup;
     public Transform DashIndicator;
+    public Transform AnyMealWillDoIndicator;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject BlackFade;
@@ -76,6 +79,7 @@ public class GameManager : MonoBehaviour
     public float leftovers = 0;
     public float cauldronFilled = 0;
     public float cauldronBoiled = 0;
+    public float mealsServed = 0;
 
 
 
@@ -131,6 +135,14 @@ public class GameManager : MonoBehaviour
         {
             crowdSound.GetComponent<AudioSource>().Stop();
         }
+
+        //Any Meal Will Do Skill
+        if(canAnyMeal && Input.GetKey(KeyCode.Z))
+        {
+            canAnyMeal = false;
+            AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+            StartCoroutine("AnyMealWillDoRecharge");
+        }
     }
 
     public void loadGame()
@@ -179,6 +191,30 @@ public class GameManager : MonoBehaviour
         populateUnlockableFoods();
     }
 
+    public bool StorageTableContains (Sprite Object)
+    {
+        foreach(Transform store in StorageTables)
+        {
+            if(store.GetComponent<StorageBehaviour>().contains(Object))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Transform StorageTableRetrieve (Sprite Object)
+    {
+        foreach (Transform store in StorageTables)
+        {
+            if (store.GetComponent<StorageBehaviour>().contains(Object))
+            {
+                return store.GetComponent<StorageBehaviour>().retrieve(Object);
+            }
+        }
+        return null;
+    }
+
     IEnumerator SpawnCustomer()
     {
         yield return new WaitForSeconds(DayStartDelay); //delay to start the day
@@ -224,6 +260,13 @@ public class GameManager : MonoBehaviour
             TimelineCount++;
             yield return new WaitForSeconds(1);
         }
+    }
+
+    IEnumerator AnyMealWillDoRecharge()
+    {
+        yield return new WaitForSeconds(60f - 2f * this.GetComponent<PlayerBehavior>().Level);
+        canAnyMeal = true;
+        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }
 
     private void populateUnlockableFoods()
@@ -360,6 +403,12 @@ public class GameManager : MonoBehaviour
 
         //turn off skills list if open
         SkillList.SetActive(false);
+
+        //stops the recharge of the dashing ability
+        if(this.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Diner Dash"))
+        {
+            this.GetComponent<PlayerBehavior>().stopDashRecharge();
+        }
 
         //stop counitng time, and spawining customers
         StopAllCoroutines();

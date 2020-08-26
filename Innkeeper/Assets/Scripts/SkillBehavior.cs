@@ -97,6 +97,10 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.cauldronBoiled;
         }
+        else if (this.gameObject.name.Equals("Any Meal Will Do") || this.gameObject.name.Equals("Inn, My Hand"))
+        {
+            return player.mealsServed / 3f;
+        }
         Debug.LogError("Could not find " + this.gameObject.name);
         return 0;
     }

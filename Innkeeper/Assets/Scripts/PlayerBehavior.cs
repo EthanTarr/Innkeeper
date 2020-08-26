@@ -39,7 +39,7 @@ public class PlayerBehavior : MonoBehaviour
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
-    private bool canDash = true;
+    public bool canDash = false;
 
     
     
@@ -84,7 +84,7 @@ public class PlayerBehavior : MonoBehaviour
             {
                 MovementSpeed = 0.1f;
             }
-            if(PlayerSkills.Contains("Diner Dash") && Input.GetKey(KeyCode.X) && canDash)
+            if(canDash && Input.GetKey(KeyCode.X))
             {
                 MovementSpeed += 2;
                 canDash = false;
@@ -526,6 +526,11 @@ public class PlayerBehavior : MonoBehaviour
         {
             return 10;
         }
+    }
+
+    public void stopDashRecharge()
+    {
+        StopAllCoroutines();
     }
 
     IEnumerator DashRecharge()
