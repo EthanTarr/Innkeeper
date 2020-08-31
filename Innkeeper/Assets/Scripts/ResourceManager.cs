@@ -28,6 +28,8 @@ public class ResourceManager : MonoBehaviour
     public int WaterGlassGain = 5;
     public int PastaGain = 3;
 
+    public List<Transform> Foods;
+
     public Transform BlueFruit;
     public Transform Water;
     public Transform BlueFruitJuice;
@@ -441,26 +443,44 @@ public class ResourceManager : MonoBehaviour
     public void FruitBasket()
     {
         FruitGain++;
+        Player.GetComponent<GameManager>().DoorPopup.GetChild(3).GetComponent<Info>().Description =
+            "<b>Gather Blue Fruits</b> - Gather <color=#F7D64A>(" + FruitGain +
+            ")</color> Blue Fruits from a nearby orchird of trees. They seem edible.";
     }
 
     public void Bucket()
     {
         WaterGain++;
+        Player.GetComponent<GameManager>().DoorPopup.GetChild(4).GetComponent<Info>().Description =
+            "<b>Gather Water</b> - Gather <color=#F7D64A>(" + WaterGain +
+            ")</color> Buckets of Water from the nearby stream.";
     }
 
     public void Jar()
     {
         DeAcidFlyGain++;
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(3).GetComponent<Info>().Description =
+            "<b>Seperate Acid from Flies</b> - Violently shake <color=#F7D64A>(1)</color> Jar of Acid Flies to kill the fragile creatures. Then seperate the fly corpses from the acid and place them into <color=#F7D64A>(" +
+            DeAcidFlyGain + ")</color> bowls.";
     }
 
     public void Strainer()
     {
         BlueFruitJuiceGain++;
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(5).GetComponent<Info>().Description =
+            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(" + BlueFruitJuiceGain +
+            ")</color> glasses of water to create <color=#F7D64A>(3)</color> glasses of blue fruit juice.";
     }
 
     public void Flour()
     {
         PastaGain++;
+        foreach (Transform cauldronPopup in Player.GetComponent<GameManager>().CauldronPopups)
+        {
+            cauldronPopup.GetChild(3).GetComponent<Info>().Description =
+            "<b>Boil some pasta</b> - Use <color=#F7D64A>(3)</color> Dried Noodles from your hand to boil it into <color=#F7D64A>(" + PastaGain +
+            ")</color> Bowls of Pasta.";
+        }
     }
 
     public void Knives()

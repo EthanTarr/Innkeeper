@@ -8,6 +8,8 @@ public class StorageBehaviour : MonoBehaviour
     public Transform CenterObject;
     public Transform RightObject;
     public Transform Highlight;
+
+    private Transform Player;
     
     // Start is called before the first frame update
     void Start()
@@ -16,6 +18,7 @@ public class StorageBehaviour : MonoBehaviour
         {
             Debug.LogError(name + " could not find Highlight on startup");
         }
+        Player = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
@@ -123,6 +126,35 @@ public class StorageBehaviour : MonoBehaviour
             return RightObject;
         }
         return null;
+    }
+
+    public void Decode(int[] foods)
+    {
+        LeftObject = Player.GetComponent<ResourceManager>().Foods[foods[0]];
+        CenterObject = Player.GetComponent<ResourceManager>().Foods[foods[1]];
+        RightObject = Player.GetComponent<ResourceManager>().Foods[foods[2]];
+    }
+
+    public int[] Encode()
+    {
+        int[] temp = new int[3];
+        int count = 0;
+        foreach(Transform food in Player.GetComponent<ResourceManager>().Foods)
+        {
+            if(LeftObject != null && LeftObject.name.Equals(food.name))
+            {
+                temp[0] = count;
+            }
+            if (CenterObject != null && CenterObject.name.Equals(food.name))
+            {
+                temp[1] = count;
+            }
+            if (RightObject != null && RightObject.name.Equals(food.name))
+            {
+                temp[2] = count;
+            }
+        }
+        return temp;
     }
 
     private void moveHighlight(Collider2D collision)

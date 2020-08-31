@@ -12,15 +12,20 @@ public class PurchaseInfo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cost += int.Parse(this.transform.GetChild(1).GetComponent<Text>().text) * 200;
-        Cost += int.Parse(this.transform.GetChild(3).GetComponent<Text>().text) * 10;
-        Cost += int.Parse(this.transform.GetChild(5).GetComponent<Text>().text);
+        updateCost();
     }
 
     // Update is called once per frame
     void Update()
     {
         Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
+    }
+
+    public void updateCost()
+    {
+        this.transform.GetChild(1).GetComponent<Text>().text = (Cost / 200) + "";
+        this.transform.GetChild(3).GetComponent<Text>().text = ((Cost % 200) / 10) + "";
+        this.transform.GetChild(5).GetComponent<Text>().text = (Cost % 10) + "";
     }
 
     public void Purchase()

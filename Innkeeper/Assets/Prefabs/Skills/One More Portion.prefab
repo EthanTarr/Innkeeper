@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3903024030588317552}
   - component: {fileID: 5422265092108592306}
   m_Layer: 0
-  m_Name: Extra Portion
+  m_Name: One More Portion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,5 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base: 47
   Level: 9
-  Description: Increases the amount of food gained from all sources.
+  Description: Increases the amount of food gained when cooking.
   PreferedToolTipSize: {x: 200, y: 60}
+  PrerequisiteSkill: {fileID: 0}

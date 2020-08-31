@@ -25,7 +25,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.lifts / 5000;
         }
-        else if (this.gameObject.name.Equals("Basic Chopping") || this.gameObject.name.Equals("Skill Change - Basic Chopping - Advanced Chopping"))
+        else if (this.gameObject.name.Equals("Basic Preparation") || this.gameObject.name.Equals("Advanced Prepation"))
         {
             return player.chopped / 10;
         }
@@ -49,7 +49,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.goblins / 5;
         }
-        else if (this.gameObject.name.Equals("Extra Portion"))
+        else if (this.gameObject.name.Equals("One More Portion"))
         {
             return (player.gathered + player.cooked + player.chopped) / 30;
         }
@@ -81,7 +81,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.numofDisatisfiedCustomers;
         }
-        else if (this.gameObject.name.Equals("Generous Tippers"))
+        else if (this.gameObject.name.Equals("Inn - Generous Tippers"))
         {
             return player.numofSatisfiedCustomers / 3;
         }

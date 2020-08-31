@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public List<Transform> Tables;
     public List<Transform> DisSatisfiedCustomerCounters;
 
-    public Dictionary<int, Transform> UnlockableFoods = new Dictionary<int, Transform>();
+    public Dictionary<int, string> UnlockableFoods = new Dictionary<int, string>();
 
     //Spawning values
     public float MinSpawnTime = 60f;
@@ -19,16 +19,14 @@ public class GameManager : MonoBehaviour
     private float OriginalMaxSpawnTime = 80f;
     public float SpawnTimerIncreaseRate = 40f;
     public float SpawnTimerIncreaseAmount = .92f;
-    private float startingIncreaseAmount;
 
     public int TimelineCount = 0;
     public int DayCount = 0;
-    public int DayTimeLimit = 80;
-    private int startingDayTimeLimit; 
+    public int DayTimeLimit = 80; 
     public int DayStartDelay = 15;
-    private int startingDayStartDelay;
 
-    private List<Transform> UnlockedFoods;
+    public List<Transform> FoodNeedingUnlocks;
+    private List<string> UnlockedFoods;
 
     public int numOfSatisfiedCustomers = 0;
     public int numOfDisSatisfiedCustomers = 0;
@@ -38,6 +36,8 @@ public class GameManager : MonoBehaviour
 
     public List<Transform> StorageTables;
     public List<Transform> CauldronPopups;
+    public Transform CraftingPopup;
+    public Transform DoorPopup;
     public Transform Customer;
     public Transform EndOfDayScreen;
     public Transform BlackBackground;
@@ -86,12 +86,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        startingIncreaseAmount = SpawnTimerIncreaseAmount; //to use when reseting the game
-        startingDayTimeLimit = DayTimeLimit;
-        startingDayStartDelay = DayStartDelay;
 
         populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
-
+        SaveLoad.SaveBlank();
     }
 
     // Update is called once per frame
@@ -178,16 +175,7 @@ public class GameManager : MonoBehaviour
     public void restart()
     {
         ResetInn();
-        DayCount = 0;
-        this.GetComponent<PlayerBehavior>().PreviousXp = 0;
-        this.GetComponent<PlayerBehavior>().xp = 0;
-        this.GetComponent<PlayerBehavior>().Level = 0;
-        this.GetComponent<PlayerBehavior>().PlayerSkills = new List<string>();
-        EndOfDayScreen.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().originalPercentage = 0;
-        SpawnTimerIncreaseAmount = startingIncreaseAmount;
-        DayTimeLimit = startingDayTimeLimit;
-        DayStartDelay = startingDayStartDelay;
-        UnlockableFoods = new Dictionary<int, Transform>();
+        SaveLoad.Load("/blankGame.ent");
         populateUnlockableFoods();
     }
 
@@ -269,16 +257,56 @@ public class GameManager : MonoBehaviour
         AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }
 
+    public void createDisSatisfiedCustomerCounters()
+    {
+        Transform customerCounter = GameObject.Find("Upset Customer Counter").transform.GetChild(0);
+        Transform newCounter = Instantiate(customerCounter, customerCounter.position + new Vector3(-50 * customerCounter.parent.childCount, 0, 0), customerCounter.transform.rotation);
+        newCounter.parent = customerCounter.parent;
+        DisSatisfiedCustomerCounters.Add(newCounter);
+    }
+
+    public List<bool> encodeActiveSkills()
+    {
+        List<bool> skillActives = new List<bool>();
+        skillActives.Add(Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.activeSelf);
+        skillActives.Add(DashIndicator.gameObject.activeSelf);
+        foreach (Transform popup in CauldronPopups)
+        {
+            skillActives.Add(popup.GetChild(5).gameObject.activeSelf);
+        }
+        foreach (Transform popup in CauldronPopups)
+        {
+            skillActives.Add(popup.GetChild(6).gameObject.activeSelf);
+        }
+        skillActives.Add(AnyMealWillDoIndicator.gameObject.activeSelf);
+        return skillActives;
+    }
+
+    public void decodeActiveSkills(List<bool> skillActives)
+    {
+        Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.SetActive(skillActives[0]);
+        DashIndicator.gameObject.SetActive(skillActives[1]);
+        foreach (Transform popup in CauldronPopups)
+        {
+            popup.GetChild(5).gameObject.SetActive(skillActives[2]);
+        }
+        foreach (Transform popup in CauldronPopups)
+        {
+            popup.GetChild(6).gameObject.SetActive(skillActives[3]);
+        }
+        AnyMealWillDoIndicator.gameObject.SetActive(skillActives[4]);
+    }
+
     private void populateUnlockableFoods()
     {
-        UnlockableFoods.Add(3, GetComponent<ResourceManager>().PastaBowl);
-        UnlockableFoods.Add(6, GetComponent<ResourceManager>().DeAcidFly);
+        UnlockableFoods.Add(3, GetComponent<ResourceManager>().PastaBowl.name);
+        UnlockableFoods.Add(6, GetComponent<ResourceManager>().DeAcidFly.name);
     }
 
     private void findUnlockedFood()
     {
         int targetLevel = -1;
-        UnlockedFoods = new List<Transform>();
+        UnlockedFoods = new List<string>();
         List<int> removes = new List<int>();
         MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level);
         foreach (int level in UnlockableFoods.Keys)
@@ -292,8 +320,14 @@ public class GameManager : MonoBehaviour
         }
         if (targetLevel > -1)
         {
-            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0].name + "!";
-            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockedFoods[0].GetComponent<SpriteRenderer>().sprite;
+            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0] + "!";
+            foreach(Transform food in FoodNeedingUnlocks)
+            {
+                if(food.name.Equals(UnlockedFoods[0]))
+                {
+                    UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = food.GetComponent<SpriteRenderer>().sprite;
+                }
+            }
             UnlockedFoods.Remove(UnlockedFoods[0]);
             UnlockedFoodScreen.gameObject.SetActive(true);
         }
@@ -307,14 +341,38 @@ public class GameManager : MonoBehaviour
     {
         if (UnlockedFoods.Count > 0)
         {
-            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0].name + "!";
-            UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = UnlockedFoods[0].GetComponent<SpriteRenderer>().sprite;
+            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0] + "!";
+            foreach (Transform food in FoodNeedingUnlocks)
+            {
+                if (food.name.Equals(UnlockedFoods[0]))
+                {
+                    UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = food.GetComponent<SpriteRenderer>().sprite;
+                }
+            }
             UnlockedFoods.Remove(UnlockedFoods[0]);
         }
         else
         {
             UnlockedFoodScreen.gameObject.SetActive(false);
             MarketScreen.GetChild(3).GetComponent<Button>().interactable = true;
+        }
+    }
+
+    public List<int[]> tableToSave()
+    {
+        List<int[]> Tables = new List<int[]>();
+        foreach(Transform table in StorageTables)
+        {
+            Tables.Add(table.GetComponent<StorageBehaviour>().Encode());
+        }
+        return Tables;
+    }
+
+    public void savetoTable(List<int[]> tables)
+    {
+        for (int i = 0; i < StorageTables.Count; i++)
+        {
+            StorageTables[i].GetComponent<StorageBehaviour>().Decode(tables[i]);
         }
     }
 

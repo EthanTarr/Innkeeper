@@ -32,9 +32,9 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Customer Preference - Drake", CustomerPreferenceDrake);
         Calls.Add("Inn - Calming Presence", InnCalmingPresence);
         Calls.Add("Magnified Training", MagnifiedTraining);
-        Calls.Add("Extra Portion", ExtraPortion);
-        Calls.Add("Basic Chopping", BasicChopping);
-        Calls.Add("Advanced Chopping", AdvancedChopping);
+        Calls.Add("One More Portion", OneMorePortion);
+        Calls.Add("Basic Preparation", BasicPreparation);
+        Calls.Add("Advanced Preparation", AdvancedPreparation);
         Calls.Add("Basic Gathering", BasicGathering);
         Calls.Add("Advanced Gathering", AdvancedGathering);
         Calls.Add("Inn - Lethargic Steps", InnLethargicSteps);
@@ -42,7 +42,7 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Fancy Food", FancyFood);
         Calls.Add("Proficiency - Haggling", ProficiencyHaggling);
         Calls.Add("Local Landmark - Liscor", LocalLandmarkLiscor);
-        Calls.Add("Generous Tippers", GenerousTippers);
+        Calls.Add("Inn - Generous Tippers", InnGenerousTippers);
         Calls.Add("Field of Preservation", FieldOfPreservation);
         Calls.Add("Ready To Cook", ReadyToCook);
         Calls.Add("Fill Container - Water", FillContainerWater);
@@ -419,12 +419,19 @@ public class LevelManager : MonoBehaviour
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Strength"))
         {
             Player.GetComponent<PlayerBehavior>().strength += ((currentLevel - pastLevel) * .01f);
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Lesser Strength");
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Lesser Strength"))
+            {
+                Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Lesser Strength");
+                AvaliableSkills.Remove(SkillDictionary["Enhanced Strength"]);
+            }
+            else
+            {
+                AvaliableSkills.Remove(SkillDictionary["Lesser Strength"]);
+            }
 
             pastLevel = 0;
             Player.GetComponent<PlayerBehavior>().strength += .1f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Strength");
-            AvaliableSkills.Remove(SkillDictionary["Enhanced Strength"]);
             Player.GetComponent<PlayerBehavior>().strength += ((currentLevel - pastLevel) * .01f);
         }
         else
@@ -441,11 +448,18 @@ public class LevelManager : MonoBehaviour
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Cooking"))
         {
             Player.GetComponent<ResourceManager>().CookingTimeDelay -= ((currentLevel - pastLevel) * .25f);
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Cooking");
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Cooking"))
+            {
+                Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Cooking");
+                AvaliableSkills.Remove(SkillDictionary["Advanced Cooking"]);
+            }
+            else
+            {
+                AvaliableSkills.Remove(SkillDictionary["Basic Cooking"]);
+            }
             pastLevel = 0;
             Player.GetComponent<ResourceManager>().CookingTimeDelay -= 2.5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Cooking");
-            AvaliableSkills.Remove(SkillDictionary["Advanced Cooking"]);
             Player.GetComponent<ResourceManager>().CookingTimeDelay -= ((currentLevel - pastLevel) * .25f);
         }
         else
@@ -462,11 +476,18 @@ public class LevelManager : MonoBehaviour
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Enhanced Movement"))
         {
             Player.GetComponent<PlayerBehavior>().MovementSpeed += ((currentLevel - pastLevel) * .025f);
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Quick Movement");
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Movement"))
+            {
+                Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Quick Movement");
+                AvaliableSkills.Remove(SkillDictionary["Enhanced Movement"]);
+            }
+            else
+            {
+                AvaliableSkills.Remove(SkillDictionary["Quick Movement"]);
+            }
             pastLevel = 0;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += .5f;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Enhanced Movement");
-            AvaliableSkills.Remove(SkillDictionary["Enhanced Movement"]);
             Player.GetComponent<PlayerBehavior>().MovementSpeed += ((currentLevel - pastLevel) * .025f);
         }
         else
@@ -476,25 +497,43 @@ public class LevelManager : MonoBehaviour
         CheckForMoreSkills();
     }
 
-    private void ExtraPortion()
+    private void OneMorePortion()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Extra Portion"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("One More Portion"))
         {
             pastLevel = 0;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Extra Portion");
-            AvaliableSkills.Remove(SkillDictionary["Extra Portion"]);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("One More Portion");
+            AvaliableSkills.Remove(SkillDictionary["One More Portion"]);
         }
         int extraGain = (currentLevel / 5) - (pastLevel / 5);
-        Player.GetComponent<ResourceManager>().FruitGain += extraGain; //number of fruits gained with each gather action
-        Player.GetComponent<ResourceManager>().WaterGain += extraGain; //number of water gained with each gather action
         Player.GetComponent<ResourceManager>().BlueFruitJuiceGain += extraGain; //number of Blue Fruit Juice created with each create action
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(5).GetComponent<Info>().Description = 
+            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().BlueFruitJuiceGain + 
+            ")</color> glasses of water to create <color=#F7D64A>(3)</color> glasses of blue fruit juice.";
         Player.GetComponent<ResourceManager>().SlicedBlueFruitGain += extraGain; //number of Sliced Blue Fruit created with each create action
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(4).GetComponent<Info>().Description =
+            "<b>Slice Blue Fruit</b> - Slice <color=#F7D64A>(1)</color> Blue Fruit into <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().SlicedBlueFruitGain +
+            ")</color> Meals of Sliced Blue Fruit";
         Player.GetComponent<ResourceManager>().PastaGain += extraGain; //number of Patsa created with each create action
+        foreach(Transform cauldronPopup in Player.GetComponent<GameManager>().CauldronPopups)
+        {
+            cauldronPopup.GetChild(3).GetComponent<Info>().Description =
+            "<b>Boil some pasta</b> - Use <color=#F7D64A>(3)</color> Dried Noodles from your hand to boil it into <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().PastaGain +
+            ")</color> Bowls of Pasta.";
+        }
         Player.GetComponent<ResourceManager>().WaterGlassGain += extraGain; //number of Water created with each create action
-        Player.GetComponent<ResourceManager>().NoodleGain += extraGain; //number of Noodles created with each create action
+        foreach (Transform cauldronPopup in Player.GetComponent<GameManager>().CauldronPopups)
+        {
+            cauldronPopup.GetChild(4).GetComponent<Info>().Description =
+            "<b>Glass of Water</b> - <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().WaterGlassGain +
+            ")</color> Glasses of Boiled Water collected and heated in your cauldron. Standard stuff.";
+        }
         Player.GetComponent<ResourceManager>().DeAcidFlyGain += extraGain;
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(3).GetComponent<Info>().Description =
+            "<b>Seperate Acid from Flies</b> - Violently shake <color=#F7D64A>(1)</color> Jar of Acid Flies to kill the fragile creatures. Then seperate the fly corpses from the acid and place them into <color=#F7D64A>(" +
+            Player.GetComponent<ResourceManager>().DeAcidFlyGain + ")</color> bowls.";
         CheckForMoreSkills();
     }
 
@@ -615,34 +654,41 @@ public class LevelManager : MonoBehaviour
         CheckForMoreSkills();
     }
 
-    private void BasicChopping()
+    private void BasicPreparation()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Chopping"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Preparation"))
         {
             pastLevel = 0;
             Player.GetComponent<ResourceManager>().CraftingTimeDelay -= 1.5f;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Chopping");
-            AvaliableSkills.Remove(SkillDictionary["Basic Chopping"]);
-            AvaliableSkills.Add(SkillDictionary["Advanced Chopping"]);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Basic Preparation");
+            AvaliableSkills.Remove(SkillDictionary["Basic Preparation"]);
+            AvaliableSkills.Add(SkillDictionary["Advanced Preparation"]);
         }
         Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
         CheckForMoreSkills();
     }
 
-    private void AdvancedChopping()
+    private void AdvancedPreparation()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Chopping"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Preparation"))
         {
             Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Chopping");
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Preparation"))
+            {
+                Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Preparation");
+                AvaliableSkills.Remove(SkillDictionary["Advanced Preparation"]);
+            }
+            else
+            {
+                AvaliableSkills.Remove(SkillDictionary["Basic Preparation"]);
+            }
             pastLevel = 0;
             Player.GetComponent<ResourceManager>().CraftingTimeDelay -= 1.5f;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Chopping");
-            AvaliableSkills.Remove(SkillDictionary["Advanced Chopping"]);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Preparation");
             Player.GetComponent<ResourceManager>().CraftingTimeDelay -= ((currentLevel - pastLevel) * .1f);
         }
         else
@@ -675,11 +721,18 @@ public class LevelManager : MonoBehaviour
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Advanced Gathering"))
         {
             Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Gathering");
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Basic Gathering"))
+            {
+                Player.GetComponent<PlayerBehavior>().PlayerSkills.Remove("Basic Gathering");
+                AvaliableSkills.Remove(SkillDictionary["Advanced Gathering"]);
+            }
+            else
+            {
+                AvaliableSkills.Remove(SkillDictionary["Basic Gathering"]);
+            }
             pastLevel = 0;
             Player.GetComponent<ResourceManager>().GatheringTimeDelay -= 1;
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Advanced Gathering");
-            AvaliableSkills.Remove(SkillDictionary["Advanced Gathering"]);
             Player.GetComponent<ResourceManager>().GatheringTimeDelay -= ((currentLevel - pastLevel) * .05f);
         }
         else
@@ -767,34 +820,8 @@ public class LevelManager : MonoBehaviour
         Transform content = Player.GetComponent<GameManager>().MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
         for(int i = 0; i < content.childCount; i++)
         {
-            if (content.GetChild(i).gameObject.activeSelf)
-            {
-                content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = Mathf.Max(1, content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost - discount);
-            }
-
-            content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) - discount + "";
-
-            if(int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) < 0)
-            {
-                discount = 0;
-                while(int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) < 0)
-                {
-                    content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(5).GetComponent<Text>().text) + 10 + "";
-                    discount++;
-                }
-                content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) - discount + "";
-
-                if(int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) < 0)
-                {
-                    discount = 0;
-                    while (int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) < 0)
-                    {
-                        content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text = int.Parse(content.GetChild(i).GetChild(1).GetChild(3).GetComponent<Text>().text) + 20 + "";
-                        discount++;
-                    }
-                    content.GetChild(i).GetChild(1).GetChild(1).GetComponent<Text>().text = Mathf.Max(int.Parse(content.GetChild(i).GetChild(1).GetChild(1).GetComponent<Text>().text) - discount, 0) + "";
-                }
-            }
+            content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = Mathf.Max(1, content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost - discount);
+            content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().updateCost();
         }
         CheckForMoreSkills();
     }
@@ -809,25 +836,22 @@ public class LevelManager : MonoBehaviour
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Local Landmark - Liscor");
             AvaliableSkills.Remove(SkillDictionary["Local Landmark - Liscor"]);
         }
-        if((currentLevel / 5) - (pastLevel / 5) > 0)
+        for(int i = (currentLevel / 5) - (pastLevel / 5); i > 0; i--)
         {
-            Transform customerCounter = GameObject.Find("Upset Customer Counter").transform.GetChild(0);
-            Transform newCounter = Instantiate(customerCounter, customerCounter.position + new Vector3(-50 * customerCounter.parent.childCount, 0, 0), customerCounter.transform.rotation);
-            newCounter.parent = customerCounter.parent;
-            Player.GetComponent<GameManager>().DisSatisfiedCustomerCounters.Add(newCounter);
+            Player.GetComponent<GameManager>().createDisSatisfiedCustomerCounters();
         }
         CheckForMoreSkills();
     }
 
-    private void GenerousTippers()
+    private void InnGenerousTippers()
     {
         int currentLevel = Player.GetComponent<PlayerBehavior>().Level;
         int pastLevel = Player.GetComponent<PlayerBehavior>().xpToLevels(Player.GetComponent<PlayerBehavior>().PreviousXp);
-        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Generous Tippers"))
+        if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn - Generous Tippers"))
         {
             pastLevel = 0;
-            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Generous Tippers");
-            AvaliableSkills.Remove(SkillDictionary["Generous Tippers"]);
+            Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Inn - Generous Tippers");
+            AvaliableSkills.Remove(SkillDictionary["Inn - Generous Tippers"]);
         }
         CustomerPopup.transform.GetChild(3).GetComponent<CustomerRequestBehavior>().maxTip += (currentLevel / 2) - (pastLevel / 2);
         CheckForMoreSkills();
@@ -881,7 +905,6 @@ public class LevelManager : MonoBehaviour
     {
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Fill Container - Water"))
         {
-            Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Fill Container - Water");
             AvaliableSkills.Remove(SkillDictionary["Fill Container - Water"]);
             foreach(Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
@@ -896,7 +919,6 @@ public class LevelManager : MonoBehaviour
     {
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Boiling"))
         {
-            Player.GetComponent<GameManager>().DashIndicator.gameObject.SetActive(true);
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Quick Boiling");
             AvaliableSkills.Remove(SkillDictionary["Quick Boiling"]);
             foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)

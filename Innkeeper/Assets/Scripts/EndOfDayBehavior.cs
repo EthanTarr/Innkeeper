@@ -39,24 +39,25 @@ public class EndOfDayBehavior : MonoBehaviour
     IEnumerator SetUp(int SatisfiedCustomers, int DisSatisfiedCustomers, float PreviousXp, float CurrentXp)
     {
         this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = "0";
+        this.transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<Text>().text = "0";
 
         if (Player == null)
         {
             Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.5f);
 
         if (SatisfiedCustomers > 0)
         {
             this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = SatisfiedCustomers + "";
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.5f);
         }
 
         if (DisSatisfiedCustomers > 0)
         {
             this.transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<Text>().text = DisSatisfiedCustomers + "";
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.5f);
         }
 
         if (Player.Level != 10)

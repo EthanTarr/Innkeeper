@@ -39,6 +39,9 @@ public class PlayerBehavior : MonoBehaviour
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
+    private int leftHandNum = 99;
+    private int rightHandNum = 99;
+
     public bool canDash = false;
 
     
@@ -103,7 +106,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", true);
                 this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
-                moveHandObject(99, 99);
+                leftHandNum = 99;
+                rightHandNum = 99;
             }
             else if (Input.GetKey(KeyCode.S))
             {
@@ -114,7 +118,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
-                moveHandObject(105, 105);
+                leftHandNum = 105;
+                rightHandNum = 105;
             }
             if (Input.GetKey(KeyCode.A))
             {
@@ -125,7 +130,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
-                moveHandObject(99, 105);
+                leftHandNum = 99;
+                rightHandNum = 105;
             }
             else if (Input.GetKey(KeyCode.D))
             {
@@ -136,7 +142,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
-                moveHandObject(105, 99);
+                leftHandNum = 105;
+                rightHandNum = 99;
             }
             MovementSpeed = oldMovement;
             
@@ -173,6 +180,7 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<GameManager>().lifts += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
             }
         }
+        moveHandObject(leftHandNum, rightHandNum);
     }
 
     // Update is called once per frame
