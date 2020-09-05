@@ -25,7 +25,6 @@ public class GameManager : MonoBehaviour
     public int DayTimeLimit = 80; 
     public int DayStartDelay = 15;
 
-    public List<Transform> FoodNeedingUnlocks;
     private List<string> UnlockedFoods;
 
     public int numOfSatisfiedCustomers = 0;
@@ -102,11 +101,11 @@ public class GameManager : MonoBehaviour
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
             numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
             numofSatisfiedCustomers += numOfSatisfiedCustomers;
+            GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
+            findUnlockedFood();
             EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
                 this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
             ResetInn();
-            GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
-            findUnlockedFood();
             Debug.Log("Day Over!");
         }
 
@@ -305,56 +304,44 @@ public class GameManager : MonoBehaviour
 
     private void findUnlockedFood()
     {
-        int targetLevel = -1;
         UnlockedFoods = new List<string>();
         List<int> removes = new List<int>();
-        MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level);
+        MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level); //tells market to unlock pasta or acid fly items
         foreach (int level in UnlockableFoods.Keys)
         {
             if(GetComponent<PlayerBehavior>().Level >= level)
             {
-                targetLevel = level;
+
                 removes.Add(level);
-                UnlockedFoods.Add(UnlockableFoods[targetLevel]);
+                UnlockedFoods.Add(UnlockableFoods[level]);
             }
         }
-        if (targetLevel > -1)
-        {
-            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0] + "!";
-            foreach(Transform food in FoodNeedingUnlocks)
-            {
-                if(food.name.Equals(UnlockedFoods[0]))
-                {
-                    UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = food.GetComponent<SpriteRenderer>().sprite;
-                }
-            }
-            UnlockedFoods.Remove(UnlockedFoods[0]);
-            UnlockedFoodScreen.gameObject.SetActive(true);
-        }
-        foreach(int lev in removes)
+        foreach (int lev in removes)
         {
             UnlockableFoods.Remove(lev);
         }
+        Unlockfoods();
     }
 
     public void Unlockfoods()
     {
         if (UnlockedFoods.Count > 0)
         {
-            UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = UnlockedFoods[0] + "!";
-            foreach (Transform food in FoodNeedingUnlocks)
+            if (UnlockedFoods[0].Equals("Pasta"))
             {
-                if (food.name.Equals(UnlockedFoods[0]))
-                {
-                    UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = food.GetComponent<SpriteRenderer>().sprite;
-                }
+                this.GetComponent<Unlocks>().unlockPasta();
             }
+            else if (UnlockedFoods[0].Equals("Acid Flys"))
+            {
+                this.GetComponent<Unlocks>().unlockAcidFlys();
+            }
+
             UnlockedFoods.Remove(UnlockedFoods[0]);
         }
         else
         {
             UnlockedFoodScreen.gameObject.SetActive(false);
-            MarketScreen.GetChild(3).GetComponent<Button>().interactable = true;
+            MarketScreen.gameObject.SetActive(true);
         }
     }
 

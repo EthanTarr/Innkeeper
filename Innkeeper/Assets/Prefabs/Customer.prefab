@@ -170,16 +170,16 @@ MonoBehaviour:
   AntiniumController: {fileID: 9100000, guid: 26443ec754b0c7142999a60bec9281ba, type: 2}
   DrakeSounds:
   - {fileID: 8300000, guid: d882622c4fc0ce649987664696348e9e, type: 3}
-  - {fileID: 8300000, guid: b25dc697af313364490646586c359d24, type: 3}
-  - {fileID: 8300000, guid: ec5618b87263d1b42a750cbc0efa6876, type: 3}
+  - {fileID: 8300000, guid: b538cc3a19d52f34aa570f5fc47d5928, type: 3}
+  - {fileID: 8300000, guid: ed5795309b9e1fc45853d873f371797a, type: 3}
   GoblinSounds:
-  - {fileID: 8300000, guid: 7e19182716d810447a675856c1d4f168, type: 3}
-  - {fileID: 8300000, guid: 06b21ca74c5bec642872aa6131026787, type: 3}
-  - {fileID: 8300000, guid: 10f693ec51d91c6478437a3e40594665, type: 3}
+  - {fileID: 8300000, guid: 05bd0dacf2fba7347af4a6574f119b8e, type: 3}
+  - {fileID: 8300000, guid: 57207a3388449224b8e45a33534e5765, type: 3}
+  - {fileID: 8300000, guid: 748724e84cfdeab4ab0b5aa61cf0bcfa, type: 3}
   AntiniumSounds:
-  - {fileID: 8300000, guid: 823b9f0dbc76a5149a1cbaa82447c58a, type: 3}
-  - {fileID: 8300000, guid: 520c53960cdd77a4aa61e5bac5102e67, type: 3}
-  - {fileID: 8300000, guid: 088e36dbeb4746643868f2958248c00a, type: 3}
+  - {fileID: 8300000, guid: 1c2c487a2427d064cbf0ca5ebd60f1f7, type: 3}
+  - {fileID: 8300000, guid: 54192a39185d7d64298d2d6c3ec74981, type: 3}
+  - {fileID: 8300000, guid: 3b057cedca6ba4747a4e8a43fd970eb7, type: 3}
   MoodIndicator: {fileID: 719970757434514794, guid: 7e989adac2590d64c838886d27e2f86c,
     type: 3}
 --- !u!61 &3241138680102036579

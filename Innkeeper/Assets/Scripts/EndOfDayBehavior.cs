@@ -87,14 +87,24 @@ public class EndOfDayBehavior : MonoBehaviour
                 }
             }
 
+            this.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(TurnOnMarket);
             if (SkillUpCount > 0)
             {
                 LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
                 LevelChoicesScreen.gameObject.SetActive(true);
-                MarketScreen.transform.GetChild(3).GetComponent<Button>().interactable = false;
+                this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+            else if(Player.GetComponent<GameManager>().UnlockedFoodScreen.gameObject.activeSelf)
+            {
+                this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             }
         }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
+    }
+
+    private void TurnOnMarket()
+    {
+        MarketScreen.gameObject.SetActive(true);
     }
 }

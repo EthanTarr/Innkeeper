@@ -36,6 +36,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private GameObject Cauldron;
     private GameObject StorageObject;
+    private GameObject Trash;
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
 
@@ -276,7 +277,7 @@ public class PlayerBehavior : MonoBehaviour
                     }
                 }
             }
-            else if (Cauldron != null)
+            else if (Cauldron != null && Cauldron.GetComponent<CauldronBehavior>().Highlight.gameObject.activeSelf)
             {
                 if (Cauldron.GetComponent<CauldronBehavior>().isEmpty)
                 {
@@ -298,6 +299,23 @@ public class PlayerBehavior : MonoBehaviour
                 else if (Cauldron.GetComponent<CauldronBehavior>().isCookedPasta && (LeftHandObject == null || RightHandObject == null))
                 {
                     Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
+                }
+            }
+            else if (Trash != null && Trash.GetComponent<TrashBehavior>().Highlight.gameObject.activeSelf)
+            {
+                if (LeftHandObject != null)
+                {
+                    MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                    Destroy(LeftHandObject.gameObject);
+                    LeftHandObject = null;
+                    checkHand();
+                }
+                else
+                {
+                    MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                    Destroy(RightHandObject.gameObject);
+                    RightHandObject = null;
+                    checkHand();
                 }
             }
             else if (LeftHandObject != null && RightHandObject == null && controlMovement)
@@ -332,6 +350,10 @@ public class PlayerBehavior : MonoBehaviour
         {
             Cauldron = collision.gameObject;
         }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Trash"))
+        {
+            Trash = collision.gameObject;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -343,6 +365,10 @@ public class PlayerBehavior : MonoBehaviour
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Cauldron"))
         {
             Cauldron = null;
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Trash"))
+        {
+            Trash = null;
         }
     }
 
