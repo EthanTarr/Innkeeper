@@ -52,6 +52,7 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
     }
 
+    
 
     // Checks to see if Blue Fruit Counter can be legally decremented. If it can, then the customer and this parent object are deleted
     public void FullfilRequest()
@@ -61,7 +62,10 @@ public class CustomerRequestBehavior : MonoBehaviour
         if (LeftPlayerObject != null || RightPlayerObject != null)
         {
             if((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
-                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && 
+                (LeftPlayerObject != null || RightPlayerObject != null)) || (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && 
+                Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite)))
             {
                 if (Customer == null)
                 {
@@ -82,9 +86,9 @@ public class CustomerRequestBehavior : MonoBehaviour
                         }
                     }
 
-                    int OriginalRequestCount = int.Parse(this.transform.GetChild(0).GetComponent<Text>().text);
-                    int RequestCount = OriginalRequestCount;
-                    if (LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+                    int RequestCount = int.Parse(this.transform.GetChild(0).GetComponent<Text>().text);
+                    if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
+                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && LeftPlayerObject != null))
                     {
                         RequestCount = satisfyRequest(LeftPlayerObject, this.transform, RequestCount);
                     }
@@ -93,13 +97,24 @@ public class CustomerRequestBehavior : MonoBehaviour
                         otherRequestCount = satisfyRequest(LeftPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }
 
-                    if (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite))
+                    if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && RequestCount > 0))
                     {
                         RequestCount = satisfyRequest(RightPlayerObject, this.transform, RequestCount);
                     }
-                    else if (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
+                    else if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite)) ||
+                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && otherRequestCount > 0))
                     {
                         otherRequestCount = satisfyRequest(RightPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
+                    }
+
+                    if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite))
+                    {
+                        RequestCount = satisfyRequest(Player.GetComponent<GameManager>().StorageTableRetrieve(this.GetComponent<Image>().sprite), this.transform, RequestCount);
+                    }
+                    else if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
+                    {
+                        otherRequestCount = satisfyRequest(Player.GetComponent<GameManager>().StorageTableRetrieve(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite), this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }
 
                     if (otherRequestCount <= 0)
@@ -112,7 +127,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                     if (RequestCount <= 0)
                     {
 
-                        if (this.transform.parent.transform.childCount <= 4 || otherRequestCount <= 0) //if this is the last request
+                        if (this.transform.parent.childCount <= 5 /*|| otherRequestCount <= 0*/) //if this is the last request
                         {
                             Customer.GetComponent<CustomerBehavior>().SendCustomerAway();
                             Player.GetComponent<GameManager>().numOfSatisfiedCustomers++;
@@ -159,7 +174,7 @@ public class CustomerRequestBehavior : MonoBehaviour
         }
         else
         {
-            PlayerObject.GetComponent<ItemBehavior>().ItemCount += -RequestCount;
+            PlayerObject.GetComponent<ItemBehavior>().ItemCount -= RequestCount;
             Player.GetComponent<PlayerBehavior>().MovementSpeed += Math.Max((PlayerObject.GetComponent<ItemBehavior>().ItemWeight - Player.GetComponent<PlayerBehavior>().strength) * RequestCount, 0);
             Player.GetComponent<PlayerBehavior>().xp += xpGain * RequestCount;
             if (Customer.GetComponent<CustomerBehavior>().myTimer != null)
@@ -175,6 +190,7 @@ public class CustomerRequestBehavior : MonoBehaviour
             {
                 Player.GetComponent<GameManager>().ExpensiveFood++;
             }
+            Player.GetComponent<GameManager>().mealsServed++;
             CoinCount = RequestCount;
         }
         for(int i = 0; i < CoinCount; i++)

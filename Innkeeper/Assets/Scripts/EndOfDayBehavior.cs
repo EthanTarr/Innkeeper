@@ -39,27 +39,28 @@ public class EndOfDayBehavior : MonoBehaviour
     IEnumerator SetUp(int SatisfiedCustomers, int DisSatisfiedCustomers, float PreviousXp, float CurrentXp)
     {
         this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = "0";
+        this.transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<Text>().text = "0";
 
         if (Player == null)
         {
             Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.5f);
 
         if (SatisfiedCustomers > 0)
         {
             this.transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = SatisfiedCustomers + "";
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.5f);
         }
 
         if (DisSatisfiedCustomers > 0)
         {
             this.transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<Text>().text = DisSatisfiedCustomers + "";
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.5f);
         }
 
-        if (Player.Level != 10)
+        if (Player.Level != 20)
         {
             int SkillUpCount = 0;
             while (Player.xpToLevels(CurrentXp) > Player.xpToLevels(PreviousXp))
@@ -72,9 +73,17 @@ public class EndOfDayBehavior : MonoBehaviour
                 PreviousXp = Player.LevelMilestones[Player.xpToLevels(PreviousXp)];
                 this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
-                if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
+                /*if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
                 {
                     SkillUpCount++;
+                }*/
+                if (Random.value > 0.5f || (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 10 == 0)
+                {
+                    SkillUpCount++;
+                    if(Random.value < .1f)
+                    {
+                        SkillUpCount++;
+                    }
                 }
             }
             if (CurrentXp != PreviousXp)
@@ -86,14 +95,24 @@ public class EndOfDayBehavior : MonoBehaviour
                 }
             }
 
+            this.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(TurnOnMarket);
             if (SkillUpCount > 0)
             {
-                LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
+                LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps = SkillUpCount;
                 LevelChoicesScreen.gameObject.SetActive(true);
-                MarketScreen.transform.GetChild(3).GetComponent<Button>().interactable = false;
+                this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
+            }
+            else if(Player.GetComponent<GameManager>().UnlockedFoodScreen.gameObject.activeSelf)
+            {
+                this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             }
         }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
+    }
+
+    private void TurnOnMarket()
+    {
+        MarketScreen.gameObject.SetActive(true);
     }
 }

@@ -31,12 +31,16 @@ public class SkillListBehavior : MonoBehaviour
     private void OnEnable()
     {
         int skillNum = 0;
+        Transform SkillArea = null;
         foreach (string skill in Player.GetComponent<PlayerBehavior>().PlayerSkills)
         {
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(0).GetComponent<Text>().text = skill;
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(1).GetComponent<Text>().text =
                 Player.GetComponent<GameManager>().LevelChoices.GetComponent<LevelManager>().SkillDictionary[skill].GetComponent<SkillBehavior>().Description;
+            SkillArea = Instantiate(this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum));
+            SkillArea.parent = this.transform.GetChild(1).GetChild(0).GetChild(0);
             skillNum++;
         }
+        Destroy(SkillArea);
     }
 }

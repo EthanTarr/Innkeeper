@@ -78,6 +78,8 @@ public class CauldronBehavior : MonoBehaviour
 
         isBoiledWater = false;
         isEmpty = true;
+        CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+        this.transform.GetChild(1).gameObject.SetActive(true);
         this.GetComponent<Animator>().enabled = false;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
         this.GetComponent<AudioSource>().clip = CauldronSounds[1];
@@ -100,6 +102,8 @@ public class CauldronBehavior : MonoBehaviour
 
         isCookedPasta = false;
         isEmpty = true;
+        CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
+        this.transform.GetChild(1).gameObject.SetActive(true);
         this.GetComponent<Animator>().enabled = false;
         this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
         this.GetComponent<AudioSource>().Stop();
@@ -162,7 +166,9 @@ public class CauldronBehavior : MonoBehaviour
             this.GetComponent<AudioSource>().clip = CauldronSounds[1];
             this.GetComponent<AudioSource>().loop = false;
             this.GetComponent<AudioSource>().Play();
+            this.transform.GetChild(1).gameObject.SetActive(false);
             Player.GetComponent<GameManager>().cooked++;
+            Player.GetComponent<GameManager>().cauldronFilled++;
 
             myTimer = Instantiate(Timer, this.transform.position, Timer.rotation); //create timer
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
@@ -175,7 +181,8 @@ public class CauldronBehavior : MonoBehaviour
         }
     }
 
-    private void boiledWater()
+
+    public void boiledWater()
     {
         isUnboiledWater = false;
         isBoiledWater = true;
@@ -184,6 +191,7 @@ public class CauldronBehavior : MonoBehaviour
         this.GetComponent<AudioSource>().clip = CauldronSounds[0];
         this.GetComponent<AudioSource>().loop = true;
         this.GetComponent<AudioSource>().Play();
+        Player.GetComponent<GameManager>().cauldronBoiled++;
         if (isCollidingWithPlayer)
         {
             checkForHighlights();
@@ -215,7 +223,7 @@ public class CauldronBehavior : MonoBehaviour
             Highlight.gameObject.SetActive(true);
             if (isBoiledWater)
             {
-                CauldronPopup.gameObject.SetActive(true);
+                
                 if ((LeftHand == null || RightHand == null || LeftHand.name.Equals("WaterGlass") || RightHand.name.Equals("WaterGlass")) && 
                     GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
                 {
@@ -227,8 +235,7 @@ public class CauldronBehavior : MonoBehaviour
                 }
 
                 int requiredNoodleCount = 3;
-                if ((Player.GetComponent<PlayerBehavior>().Level > 2) &&
-                    ((LeftHand != null && LeftHand.name.Equals("Noodles") && LeftHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) || 
+                if (((LeftHand != null && LeftHand.name.Equals("Noodles") && LeftHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) || 
                     (RightHand != null && RightHand.name.Equals("Noodles") && RightHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) ||
                     (LeftHand != null && RightHand != null && LeftHand.name.Equals("Noodles") && RightHand.name.Equals("Noodles") && 
                     ((LeftHand.GetComponent<ItemBehavior>().ItemCount + RightHand.GetComponent<ItemBehavior>().ItemCount) >= requiredNoodleCount))))
@@ -240,12 +247,18 @@ public class CauldronBehavior : MonoBehaviour
                     CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
                 }
             }
+            else
+            {
+                CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+                CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
+            }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         checkForHighlights();
+        CauldronPopup.gameObject.SetActive(true);
         isCollidingWithPlayer = true;
     }
 

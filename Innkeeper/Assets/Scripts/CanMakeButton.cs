@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class CanMakeButton : MonoBehaviour
 {
+    private Transform Player;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Player = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
@@ -17,57 +18,50 @@ public class CanMakeButton : MonoBehaviour
     {
         if (this.transform.parent.gameObject.activeSelf)
         {
-            if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
+            bool itemCraftable = false;
+            Dictionary<string, int> Ingredients = new Dictionary<string, int>();
+
+            if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
             {
-                this.GetComponent<Button>().interactable = false;
+                Ingredients.Add("WaterGlass", 3);
+                Ingredients.Add("Blue Fruit", 1);
             }
-            else
+            else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
             {
-                bool itemCraftable = false;
-                Dictionary<string, int> Ingredients = new Dictionary<string, int>();
-
-                if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
-                {
-                    Ingredients.Add("WaterGlass", 3);
-                    Ingredients.Add("Blue Fruit", 1);
-                }
-                else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
-                {
-                    Ingredients.Add("Blue Fruit", 1);
-                }
-                else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
-                {
-                    Ingredients.Add("Acid Fly", 1);
-                }
-
-                Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
-                }
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
-                }
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
-                }
-                this.GetComponent<Button>().interactable = itemCraftable;
+                Ingredients.Add("Blue Fruit", 1);
+            }
+            else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
+            {
+                Ingredients.Add("Acid Fly", 1);
             }
 
+            Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
+            }
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
+            }
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
+            }
+            this.GetComponent<Button>().interactable = itemCraftable;
 
-            if (this.name.Equals("DeAcid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+
+            if (this.name.Equals("DeAcid Fly Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.2f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
             {
                 this.GetComponent<Button>().interactable = false;
             }
-            else if (this.name.Equals("Slice Blue Fruit Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+            else if (this.name.Equals("Slice Blue Fruit Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.08f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 2))
             {
                 this.GetComponent<Button>().interactable = false;
             }
-            else if (this.name.Equals("Blue Fruit Juice Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed <
+            else if (this.name.Equals("Blue Fruit Juice Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <
                 ((.4f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 1))
             {
                 this.GetComponent<Button>().interactable = false;

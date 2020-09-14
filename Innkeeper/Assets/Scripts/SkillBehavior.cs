@@ -5,7 +5,6 @@ using UnityEngine;
 public class SkillBehavior : MonoBehaviour
 {
     public int Base;
-    public int Level;
     public float Modifier
     {
         get { return ModSkill(); }
@@ -17,7 +16,7 @@ public class SkillBehavior : MonoBehaviour
     private float ModSkill()
     {
         GameManager player = GameObject.Find("Player").GetComponent<GameManager>();
-        if (this.gameObject.name.Equals("Quick Movement") || this.gameObject.name.Equals("Enhanced Movement"))
+        if (this.gameObject.name.Equals("Quick Movement") || this.gameObject.name.Equals("Enhanced Movement") || this.gameObject.name.Equals("Diner Dash"))
         {
             return player.steps / 20000;
         }
@@ -25,11 +24,11 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.lifts / 5000;
         }
-        else if (this.gameObject.name.Equals("Basic Chopping") || this.gameObject.name.Equals("Skill Change - Basic Chopping - Advanced Chopping"))
+        else if (this.gameObject.name.Equals("Basic Preparation") || this.gameObject.name.Equals("Advanced Prepation"))
         {
             return player.chopped / 10;
         }
-        else if (this.gameObject.name.Equals("Basic Gathering") || this.gameObject.name.Equals("Advanced Gathering"))
+        else if (this.gameObject.name.Equals("Basic Gathering") || this.gameObject.name.Equals("Advanced Gathering") || this.gameObject.name.Equals("Ready To Cook"))
         {
             return player.gathered / 10;
         }
@@ -49,7 +48,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.goblins / 5;
         }
-        else if (this.gameObject.name.Equals("Extra Portion"))
+        else if (this.gameObject.name.Equals("One More Portion"))
         {
             return (player.gathered + player.cooked + player.chopped) / 30;
         }
@@ -77,13 +76,29 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.MarketTime / 200;
         }
-        else if (this.gameObject.name.Equals("Local Landmark - Liscor"))
+        else if (this.gameObject.name.Equals("Local Landmark - Liscor") || this.gameObject.name.Equals("Stay Awhile"))
         {
             return player.numofDisatisfiedCustomers;
         }
-        else if (this.gameObject.name.Equals("Generous Tippers"))
+        else if (this.gameObject.name.Equals("Inn - Generous Tippers"))
         {
             return player.numofSatisfiedCustomers / 3;
+        }
+        else if (this.gameObject.name.Equals("Field of Preservation"))
+        {
+            return player.leftovers / 1.5f;
+        }
+        else if (this.gameObject.name.Equals("Fill Container - Water"))
+        {
+            return player.cauldronFilled;
+        }
+        else if (this.gameObject.name.Equals("Quick Boiling"))
+        {
+            return player.cauldronBoiled;
+        }
+        else if (this.gameObject.name.Equals("Any Meal Will Do") || this.gameObject.name.Equals("Inn, My Hand"))
+        {
+            return player.mealsServed / 3f;
         }
         Debug.LogError("Could not find " + this.gameObject.name);
         return 0;

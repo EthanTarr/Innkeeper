@@ -153,7 +153,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d1cc3a9671298b54399bc09a67c1bbba, type: 3}
   - {fileID: 21300000, guid: 0a79f7dbcd33c844aab5ea452ffb77da, type: 3}
   MovementSpeed: 20
-  LifeTimer: 80
+  LifeTimer: 100
   PossibleMeals:
   - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
   - {fileID: 8132216591011756052, guid: bf5ccd1bdec49c14b97cb291e4c06e29, type: 3}
@@ -162,24 +162,24 @@ MonoBehaviour:
   - {fileID: 7992100183616138280, guid: 6401f876976db42479fadaa6946f5b6c, type: 3}
   HungerValue: 0
   Table: {fileID: 0}
-  DrakeChance: 33
-  GoblinChance: 33
-  AntiniumChance: 33
+  DrakeChance: 50
+  GoblinChance: 0
+  AntiniumChance: 50
   DrakeController: {fileID: 9100000, guid: 02271ca693153764fa8ef3f6012f6f8b, type: 2}
   GoblinController: {fileID: 9100000, guid: 376ee9758c0628c479c097579371edc5, type: 2}
   AntiniumController: {fileID: 9100000, guid: 26443ec754b0c7142999a60bec9281ba, type: 2}
   DrakeSounds:
   - {fileID: 8300000, guid: d882622c4fc0ce649987664696348e9e, type: 3}
-  - {fileID: 8300000, guid: b25dc697af313364490646586c359d24, type: 3}
-  - {fileID: 8300000, guid: ec5618b87263d1b42a750cbc0efa6876, type: 3}
+  - {fileID: 8300000, guid: b538cc3a19d52f34aa570f5fc47d5928, type: 3}
+  - {fileID: 8300000, guid: ed5795309b9e1fc45853d873f371797a, type: 3}
   GoblinSounds:
-  - {fileID: 8300000, guid: 7e19182716d810447a675856c1d4f168, type: 3}
-  - {fileID: 8300000, guid: 06b21ca74c5bec642872aa6131026787, type: 3}
-  - {fileID: 8300000, guid: 10f693ec51d91c6478437a3e40594665, type: 3}
+  - {fileID: 8300000, guid: 05bd0dacf2fba7347af4a6574f119b8e, type: 3}
+  - {fileID: 8300000, guid: 57207a3388449224b8e45a33534e5765, type: 3}
+  - {fileID: 8300000, guid: 748724e84cfdeab4ab0b5aa61cf0bcfa, type: 3}
   AntiniumSounds:
-  - {fileID: 8300000, guid: 823b9f0dbc76a5149a1cbaa82447c58a, type: 3}
-  - {fileID: 8300000, guid: 520c53960cdd77a4aa61e5bac5102e67, type: 3}
-  - {fileID: 8300000, guid: 088e36dbeb4746643868f2958248c00a, type: 3}
+  - {fileID: 8300000, guid: 1c2c487a2427d064cbf0ca5ebd60f1f7, type: 3}
+  - {fileID: 8300000, guid: 54192a39185d7d64298d2d6c3ec74981, type: 3}
+  - {fileID: 8300000, guid: 3b057cedca6ba4747a4e8a43fd970eb7, type: 3}
   MoodIndicator: {fileID: 719970757434514794, guid: 7e989adac2590d64c838886d27e2f86c,
     type: 3}
 --- !u!61 &3241138680102036579

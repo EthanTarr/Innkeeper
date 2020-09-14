@@ -36,26 +36,42 @@ public class PlayerBehavior : MonoBehaviour
 
     private GameObject Cauldron;
     private GameObject StorageObject;
+    private GameObject Trash;
     private GameObject LeftHandUIImage;
     private GameObject RightHandUIImage;
+
+    private int leftHandNum = 99;
+    private int rightHandNum = 99;
+
+    public bool canDash = false;
 
     
     
     // Start is called before the first frame update
     void Start()
     {
-        LevelMilestones = new int[11];
+        LevelMilestones = new int[21];
         LevelMilestones[0] = -1;
-        LevelMilestones[1] = 150;
-        LevelMilestones[2] = 375;
-        LevelMilestones[3] = 675;
-        LevelMilestones[4] = 1050;
-        LevelMilestones[5] = 1500;
-        LevelMilestones[6] = 2250;
-        LevelMilestones[7] = 3150;
-        LevelMilestones[8] = 4350;
-        LevelMilestones[9] = 5550;
-        LevelMilestones[10] = int.MaxValue;
+        LevelMilestones[1] = 100;
+        LevelMilestones[2] = 275;
+        LevelMilestones[3] = 525;
+        LevelMilestones[4] = 850;
+        LevelMilestones[5] = 1250;
+        LevelMilestones[6] = 1950;
+        LevelMilestones[7] = 2550;
+        LevelMilestones[8] = 3650;
+        LevelMilestones[9] = 4750;
+        LevelMilestones[10] = 6050;
+        LevelMilestones[11] = 7450;
+        LevelMilestones[12] = 8950;
+        LevelMilestones[13] = 10550;
+        LevelMilestones[14] = 12250;
+        LevelMilestones[15] = 14050;
+        LevelMilestones[16] = 15950;
+        LevelMilestones[17] = 17950;
+        LevelMilestones[18] = 20050;
+        LevelMilestones[19] = 22250;
+        LevelMilestones[20] = int.MaxValue;
 
 
         Destination = transform.position; //find destination position
@@ -82,7 +98,13 @@ public class PlayerBehavior : MonoBehaviour
             {
                 MovementSpeed = 0.1f;
             }
-
+            if(canDash && Input.GetKey(KeyCode.X))
+            {
+                MovementSpeed += 2;
+                canDash = false;
+                this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+                StartCoroutine("DashRecharge");
+            }
             //calculating where to move
             PreviousDestination = Destination;
             Destination = transform.position;
@@ -95,7 +117,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", true);
                 this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
-                moveHandObject(99, 99);
+                leftHandNum = 99;
+                rightHandNum = 99;
             }
             else if (Input.GetKey(KeyCode.S))
             {
@@ -106,7 +129,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", false);
                 HandOffset.x = 3;
-                moveHandObject(105, 105);
+                leftHandNum = 105;
+                rightHandNum = 105;
             }
             if (Input.GetKey(KeyCode.A))
             {
@@ -117,7 +141,8 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
-                moveHandObject(99, 105);
+                leftHandNum = 99;
+                rightHandNum = 105;
             }
             else if (Input.GetKey(KeyCode.D))
             {
@@ -128,16 +153,19 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<Animator>().SetBool("Backward", false);
                 this.GetComponent<Animator>().SetBool("Sideways", true);
                 HandOffset.x = 2;
-                moveHandObject(105, 99);
+                leftHandNum = 105;
+                rightHandNum = 99;
             }
-            MovementSpeed = oldMovement;
             
             //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 
             //set moving animation
             this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
-            this.GetComponent<Animator>().speed = (1f + (PreviousDestination - Destination).magnitude) / 1.5f;
+            this.GetComponent<Animator>().speed = (1 + (PreviousDestination - Destination).magnitude);
+
+            //return movement to how it was
+            MovementSpeed = oldMovement;
 
             //set moving audio
             if ((PreviousDestination - Destination).magnitude > .1f && !this.GetComponent<AudioSource>().isPlaying)
@@ -165,6 +193,7 @@ public class PlayerBehavior : MonoBehaviour
                 this.GetComponent<GameManager>().lifts += RightHandObject.GetComponent<ItemBehavior>().ItemWeight * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
             }
         }
+        moveHandObject(leftHandNum, rightHandNum);
     }
 
     // Update is called once per frame
@@ -260,7 +289,7 @@ public class PlayerBehavior : MonoBehaviour
                     }
                 }
             }
-            else if (Cauldron != null)
+            else if (Cauldron != null && Cauldron.GetComponent<CauldronBehavior>().Highlight.gameObject.activeSelf)
             {
                 if (Cauldron.GetComponent<CauldronBehavior>().isEmpty)
                 {
@@ -284,6 +313,23 @@ public class PlayerBehavior : MonoBehaviour
                     Cauldron.GetComponent<CauldronBehavior>().grabPastaBowl();
                 }
             }
+            else if (Trash != null && Trash.GetComponent<TrashBehavior>().Highlight.gameObject.activeSelf)
+            {
+                if (LeftHandObject != null)
+                {
+                    MovementSpeed += Mathf.Max(LeftHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * LeftHandObject.GetComponent<ItemBehavior>().ItemCount;
+                    Destroy(LeftHandObject.gameObject);
+                    LeftHandObject = null;
+                    checkHand();
+                }
+                else
+                {
+                    MovementSpeed += Mathf.Max(RightHandObject.GetComponent<ItemBehavior>().ItemWeight - strength, 0) * RightHandObject.GetComponent<ItemBehavior>().ItemCount;
+                    Destroy(RightHandObject.gameObject);
+                    RightHandObject = null;
+                    checkHand();
+                }
+            }
             else if (LeftHandObject != null && RightHandObject == null && controlMovement)
             {
                 RightHandObject = Instantiate(LeftHandObject, this.transform.position + HandOffset, LeftHandObject.rotation);
@@ -303,6 +349,7 @@ public class PlayerBehavior : MonoBehaviour
                 checkHand();
             }
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -314,6 +361,10 @@ public class PlayerBehavior : MonoBehaviour
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Cauldron"))
         {
             Cauldron = collision.gameObject;
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Trash"))
+        {
+            Trash = collision.gameObject;
         }
     }
 
@@ -327,14 +378,20 @@ public class PlayerBehavior : MonoBehaviour
         {
             Cauldron = null;
         }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Trash"))
+        {
+            Trash = null;
+        }
     }
 
     public bool GiveObject(Transform ItemForPlayer)
     {
+        /*   Forces items to be the max at most if given to the player
         if (ItemForPlayer.GetComponent<ItemBehavior>().ItemCount > ItemForPlayer.GetComponent<ItemBehavior>().ItemMax)
         {
             ItemForPlayer.GetComponent<ItemBehavior>().ItemCount = ItemForPlayer.GetComponent<ItemBehavior>().ItemMax;
         }
+        */
         if (LeftHandObject == null && !(RightHandObject != null && RightHandObject.name.Equals(ItemForPlayer.name) && 
             (RightHandObject.GetComponent<ItemBehavior>().ItemCount + ItemForPlayer.GetComponent<ItemBehavior>().ItemCount <= RightHandObject.GetComponent<ItemBehavior>().ItemMax)))
         {
@@ -464,6 +521,11 @@ public class PlayerBehavior : MonoBehaviour
         Purchases.Add(purchase);
     }
 
+    public void Shoes()
+    {
+        MovementSpeed += .5f;
+    }
+
     public int xpToLevels(float xp)
     {
         if(xp < LevelMilestones[0])
@@ -506,9 +568,61 @@ public class PlayerBehavior : MonoBehaviour
         {
             return 9;
         }
-        else
+        else if (xp < LevelMilestones[10])
         {
             return 10;
         }
+        else if (xp < LevelMilestones[11])
+        {
+            return 11;
+        }
+        else if (xp < LevelMilestones[12])
+        {
+            return 12;
+        }
+        else if (xp < LevelMilestones[13])
+        {
+            return 13;
+        }
+        else if (xp < LevelMilestones[14])
+        {
+            return 14;
+        }
+        else if (xp < LevelMilestones[15])
+        {
+            return 15;
+        }
+        else if (xp < LevelMilestones[16])
+        {
+            return 16;
+        }
+        else if (xp < LevelMilestones[17])
+        {
+            return 17;
+        }
+        else if (xp < LevelMilestones[18])
+        {
+            return 18;
+        }
+        else if (xp < LevelMilestones[19])
+        {
+            return 19;
+        }
+        else
+        {
+            return 20;
+        }
+    }
+
+    public void stopDashRecharge()
+    {
+        StopAllCoroutines();
+    }
+
+    IEnumerator DashRecharge()
+    {
+        yield return new WaitForSeconds(15f - .7f * Level);
+        canDash = true;
+        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }
 }
