@@ -5,7 +5,6 @@ using UnityEngine;
 public class SkillBehavior : MonoBehaviour
 {
     public int Base;
-    public int Level;
     public float Modifier
     {
         get { return ModSkill(); }

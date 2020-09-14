@@ -40,6 +40,7 @@ public class canFill : MonoBehaviour
 
     IEnumerator Reinteract()
     {
+        resetTime = 60 - (Player.Level * 1.5f);
         yield return new WaitForSeconds(resetTime);
         foreach(Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
         {

@@ -50,18 +50,28 @@ public class PlayerBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LevelMilestones = new int[11];
+        LevelMilestones = new int[21];
         LevelMilestones[0] = -1;
-        LevelMilestones[1] = 150;
-        LevelMilestones[2] = 375;
-        LevelMilestones[3] = 675;
-        LevelMilestones[4] = 1050;
-        LevelMilestones[5] = 1500;
-        LevelMilestones[6] = 2250;
-        LevelMilestones[7] = 3150;
-        LevelMilestones[8] = 4350;
-        LevelMilestones[9] = 5550;
-        LevelMilestones[10] = int.MaxValue;
+        LevelMilestones[1] = 100;
+        LevelMilestones[2] = 275;
+        LevelMilestones[3] = 525;
+        LevelMilestones[4] = 850;
+        LevelMilestones[5] = 1250;
+        LevelMilestones[6] = 1950;
+        LevelMilestones[7] = 2550;
+        LevelMilestones[8] = 3650;
+        LevelMilestones[9] = 4750;
+        LevelMilestones[10] = 6050;
+        LevelMilestones[11] = 7450;
+        LevelMilestones[12] = 8950;
+        LevelMilestones[13] = 10550;
+        LevelMilestones[14] = 12250;
+        LevelMilestones[15] = 14050;
+        LevelMilestones[16] = 15950;
+        LevelMilestones[17] = 17950;
+        LevelMilestones[18] = 20050;
+        LevelMilestones[19] = 22250;
+        LevelMilestones[20] = int.MaxValue;
 
 
         Destination = transform.position; //find destination position
@@ -146,14 +156,16 @@ public class PlayerBehavior : MonoBehaviour
                 leftHandNum = 105;
                 rightHandNum = 99;
             }
-            MovementSpeed = oldMovement;
             
             //moveing to location
             this.GetComponent<Rigidbody2D>().MovePosition(Destination);
 
             //set moving animation
             this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
-            this.GetComponent<Animator>().speed = (1f + (PreviousDestination - Destination).magnitude) / 1.5f;
+            this.GetComponent<Animator>().speed = (1 + (PreviousDestination - Destination).magnitude);
+
+            //return movement to how it was
+            MovementSpeed = oldMovement;
 
             //set moving audio
             if ((PreviousDestination - Destination).magnitude > .1f && !this.GetComponent<AudioSource>().isPlaying)
@@ -556,9 +568,49 @@ public class PlayerBehavior : MonoBehaviour
         {
             return 9;
         }
-        else
+        else if (xp < LevelMilestones[10])
         {
             return 10;
+        }
+        else if (xp < LevelMilestones[11])
+        {
+            return 11;
+        }
+        else if (xp < LevelMilestones[12])
+        {
+            return 12;
+        }
+        else if (xp < LevelMilestones[13])
+        {
+            return 13;
+        }
+        else if (xp < LevelMilestones[14])
+        {
+            return 14;
+        }
+        else if (xp < LevelMilestones[15])
+        {
+            return 15;
+        }
+        else if (xp < LevelMilestones[16])
+        {
+            return 16;
+        }
+        else if (xp < LevelMilestones[17])
+        {
+            return 17;
+        }
+        else if (xp < LevelMilestones[18])
+        {
+            return 18;
+        }
+        else if (xp < LevelMilestones[19])
+        {
+            return 19;
+        }
+        else
+        {
+            return 20;
         }
     }
 
@@ -569,7 +621,7 @@ public class PlayerBehavior : MonoBehaviour
 
     IEnumerator DashRecharge()
     {
-        yield return new WaitForSeconds(15f - 1.4f * Level);
+        yield return new WaitForSeconds(15f - .7f * Level);
         canDash = true;
         this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }

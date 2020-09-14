@@ -18,44 +18,37 @@ public class CanMakeButton : MonoBehaviour
     {
         if (this.transform.parent.gameObject.activeSelf)
         {
-            if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl") && Player.GetComponent<PlayerBehavior>().Level < 6)
-            {
-                this.GetComponent<Button>().interactable = false;
-            }
-            else
-            {
-                bool itemCraftable = false;
-                Dictionary<string, int> Ingredients = new Dictionary<string, int>();
+            bool itemCraftable = false;
+            Dictionary<string, int> Ingredients = new Dictionary<string, int>();
 
-                if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
-                {
-                    Ingredients.Add("WaterGlass", 3);
-                    Ingredients.Add("Blue Fruit", 1);
-                }
-                else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
-                {
-                    Ingredients.Add("Blue Fruit", 1);
-                }
-                else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
-                {
-                    Ingredients.Add("Acid Fly", 1);
-                }
-
-                Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
-                }
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
-                }
-                if (!itemCraftable)
-                {
-                    itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
-                }
-                this.GetComponent<Button>().interactable = itemCraftable;
+            if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_juice"))
+            {
+                Ingredients.Add("WaterGlass", 3);
+                Ingredients.Add("Blue Fruit", 1);
             }
+            else if (this.GetComponent<Image>().sprite.name.Equals("blue_fruit_slice"))
+            {
+                Ingredients.Add("Blue Fruit", 1);
+            }
+            else if (this.GetComponent<Image>().sprite.name.Equals("Fly in a Bowl"))
+            {
+                Ingredients.Add("Acid Fly", 1);
+            }
+
+            Transform CraftingSurface = this.transform.parent.GetComponent<PopupBehaviour>().PopupObject;
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().CenterObject, Ingredients, CraftingSurface);
+            }
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().RightObject, Ingredients, CraftingSurface);
+            }
+            if (!itemCraftable)
+            {
+                itemCraftable = Check(CraftingSurface.GetComponent<StorageBehaviour>().LeftObject, Ingredients, CraftingSurface);
+            }
+            this.GetComponent<Button>().interactable = itemCraftable;
 
 
             if (this.name.Equals("DeAcid Fly Gather Action") && Player.GetComponent<PlayerBehavior>().MovementSpeed <

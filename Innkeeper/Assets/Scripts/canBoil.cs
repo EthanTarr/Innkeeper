@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class canBoil : MonoBehaviour
 {
-    public float resetTime = 30;
+    public float resetTime = 60;
 
     private PlayerBehavior Player;
     private bool reseting = false;
@@ -40,6 +40,7 @@ public class canBoil : MonoBehaviour
 
     IEnumerator Reinteract()
     {
+        resetTime = 60 - (Player.Level * 1.5f);
         yield return new WaitForSeconds(resetTime);
         foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
         {

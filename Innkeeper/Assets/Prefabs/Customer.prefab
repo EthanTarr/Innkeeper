@@ -153,7 +153,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d1cc3a9671298b54399bc09a67c1bbba, type: 3}
   - {fileID: 21300000, guid: 0a79f7dbcd33c844aab5ea452ffb77da, type: 3}
   MovementSpeed: 20
-  LifeTimer: 80
+  LifeTimer: 100
   PossibleMeals:
   - {fileID: 4105547411058682866, guid: 52f1e50477c12d146be9287843273382, type: 3}
   - {fileID: 8132216591011756052, guid: bf5ccd1bdec49c14b97cb291e4c06e29, type: 3}

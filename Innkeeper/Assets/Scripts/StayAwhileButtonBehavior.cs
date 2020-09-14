@@ -51,7 +51,7 @@ public class StayAwhileButtonBehavior : MonoBehaviour
 
     IEnumerator Reactivate()
     {
-        yield return new WaitForSeconds(60 - 3 * Player.GetComponent<PlayerBehavior>().Level);
+        yield return new WaitForSeconds(60 - 1.5f * Player.GetComponent<PlayerBehavior>().Level);
         foreach (Transform customer in Player.GetComponent<GameManager>().Customers)
         {
             customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).GetComponent<Button>().interactable = true;

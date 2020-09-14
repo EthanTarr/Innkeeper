@@ -60,7 +60,7 @@ public class EndOfDayBehavior : MonoBehaviour
             yield return new WaitForSeconds(.5f);
         }
 
-        if (Player.Level != 10)
+        if (Player.Level != 20)
         {
             int SkillUpCount = 0;
             while (Player.xpToLevels(CurrentXp) > Player.xpToLevels(PreviousXp))
@@ -73,9 +73,17 @@ public class EndOfDayBehavior : MonoBehaviour
                 PreviousXp = Player.LevelMilestones[Player.xpToLevels(PreviousXp)];
                 this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
-                if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
+                /*if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
                 {
                     SkillUpCount++;
+                }*/
+                if (Random.value > 0.5f || (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 10 == 0)
+                {
+                    SkillUpCount++;
+                    if(Random.value < .1f)
+                    {
+                        SkillUpCount++;
+                    }
                 }
             }
             if (CurrentXp != PreviousXp)
@@ -90,7 +98,7 @@ public class EndOfDayBehavior : MonoBehaviour
             this.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(TurnOnMarket);
             if (SkillUpCount > 0)
             {
-                LevelChoicesScreen.GetComponent<LevelManager>().numOfSkilUps = SkillUpCount;
+                LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps = SkillUpCount;
                 LevelChoicesScreen.gameObject.SetActive(true);
                 this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             }

@@ -16,36 +16,25 @@ public class CanGather : MonoBehaviour
     {
         if(this.transform.parent.gameObject.activeSelf)
         {
-            if (this.name.Equals("Noodle Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 3)
+            Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
+            Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
+            if (LeftPlayerObject != null && RightPlayerObject != null)
             {
-                this.GetComponent<Button>().interactable = false;
-            }
-            else if (this.name.Equals("Acid Fly Gather Action") && GameObject.Find("Player").GetComponent<PlayerBehavior>().Level < 6)
-            {
-                this.GetComponent<Button>().interactable = false;
-            }
-            else
-            {
-                Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
-                Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
-                if (LeftPlayerObject != null && RightPlayerObject != null)
-                {
-                    if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) && 
-                        LeftPlayerObject.GetComponent<ItemBehavior>().ItemCount < LeftPlayerObject.GetComponent<ItemBehavior>().ItemMax) ||
-                        (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) &&
-                        RightPlayerObject.GetComponent<ItemBehavior>().ItemCount < RightPlayerObject.GetComponent<ItemBehavior>().ItemMax))
-                    {
-                        this.GetComponent<Button>().interactable = true;
-                    }
-                    else
-                    {
-                        this.GetComponent<Button>().interactable = false;
-                    }
-                }
-                else
+                if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) && 
+                    LeftPlayerObject.GetComponent<ItemBehavior>().ItemCount < LeftPlayerObject.GetComponent<ItemBehavior>().ItemMax) ||
+                    (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite) &&
+                    RightPlayerObject.GetComponent<ItemBehavior>().ItemCount < RightPlayerObject.GetComponent<ItemBehavior>().ItemMax))
                 {
                     this.GetComponent<Button>().interactable = true;
                 }
+                else
+                {
+                    this.GetComponent<Button>().interactable = false;
+                }
+            }
+            else
+            {
+                this.GetComponent<Button>().interactable = true;
             }
 
            

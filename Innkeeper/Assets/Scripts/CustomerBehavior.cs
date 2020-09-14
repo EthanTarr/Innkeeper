@@ -89,7 +89,7 @@ public class CustomerBehavior : MonoBehaviour
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
             Meals2.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            if (Player.GetComponent<PlayerBehavior>().Level >= 5)
             {
                 Meals2.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }
@@ -115,7 +115,7 @@ public class CustomerBehavior : MonoBehaviour
 
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            if (Player.GetComponent<PlayerBehavior>().Level >= 10)
             {
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
@@ -143,12 +143,12 @@ public class CustomerBehavior : MonoBehaviour
 
             Meals.Add(PossibleMeals[0].GetComponent<SpriteRenderer>().sprite);
             Meals.Add(PossibleMeals[1].GetComponent<SpriteRenderer>().sprite);
-            if (Player.GetComponent<PlayerBehavior>().Level > 5)
+            if (Player.GetComponent<PlayerBehavior>().Level >= 10)
             {
                 Meals.Add(PossibleMeals[2].GetComponent<SpriteRenderer>().sprite);
             }
             Meals2.Add(PossibleMeals[3].GetComponent<SpriteRenderer>().sprite);
-            if (Player.GetComponent<PlayerBehavior>().Level > 2)
+            if (Player.GetComponent<PlayerBehavior>().Level >= 5)
             {
                 Meals2.Add(PossibleMeals[4].GetComponent<SpriteRenderer>().sprite);
             }

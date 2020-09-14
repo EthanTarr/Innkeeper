@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     private float OriginalMaxSpawnTime = 80f;
     public float SpawnTimerIncreaseRate = 40f;
     public float SpawnTimerIncreaseAmount = .92f;
+    private float nextSpawnTime = 0;
+    private bool canSpawn = false;
 
     public int TimelineCount = 0;
     public int DayCount = 0;
@@ -53,8 +55,6 @@ public class GameManager : MonoBehaviour
     public GameObject BlackFade;
     public GameObject SkillList;
     public GameObject PauseScreen;
-
-
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
         //Day ending catch
         if (TimelineCount > DayTimeLimit)
         {
+            canSpawn = false;
             BlackBackground.gameObject.SetActive(true);
             EndOfDayScreen.gameObject.SetActive(true);
             this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
@@ -112,11 +113,19 @@ public class GameManager : MonoBehaviour
         //Fail day catch
         if (numOfDisSatisfiedCustomers >= DisSatisfiedCustomerCounters.Count)
         {
+            canSpawn = false;
             ResetInn();
             Debug.Log("GAME OVER!");
             BlackBackground.gameObject.SetActive(true);
             GameOverScreen.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = "Too many angry customers. The Inn is ruined! And in only " + DayCount + " day(s)";
             GameOverScreen.gameObject.SetActive(true);
+        }
+
+        //Empty inn catch
+        if(Customers.Count <= 0 && Time.time + DayStartDelay < nextSpawnTime && canSpawn)
+        {
+            StopCoroutine(SpawnCustomer());
+            StartCoroutine(SpawnCustomer());
         }
 
         //Ambient inn sounds catch
@@ -204,9 +213,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SpawnCustomer()
     {
+        canSpawn = false;
         yield return new WaitForSeconds(DayStartDelay); //delay to start the day
         while (true)
         {
+            canSpawn = false;
             float SpawnTime;
             List<Transform> emptyTables = findEmptyTable();
             int customerSpawn = Random.Range(1, (DayCount / 8) + 3);
@@ -226,6 +237,8 @@ public class GameManager : MonoBehaviour
                 }
             }
             SpawnTime = Random.Range(MinSpawnTime, MaxSpawnTime);
+            nextSpawnTime = Time.time + SpawnTime;
+            canSpawn = true;
             yield return new WaitForSeconds(SpawnTime); //wait for spawntime
         }
     }
@@ -251,7 +264,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AnyMealWillDoRecharge()
     {
-        yield return new WaitForSeconds(60f - 2f * this.GetComponent<PlayerBehavior>().Level);
+        yield return new WaitForSeconds(60f - 1.5f * this.GetComponent<PlayerBehavior>().Level);
         canAnyMeal = true;
         AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
     }
@@ -298,8 +311,8 @@ public class GameManager : MonoBehaviour
 
     private void populateUnlockableFoods()
     {
-        UnlockableFoods.Add(3, GetComponent<ResourceManager>().PastaBowl.name);
-        UnlockableFoods.Add(6, GetComponent<ResourceManager>().DeAcidFly.name);
+        UnlockableFoods.Add(5, GetComponent<ResourceManager>().PastaBowl.name);
+        UnlockableFoods.Add(10, GetComponent<ResourceManager>().DeAcidFly.name);
     }
 
     private void findUnlockedFood()
@@ -432,7 +445,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            LevelChoices.GetComponent<LevelManager>().AvaliableSkills.Add(LevelChoices.GetComponent<LevelManager>().SkillDictionary["Customer Preference - Goblin"]);
+            LevelChoices.GetComponent<LevelManager>().SubTenSkills.Add(LevelChoices.GetComponent<LevelManager>().SkillDictionary["Customer Preference - Goblin"]);
         }
     }
 
