@@ -37,10 +37,13 @@ public class SkillListBehavior : MonoBehaviour
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(0).GetComponent<Text>().text = skill;
             this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum).GetChild(1).GetComponent<Text>().text =
                 Player.GetComponent<GameManager>().LevelChoices.GetComponent<LevelManager>().SkillDictionary[skill].GetComponent<SkillBehavior>().Description;
-            SkillArea = Instantiate(this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum));
-            SkillArea.parent = this.transform.GetChild(1).GetChild(0).GetChild(0);
+            if (this.transform.GetChild(1).GetChild(0).GetChild(0).childCount <= skillNum + 1)
+            {
+                SkillArea = Instantiate(this.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(skillNum));
+                SkillArea.SetParent(this.transform.GetChild(1).GetChild(0).GetChild(0), false);
+            }
             skillNum++;
         }
-        Destroy(SkillArea);
+        Destroy(SkillArea.gameObject);
     }
 }

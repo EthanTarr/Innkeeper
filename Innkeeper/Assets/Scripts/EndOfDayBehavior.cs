@@ -62,7 +62,6 @@ public class EndOfDayBehavior : MonoBehaviour
 
         if (Player.Level != 20)
         {
-            int SkillUpCount = 0;
             while (Player.xpToLevels(CurrentXp) > Player.xpToLevels(PreviousXp))
             {
                 this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage(1);
@@ -77,12 +76,46 @@ public class EndOfDayBehavior : MonoBehaviour
                 {
                     SkillUpCount++;
                 }*/
-                if (Random.value > 0.5f || (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 10 == 0)
+                int levelText = (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)));
+                if (levelText % 10 == 0)
                 {
-                    SkillUpCount++;
-                    if(Random.value < .1f)
+                    if(levelText / 10 == 1)
                     {
-                        SkillUpCount++;
+                        LevelChoicesScreen.GetComponent<LevelManager>().numOfFirstMilestoneSkillUps++;
+                        if (Random.value < .1f)
+                        {
+                            LevelChoicesScreen.GetComponent<LevelManager>().numOfFirstMilestoneSkillUps++;
+                        }
+                    }
+                    else if (levelText / 10 == 2)
+                    {
+                        LevelChoicesScreen.GetComponent<LevelManager>().numOfSecondMilestoneSkillUps++;
+                        if (Random.value < .1f)
+                        {
+                            LevelChoicesScreen.GetComponent<LevelManager>().numOfSecondMilestoneSkillUps++;
+                        }
+                    }
+                }
+                if (levelText / 10 == 0)
+                {
+                    if (Random.value > 0.5f)
+                    {
+                        LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps++;
+                        if (Random.value < .1f)
+                        {
+                            LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps++;
+                        }
+                    }
+                }
+                else
+                {
+                    if (Random.value > 0.5f)
+                    {
+                        LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTwentySkillUps++;
+                        if (Random.value < .1f)
+                        {
+                            LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTwentySkillUps++;
+                        }
                     }
                 }
             }
@@ -96,9 +129,9 @@ public class EndOfDayBehavior : MonoBehaviour
             }
 
             this.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(TurnOnMarket);
-            if (SkillUpCount > 0)
+            if (LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps > 0 || LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTwentySkillUps > 0 || 
+                LevelChoicesScreen.GetComponent<LevelManager>().numOfFirstMilestoneSkillUps > 0 || LevelChoicesScreen.GetComponent<LevelManager>().numOfSecondMilestoneSkillUps > 0)
             {
-                LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps = SkillUpCount;
                 LevelChoicesScreen.gameObject.SetActive(true);
                 this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             }

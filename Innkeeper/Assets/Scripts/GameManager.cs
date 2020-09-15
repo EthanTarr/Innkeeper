@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Day ending catch
-        if (TimelineCount > DayTimeLimit)
+        if (TimelineCount > DayTimeLimit || Input.GetKeyDown(KeyCode.T))
         {
             canSpawn = false;
             BlackBackground.gameObject.SetActive(true);
@@ -333,7 +333,10 @@ public class GameManager : MonoBehaviour
         {
             UnlockableFoods.Remove(lev);
         }
-        Unlockfoods();
+        if (UnlockedFoods.Count > 0)
+        {
+            Unlockfoods();
+        }
     }
 
     public void Unlockfoods()
