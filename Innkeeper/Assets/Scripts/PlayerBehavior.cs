@@ -52,25 +52,25 @@ public class PlayerBehavior : MonoBehaviour
     {
         LevelMilestones = new int[21];
         LevelMilestones[0] = -1;
-        LevelMilestones[1] = 100;
-        LevelMilestones[2] = 275;
-        LevelMilestones[3] = 525;
-        LevelMilestones[4] = 850;
+        LevelMilestones[1] = 200;
+        LevelMilestones[2] = 475;
+        LevelMilestones[3] = 725;
+        LevelMilestones[4] = 950;
         LevelMilestones[5] = 1250;
-        LevelMilestones[6] = 1950;
-        LevelMilestones[7] = 2550;
-        LevelMilestones[8] = 3650;
-        LevelMilestones[9] = 4750;
-        LevelMilestones[10] = 6050;
-        LevelMilestones[11] = 7450;
-        LevelMilestones[12] = 8950;
-        LevelMilestones[13] = 10550;
-        LevelMilestones[14] = 12250;
-        LevelMilestones[15] = 14050;
-        LevelMilestones[16] = 15950;
-        LevelMilestones[17] = 17950;
-        LevelMilestones[18] = 20050;
-        LevelMilestones[19] = 22250;
+        LevelMilestones[6] = 1750;
+        LevelMilestones[7] = 2300;
+        LevelMilestones[8] = 2900;
+        LevelMilestones[9] = 3550;
+        LevelMilestones[10] = 4250;
+        LevelMilestones[11] = 5000;
+        LevelMilestones[12] = 5800;
+        LevelMilestones[13] = 6650;
+        LevelMilestones[14] = 7550;
+        LevelMilestones[15] = 8500;
+        LevelMilestones[16] = 9500;
+        LevelMilestones[17] = 10550;
+        LevelMilestones[18] = 11650;
+        LevelMilestones[19] = 12800;
         LevelMilestones[20] = int.MaxValue;
 
 
@@ -100,13 +100,14 @@ public class PlayerBehavior : MonoBehaviour
             }
             if(canDash && Input.GetKey(KeyCode.X))
             {
-                MovementSpeed += 2;
+                MovementSpeed += 15;
                 canDash = false;
-                this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+                Debug.Log("Dash amount " + MovementSpeed);
+                this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 100);
                 StartCoroutine("DashRecharge");
             }
             //calculating where to move
-            PreviousDestination = Destination;
+            PreviousDestination = transform.position;
             Destination = transform.position;
             if (Input.GetKey(KeyCode.W))
             {
@@ -162,7 +163,7 @@ public class PlayerBehavior : MonoBehaviour
 
             //set moving animation
             this.GetComponent<Animator>().SetFloat("Speed", (PreviousDestination - Destination).magnitude);
-            this.GetComponent<Animator>().speed = (1 + (PreviousDestination - Destination).magnitude);
+            this.GetComponent<Animator>().speed = (.85f + (PreviousDestination - Destination).magnitude);
 
             //return movement to how it was
             MovementSpeed = oldMovement;
@@ -623,6 +624,7 @@ public class PlayerBehavior : MonoBehaviour
     {
         yield return new WaitForSeconds(15f - .7f * Level);
         canDash = true;
-        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        Debug.Log("dash true");
+        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
     }
 }

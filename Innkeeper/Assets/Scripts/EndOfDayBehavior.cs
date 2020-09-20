@@ -60,7 +60,7 @@ public class EndOfDayBehavior : MonoBehaviour
             yield return new WaitForSeconds(.5f);
         }
 
-        if (Player.Level != 20)
+        if (Player.xpToLevels(PreviousXp) != 20)
         {
             while (Player.xpToLevels(CurrentXp) > Player.xpToLevels(PreviousXp))
             {
@@ -72,10 +72,6 @@ public class EndOfDayBehavior : MonoBehaviour
                 PreviousXp = Player.LevelMilestones[Player.xpToLevels(PreviousXp)];
                 this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
-                /*if ((int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6))) % 2 == 0)
-                {
-                    SkillUpCount++;
-                }*/
                 int levelText = (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)));
                 if (levelText % 10 == 0)
                 {

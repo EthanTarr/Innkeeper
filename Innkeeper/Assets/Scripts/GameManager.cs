@@ -142,10 +142,10 @@ public class GameManager : MonoBehaviour
         }
 
         //Any Meal Will Do Skill
-        if(canAnyMeal && Input.GetKey(KeyCode.Z))
+        if(canAnyMeal && AnyMealWillDoIndicator.GetComponent<Image>().color.a > (170/255f) && Input.GetKey(KeyCode.Z))
         {
             canAnyMeal = false;
-            AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+            AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 100);
             StartCoroutine("AnyMealWillDoRecharge");
         }
     }
@@ -158,6 +158,10 @@ public class GameManager : MonoBehaviour
 
     public void start()
     {
+        if(DayCount == 0)
+        {
+            SaveLoad.Load("/blankGame.ent");
+        }
         DayCount++;
         DayCounter.GetComponent<Text>().text = DayCount + "";
         if (DayCount == 2)
@@ -191,7 +195,7 @@ public class GameManager : MonoBehaviour
     {
         foreach(Transform store in StorageTables)
         {
-            if(store.GetComponent<StorageBehaviour>().contains(Object))
+            if (store.GetComponent<StorageBehaviour>().contains(Object))
             {
                 return true;
             }
@@ -264,16 +268,18 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AnyMealWillDoRecharge()
     {
-        yield return new WaitForSeconds(60f - 1.5f * this.GetComponent<PlayerBehavior>().Level);
+        yield return new WaitForSeconds(15f + (.75f * this.GetComponent<PlayerBehavior>().Level));
         canAnyMeal = true;
-        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 170);
+        yield return new WaitForSeconds(30f - (.75f * this.GetComponent<PlayerBehavior>().Level));
+        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
     }
 
     public void createDisSatisfiedCustomerCounters()
     {
         Transform customerCounter = GameObject.Find("Upset Customer Counter").transform.GetChild(0);
         Transform newCounter = Instantiate(customerCounter, customerCounter.position + new Vector3(-50 * customerCounter.parent.childCount, 0, 0), customerCounter.transform.rotation);
-        newCounter.parent = customerCounter.parent;
+        newCounter.SetParent(customerCounter.parent);
         DisSatisfiedCustomerCounters.Add(newCounter);
     }
 
@@ -319,7 +325,6 @@ public class GameManager : MonoBehaviour
     {
         UnlockedFoods = new List<string>();
         List<int> removes = new List<int>();
-        MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level); //tells market to unlock pasta or acid fly items
         foreach (int level in UnlockableFoods.Keys)
         {
             if(GetComponent<PlayerBehavior>().Level >= level)
@@ -520,6 +525,7 @@ public class GameManager : MonoBehaviour
                 if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
                 {
                     leftovers += storage.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount;
+                    Debug.Log(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
                     Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
                 }
                 if (storage.GetComponent<StorageBehaviour>().CenterObject != null)

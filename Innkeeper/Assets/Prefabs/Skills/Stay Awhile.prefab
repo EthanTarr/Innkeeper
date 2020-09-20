@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Base: 30
-  Level: 5
-  Description: You can convince a guest to stay longer.
-  PreferedToolTipSize: {x: 200, y: 40}
+  Description: You can convince a guest to stay longer by clicking on the indicator
+    on the customer.
+  PreferedToolTipSize: {x: 200, y: 100}
   PrerequisiteSkill: {fileID: 0}

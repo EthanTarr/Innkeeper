@@ -29,15 +29,17 @@ public static class SaveLoad
         save.UnlockableFoods = Game.UnlockableFoods;
         save.BlueFruitGatherDescription = Game.DoorPopup.GetChild(3).GetComponent<Info>().Description;
         save.WaterGatherDescription = Game.DoorPopup.GetChild(4).GetComponent<Info>().Description;
-        save.AcidFlyGatherDescription = Game.DoorPopup.GetChild(5).GetComponent<Info>().Description;
-        save.NoodleGatherDescription = Game.DoorPopup.GetChild(6).GetComponent<Info>().Description;
-        save.DeAcidFlyCreationDescription = Game.DoorPopup.GetChild(3).GetComponent<Info>().Description;
-        save.SliceBlueFruitCreationDescription = Game.DoorPopup.GetChild(4).GetComponent<Info>().Description;
-        save.BlueFruitJuiceCreationDescription = Game.DoorPopup.GetChild(5).GetComponent<Info>().Description;
-        save.PastaCreationDescription = Game.DoorPopup.GetChild(3).GetComponent<Info>().Description;
-        save.GlassWaterCreationDescription = Game.DoorPopup.GetChild(4).GetComponent<Info>().Description;
+        save.AcidFlyGatherDescription = Game.DoorPopup.GetChild(6).GetComponent<Info>().Description;
+        save.NoodleGatherDescription = Game.DoorPopup.GetChild(5).GetComponent<Info>().Description;
+        save.DeAcidFlyCreationDescription = Game.CraftingPopup.GetChild(3).GetComponent<Info>().Description;
+        save.SliceBlueFruitCreationDescription = Game.CraftingPopup.GetChild(4).GetComponent<Info>().Description;
+        save.BlueFruitJuiceCreationDescription = Game.CraftingPopup.GetChild(5).GetComponent<Info>().Description;
+        save.PastaCreationDescription = Game.CauldronPopups[0].GetChild(3).GetComponent<Info>().Description;
+        save.GlassWaterCreationDescription = Game.CauldronPopups[0].GetChild(4).GetComponent<Info>().Description;
         save.DisSatisfiedCustomerCounters = Game.DisSatisfiedCustomerCounters.Count;
         save.CustomerSatisfactionXpBonus = Game.CustomerSatisfactionXpBonus;
+        save.DashIndicator = Game.DashIndicator.gameObject.activeSelf;
+        save.AnyMealWillDoIndicator = Game.AnyMealWillDoIndicator.gameObject.activeSelf;
 
         ResourceManager Resource = GameObject.Find("Player").GetComponent<ResourceManager>();
         save.FruitGain = Resource.FruitGain;
@@ -59,6 +61,7 @@ public static class SaveLoad
         save.DrakeChance = Customer.DrakeChance;
         save.GoblinChance = Customer.GoblinChance;
         save.AntiniumChance = Customer.AntiniumChance;
+        save.StayAwhile = Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.activeSelf;
 
         CustomerRequestBehavior Request = Game.Customer.GetComponent<PopUpObjectBehavior>().Popup.GetChild(3).GetComponent<CustomerRequestBehavior>();
         save.xpGain = Request.xpGain;
@@ -69,10 +72,7 @@ public static class SaveLoad
         Transform content = Game.MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
         for (int i = 0; i < content.childCount; i++)
         {
-            if (content.GetChild(i).gameObject.activeSelf)
-            {
-                save.MarketPrices.Add(content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost);
-            }
+            save.MarketPrices.Add(content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost);
         }
         foreach(Transform food in Resource.Foods)
         {
@@ -130,7 +130,7 @@ public static class SaveLoad
             GameManager Game = GameObject.Find("Player").GetComponent<GameManager>();
             LevelManager level = Game.LevelChoices.GetComponent<LevelManager>();
             ResourceManager Resource = GameObject.Find("Player").GetComponent<ResourceManager>();
-            CustomerRequestBehavior Request = Game.Customer.GetComponent<PopUpObjectBehavior>().Popup.GetComponent<CustomerRequestBehavior>();
+            CustomerRequestBehavior Request = Game.Customer.GetComponent<PopUpObjectBehavior>().Popup.GetChild(3).GetComponent<CustomerRequestBehavior>();
             CustomerBehavior Customer = Game.Customer.GetComponent<CustomerBehavior>();
 
             foreach (string skill in save.PlayerSkills)
@@ -151,11 +151,8 @@ public static class SaveLoad
             }
             for (int i = 0; i < MarketPurchases.childCount; i++)
             {
-                if (MarketPurchases.GetChild(i).gameObject.activeSelf)
-                {
-                    MarketPurchases.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = save.MarketPrices[i];
-                    MarketPurchases.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().updateCost();
-                }
+                MarketPurchases.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = save.MarketPrices[i];
+                MarketPurchases.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().updateCost();
             }
             Player.MovementSpeed = save.MovementSpeed;
             Player.PreviousXp = save.PreviousXp;
@@ -171,16 +168,21 @@ public static class SaveLoad
             Game.EndOfDayScreen.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().originalPercentage = save.xpBarPercentage;
             Game.UnlockableFoods = save.UnlockableFoods;
             Game.CustomerSatisfactionXpBonus = save.CustomerSatisfactionXpBonus;
+            Game.DashIndicator.gameObject.SetActive(save.DashIndicator);
+            Game.AnyMealWillDoIndicator.gameObject.SetActive(save.AnyMealWillDoIndicator);
 
             Game.DoorPopup.GetChild(3).GetComponent<Info>().Description = save.BlueFruitGatherDescription;
             Game.DoorPopup.GetChild(4).GetComponent<Info>().Description = save.WaterGatherDescription;
-            Game.DoorPopup.GetChild(5).GetComponent<Info>().Description = save.AcidFlyGatherDescription;
-            Game.DoorPopup.GetChild(6).GetComponent<Info>().Description = save.NoodleGatherDescription;
-            Game.DoorPopup.GetChild(3).GetComponent<Info>().Description = save.DeAcidFlyCreationDescription;
-            Game.DoorPopup.GetChild(4).GetComponent<Info>().Description = save.SliceBlueFruitCreationDescription;
-            Game.DoorPopup.GetChild(5).GetComponent<Info>().Description = save.BlueFruitJuiceCreationDescription;
-            Game.DoorPopup.GetChild(3).GetComponent<Info>().Description = save.PastaCreationDescription;
-            Game.DoorPopup.GetChild(4).GetComponent<Info>().Description = save.GlassWaterCreationDescription;
+            Game.DoorPopup.GetChild(6).GetComponent<Info>().Description = save.AcidFlyGatherDescription;
+            Game.DoorPopup.GetChild(5).GetComponent<Info>().Description = save.NoodleGatherDescription;
+            Game.CraftingPopup.GetChild(3).GetComponent<Info>().Description = save.DeAcidFlyCreationDescription;
+            Game.CraftingPopup.GetChild(4).GetComponent<Info>().Description = save.SliceBlueFruitCreationDescription;
+            Game.CraftingPopup.GetChild(5).GetComponent<Info>().Description = save.BlueFruitJuiceCreationDescription;
+            foreach (Transform cauldronPopup in Game.CauldronPopups)
+            {
+                cauldronPopup.GetChild(3).GetComponent<Info>().Description = save.PastaCreationDescription;
+                cauldronPopup.GetChild(4).GetComponent<Info>().Description = save.GlassWaterCreationDescription;
+            }
             for(int i = save.DisSatisfiedCustomerCounters; i > 3; i--)
             {
                 Game.createDisSatisfiedCustomerCounters();
@@ -208,6 +210,7 @@ public static class SaveLoad
             Customer.DrakeChance = save.DrakeChance;
             Customer.GoblinChance = save.GoblinChance;
             Customer.AntiniumChance = save.AntiniumChance;
+            Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.SetActive(save.StayAwhile);
 
             Request.xpGain = save.xpGain;
             Request.maxTip = save.maxTip;
@@ -247,7 +250,7 @@ public static class SaveLoad
         PlayerBehavior Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
         save.PlayerSkills = new List<string>();
         save.Purchases = new List<string>();
-        save.MovementSpeed = 15f;
+        save.MovementSpeed = 1.5f;
         save.PreviousXp = 0;
         save.xp = 0;
         save.Level = 0;
@@ -255,13 +258,13 @@ public static class SaveLoad
 
         GameManager Game = GameObject.Find("Player").GetComponent<GameManager>();
         save.SpawnTimerIncreaseAmount = .99f;
-        save.DayCount = 0;
+        save.DayCount = 1;
         save.DayTimeLimit = 100;
         save.DayStartDelay = 15;
         save.xpBarPercentage = 0;
         save.strength = 0;
         save.UnlockableFoods = new Dictionary<int, string>();
-        save.BlueFruitGatherDescription = "<b>Gather Blue Fruits</b> - Gather <color=#F7D64A>(3)</color> Blue Fruits from a nearby orchird of trees. They seem edible.";
+        save.BlueFruitGatherDescription = "<b>Gather Blue Fruits</b> - Gather <color=#F7D64A>(2)</color> Blue Fruits from a nearby orchird of trees. They seem edible.";
         save.WaterGatherDescription = "<b>Gather Water</b> - Gather <color=#F7D64A>(1)</color> Bucket of Water from the nearby stream.";
         save.AcidFlyGatherDescription = "<b>Gather Acid Flys</b> - Gather <color=#F7D64A>(1)</color> Jar of captured Acid Flys.";
         save.NoodleGatherDescription = "<b>Gather Noodle Ingredients</b> - Gather the ingredients for <color=#F7D64A>(3)</color> Noodles from the nearby area.";
@@ -272,6 +275,8 @@ public static class SaveLoad
         save.GlassWaterCreationDescription = "<b>Glass of Water</b> - <color=#F7D64A>(5)</color> Glasses of Boiled Water collected and heated in your cauldron. Standard stuff.";
         save.DisSatisfiedCustomerCounters = 3;
         save.CustomerSatisfactionXpBonus = 50f;
+        save.DashIndicator = false;
+        save.AnyMealWillDoIndicator = false;
 
         save.FruitGain = 2;
         save.WaterGain = 1;
@@ -287,18 +292,29 @@ public static class SaveLoad
         save.CookingTimeDelay = 15f;
 
         save.CustomerMovementSpeed = 20f;
-        save.LifeTimer = 80f;
+        save.LifeTimer = 100f;
         save.DrakeChance = 50;
         save.GoblinChance = 0;
         save.AntiniumChance = 50;
+        save.StayAwhile = false;
 
         save.xpGain = 20;
         save.maxTip = 3;
 
-        save.TableFood = new List<int[]>();
-        save.activeSkills = new List<bool>();
+        save.TableFood = Game.tableToSave();
+        save.activeSkills = Game.encodeActiveSkills();
         save.MarketPrices = new List<int>();
         save.FoodPrices = new List<int>();
+        Transform content = Game.MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
+        ResourceManager Resource = GameObject.Find("Player").GetComponent<ResourceManager>();
+        for (int i = 0; i < content.childCount; i++)
+        {
+            save.MarketPrices.Add(content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost);
+        }
+        foreach (Transform food in Resource.Foods)
+        {
+            save.FoodPrices.Add(food.GetComponent<ItemBehavior>().ItemValue);
+        }
 
         save.canAnyMeal = false;
         save.canDash = false;

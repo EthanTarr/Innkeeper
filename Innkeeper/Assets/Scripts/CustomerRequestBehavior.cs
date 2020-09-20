@@ -41,7 +41,10 @@ public class CustomerRequestBehavior : MonoBehaviour
             Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
             Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
             if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
-                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite)) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && LeftPlayerObject != null) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null))
             {
                 this.GetComponent<Button>().interactable = true;
             }
@@ -59,7 +62,7 @@ public class CustomerRequestBehavior : MonoBehaviour
     {
         Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
         Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
-        if (LeftPlayerObject != null || RightPlayerObject != null)
+        if (LeftPlayerObject != null || RightPlayerObject != null || Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand"))
         {
             if((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
                 (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
@@ -85,7 +88,6 @@ public class CustomerRequestBehavior : MonoBehaviour
                             otherItemIndex = 4;
                         }
                     }
-
                     int RequestCount = int.Parse(this.transform.GetChild(0).GetComponent<Text>().text);
                     if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
                         (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && LeftPlayerObject != null))
@@ -96,7 +98,6 @@ public class CustomerRequestBehavior : MonoBehaviour
                     {
                         otherRequestCount = satisfyRequest(LeftPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }
-
                     if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
                         (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && RequestCount > 0))
                     {

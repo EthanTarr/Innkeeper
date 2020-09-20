@@ -55,12 +55,15 @@ public class LevelManager : MonoBehaviour
         Calls.Add("Quick Boiling", QuickBoiling);
         Calls.Add("Any Meal Will Do", AnyMealWillDo);
         Calls.Add("Inn, My Hand", InnMyHand);
+        Calls.Add("Diner Dash", DinerDash);
+        Calls.Add("Stay Awhile", StayAwhile);
 
         SkillDictionary = new Dictionary<string, Transform>();
         foreach(Transform skill in Skills)
         {
             SkillDictionary.Add(skill.name, skill);
         }
+        this.gameObject.SetActive(false);
         /*
         AvaliableSkills.Add(SkillDictionary["Lesser Strength"]);
         AvaliableSkills.Add(SkillDictionary["Basic Cooking"]);
@@ -100,16 +103,16 @@ public class LevelManager : MonoBehaviour
             getChoices(SubTenSkills);
             return true;
         }
-        else if (numOfSubTwentySkillUps > 0)
-        {
-            numOfSubTwentySkillUps--;
-            getChoices(SubTwentySkills);
-            return true;
-        }
         else if (numOfFirstMilestoneSkillUps > 0)
         {
             numOfFirstMilestoneSkillUps--;
             getChoices(FirstMilestoneSkills);
+            return true;
+        }
+        else if (numOfSubTwentySkillUps > 0)
+        {
+            numOfSubTwentySkillUps--;
+            getChoices(SubTwentySkills);
             return true;
         }
         else if (numOfSecondMilestoneSkillUps > 0)
@@ -144,14 +147,7 @@ public class LevelManager : MonoBehaviour
                 float choice = Random.Range(0f, 100f);
                 if (choice < 25)
                 {
-                    if (skills.Values[0].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
-                    {
-                        Skillchoice.Add("Skill Change - " + skills.Values[0].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[0].name);
-                    }
-                    else
-                    {
-                        Skillchoice.Add(skills.Values[0].name);
-                    }
+                    Skillchoice.Add(skills.Values[0].name);
                     skills.RemoveAt(0);
                 }
                 else if (choice < 48)
@@ -161,14 +157,7 @@ public class LevelManager : MonoBehaviour
                     {
                         index = 0;
                     }
-                    if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
-                    {
-                        Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
-                    }
-                    else
-                    {
-                        Skillchoice.Add(skills.Values[index].name);
-                    }
+                    Skillchoice.Add(skills.Values[index].name);
                     skills.RemoveAt(index);
                 }
                 else if (choice < 68)
@@ -178,14 +167,7 @@ public class LevelManager : MonoBehaviour
                     {
                         index = 0;
                     }
-                    if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
-                    {
-                        Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
-                    }
-                    else
-                    {
-                        Skillchoice.Add(skills.Values[index].name);
-                    }
+                    Skillchoice.Add(skills.Values[index].name);
                     skills.RemoveAt(index);
                 }
                 else if (choice < 85)
@@ -195,14 +177,7 @@ public class LevelManager : MonoBehaviour
                     {
                         index = 0;
                     }
-                    if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
-                    {
-                        Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
-                    }
-                    else
-                    {
-                        Skillchoice.Add(skills.Values[index].name);
-                    }
+                    Skillchoice.Add(skills.Values[index].name);
                     skills.RemoveAt(index);
                 }
                 else
@@ -212,18 +187,9 @@ public class LevelManager : MonoBehaviour
                     {
                         index = 0;
                     }
-                    if (skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill != null)
-                    {
-                        Skillchoice.Add("Skill Change - " + skills.Values[index].GetComponent<SkillBehavior>().PrerequisiteSkill + " - " + skills.Values[index].name);
-                    }
-                    else
-                    {
-                        Skillchoice.Add(skills.Values[index].name);
-                    }
+                    Skillchoice.Add(skills.Values[index].name);
                     skills.RemoveAt(index);
                 }
-
-                Debug.Log("Random Value: " + choice);
             }
             PopulateChoices(Skillchoice[0], Skillchoice[1], Skillchoice[2]);
         }
@@ -238,6 +204,7 @@ public class LevelManager : MonoBehaviour
     {
         Button btn1 = this.transform.GetChild(1).GetComponent<Button>();
         btn1.onClick.RemoveAllListeners();
+        Debug.Log(Skill1);
         btn1.onClick.AddListener(Calls[Skill1]);
         foreach(Transform skill in Skills)
         {
@@ -248,7 +215,7 @@ public class LevelManager : MonoBehaviour
                 btn1.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
                 if(skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
                 {
-                    btn1.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill1;
+                    btn1.transform.GetChild(0).GetComponent<Text>().text = "Skill Change - " + skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill1;
                 }
                 else
                 {
@@ -260,6 +227,7 @@ public class LevelManager : MonoBehaviour
         
         Button btn2 = this.transform.GetChild(3).GetComponent<Button>();
         btn2.onClick.RemoveAllListeners();
+        Debug.Log(Skill2);
         btn2.onClick.AddListener(Calls[Skill2]);
         foreach (Transform skill in Skills)
         {
@@ -270,7 +238,7 @@ public class LevelManager : MonoBehaviour
                 btn2.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
                 if (skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
                 {
-                    btn2.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill2;
+                    btn2.transform.GetChild(0).GetComponent<Text>().text = "Skill Change - " + skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill2;
                 }
                 else
                 {
@@ -282,6 +250,7 @@ public class LevelManager : MonoBehaviour
 
         Button btn3 = this.transform.GetChild(5).GetComponent<Button>();
         btn3.onClick.RemoveAllListeners();
+        Debug.Log(Skill3);
         btn3.onClick.AddListener(Calls[Skill3]);
         foreach (Transform skill in Skills)
         {
@@ -292,7 +261,7 @@ public class LevelManager : MonoBehaviour
                 btn3.GetComponent<Info>().height = skill.GetComponent<SkillBehavior>().PreferedToolTipSize.y;
                 if (skill.GetComponent<SkillBehavior>().PrerequisiteSkill != null)
                 {
-                    btn3.transform.GetChild(0).GetComponent<Text>().text = skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill3;
+                    btn3.transform.GetChild(0).GetComponent<Text>().text = "Skill Change - " + skill.GetComponent<SkillBehavior>().PrerequisiteSkill.name + " -> " + Skill3;
                 }
                 else
                 {
@@ -458,9 +427,9 @@ public class LevelManager : MonoBehaviour
         }
         int extraGain = (currentLevel / 10) - (pastLevel / 10);
         Player.GetComponent<ResourceManager>().BlueFruitJuiceGain += extraGain; //number of Blue Fruit Juice created with each create action
-        Player.GetComponent<GameManager>().CraftingPopup.GetChild(5).GetComponent<Info>().Description = 
-            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().BlueFruitJuiceGain + 
-            ")</color> glasses of water to create <color=#F7D64A>(3)</color> glasses of blue fruit juice.";
+        Player.GetComponent<GameManager>().CraftingPopup.GetChild(5).GetComponent<Info>().Description =
+            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(3)</color> glasses of water to create <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().BlueFruitJuiceGain + 
+            ")</color> glasses of blue fruit juice.";
         Player.GetComponent<ResourceManager>().SlicedBlueFruitGain += extraGain; //number of Sliced Blue Fruit created with each create action
         Player.GetComponent<GameManager>().CraftingPopup.GetChild(4).GetComponent<Info>().Description =
             "<b>Slice Blue Fruit</b> - Slice <color=#F7D64A>(1)</color> Blue Fruit into <color=#F7D64A>(" + Player.GetComponent<ResourceManager>().SlicedBlueFruitGain +
@@ -760,11 +729,10 @@ public class LevelManager : MonoBehaviour
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Proficiency - Haggling");
             FirstMilestoneSkills.Remove(SkillDictionary["Proficiency - Haggling"]);
         }
-        int discount = currentLevel - pastLevel;
         Transform content = Player.GetComponent<GameManager>().MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
         for(int i = 0; i < content.childCount; i++)
         {
-            content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = Mathf.Max(1, content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost - discount);
+            content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost = Mathf.Max(1, Mathf.RoundToInt(content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost * (1f - ((currentLevel + 15f) * .01f))));
             content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().updateCost();
         }
         CheckForMoreSkills();
@@ -841,7 +809,7 @@ public class LevelManager : MonoBehaviour
             FirstMilestoneSkills.Remove(SkillDictionary["Diner Dash"]);
         }
         Player.GetComponent<PlayerBehavior>().canDash = true;
-        this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        Player.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         CheckForMoreSkills();
     }
 
@@ -861,13 +829,17 @@ public class LevelManager : MonoBehaviour
 
     private void QuickBoiling()
     {
+        Debug.Log("Test1");
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Boiling"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Quick Boiling");
             FirstMilestoneSkills.Remove(SkillDictionary["Quick Boiling"]);
+            Debug.Log("Test2");
             foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
             {
+                Debug.Log(popup.GetChild(6).gameObject.activeSelf);
                 popup.GetChild(6).gameObject.SetActive(true);
+                Debug.Log(popup.GetChild(6).gameObject.activeSelf);
             }
         }
         CheckForMoreSkills();
@@ -882,7 +854,7 @@ public class LevelManager : MonoBehaviour
             SecondMilestoneSkills.Remove(SkillDictionary["Any Meal Will Do"]);
         }
         Player.GetComponent<GameManager>().canAnyMeal = true;
-        Player.GetComponent<GameManager>().AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        Player.GetComponent<GameManager>().AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         CheckForMoreSkills();
     }
 
