@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Base: 30
-  Level: 5
   Description: Gathered food will appear in your kitchen.
-  PreferedToolTipSize: {x: 200, y: 40}
+  PreferedToolTipSize: {x: 200, y: 60}
   PrerequisiteSkill: {fileID: 0}

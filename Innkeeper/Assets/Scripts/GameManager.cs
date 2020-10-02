@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class GameManager : MonoBehaviour
@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Day ending catch
-        if (TimelineCount > DayTimeLimit)
+        if (TimelineCount > DayTimeLimit || Input.GetKeyDown(KeyCode.T))
         {
             StopCoroutine("SpawnCustomer");
             ClosedText.SetActive(true);
@@ -113,7 +113,6 @@ public class GameManager : MonoBehaviour
                 numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
                 numofSatisfiedCustomers += numOfSatisfiedCustomers;
                 GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
-                Debug.Log("test4");
                 findUnlockedFood();
                 EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers,
                     this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
@@ -172,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
         if(DayCount == 0)
         {
+            SaveLoad.reset();
             SaveLoad.Load("/blankGame.ent");
         }
         DayCount++;
@@ -200,9 +200,7 @@ public class GameManager : MonoBehaviour
 
     public void restart()
     {
-        ResetInn();
-        SaveLoad.Load("/blankGame.ent");
-        UnlockableFoods = populateUnlockableFoods();
+        SceneManager.LoadScene(0);
     }
 
     public bool StorageTableContains (Sprite Object)
@@ -343,10 +341,8 @@ public class GameManager : MonoBehaviour
         List<int> removes = new List<int>();
         foreach (int level in UnlockableFoods.Keys)
         {
-            Debug.Log("test3 : " + level);
             if (GetComponent<PlayerBehavior>().Level >= level)
             {
-                Debug.Log("test2");
                 removes.Add(level);
                 UnlockedFoods.Add(UnlockableFoods[level]);
             }

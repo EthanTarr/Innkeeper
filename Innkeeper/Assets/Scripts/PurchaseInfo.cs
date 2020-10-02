@@ -37,6 +37,6 @@ public class PurchaseInfo : MonoBehaviour
         }
         Player.money -= Cost;
         GameObject.Find("UI Out").GetComponent<AudioSource>().Play();
-        Destroy(this.transform.parent.gameObject);
+        this.transform.parent.gameObject.SetActive(false);
     }
 }

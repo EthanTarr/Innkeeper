@@ -82,8 +82,8 @@ public static class SaveLoad
         save.canAnyMeal = Game.canAnyMeal;
         save.canDash = Player.canDash;
 
-    //stats
-    save.steps = Game.steps;
+        //stats
+        save.steps = Game.steps;
         save.lifts = Game.lifts;
         save.chopped = Game.chopped;
         save.gathered = Game.gathered;
@@ -103,7 +103,7 @@ public static class SaveLoad
         save.cauldronBoiled = Game.cauldronBoiled;
         save.mealsServed = Game.mealsServed;
 
-    BinaryFormatter bf = new BinaryFormatter();
+        BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
         bf.Serialize(file, save);
         file.Close();
@@ -244,7 +244,7 @@ public static class SaveLoad
         }
     }
 
-        public static void SaveBlank()
+    private static Save blankStats()
     {
         Save save = new Save();
         PlayerBehavior Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
@@ -340,8 +340,25 @@ public static class SaveLoad
         save.cauldronBoiled = 0;
         save.mealsServed = 0;
 
+        return save;
+    }
+
+        public static void SaveBlank()
+    {
+        Save save = blankStats();
+
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/blankGame.ent");
+        bf.Serialize(file, save);
+        file.Close();
+    }
+
+    public static void reset()
+    {
+        Save save = blankStats();
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/saveGame.ent");
         bf.Serialize(file, save);
         file.Close();
     }
