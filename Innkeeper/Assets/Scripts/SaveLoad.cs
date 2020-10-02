@@ -263,7 +263,7 @@ public static class SaveLoad
         save.DayStartDelay = 15;
         save.xpBarPercentage = 0;
         save.strength = 0;
-        save.UnlockableFoods = new Dictionary<int, string>();
+        save.UnlockableFoods = Game.populateUnlockableFoods();
         save.BlueFruitGatherDescription = "<b>Gather Blue Fruits</b> - Gather <color=#F7D64A>(2)</color> Blue Fruits from a nearby orchird of trees. They seem edible.";
         save.WaterGatherDescription = "<b>Gather Water</b> - Gather <color=#F7D64A>(1)</color> Bucket of Water from the nearby stream.";
         save.AcidFlyGatherDescription = "<b>Gather Acid Flys</b> - Gather <color=#F7D64A>(1)</color> Jar of captured Acid Flys.";

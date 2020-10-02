@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
 
     public bool canAnyMeal = false;
 
+    public PlayerSoundManager PlayerVoiceSounds;
+
     public List<Transform> StorageTables;
     public List<Transform> CauldronPopups;
     public Transform CraftingPopup;
@@ -55,6 +57,7 @@ public class GameManager : MonoBehaviour
     public GameObject BlackFade;
     public GameObject SkillList;
     public GameObject PauseScreen;
+    public GameObject ClosedText;
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -86,7 +89,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
 
-        populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
+        UnlockableFoods = populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
         SaveLoad.SaveBlank();
     }
 
@@ -94,20 +97,29 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Day ending catch
-        if (TimelineCount > DayTimeLimit || Input.GetKeyDown(KeyCode.T))
+        if (TimelineCount > DayTimeLimit)
         {
-            canSpawn = false;
-            BlackBackground.gameObject.SetActive(true);
-            EndOfDayScreen.gameObject.SetActive(true);
-            this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
-            numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
-            numofSatisfiedCustomers += numOfSatisfiedCustomers;
-            GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
-            findUnlockedFood();
-            EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
-                this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
-            ResetInn();
-            Debug.Log("Day Over!");
+            StopCoroutine("SpawnCustomer");
+            ClosedText.SetActive(true);
+            if (Customers.Count == 0)
+            {
+                ClosedText.SetActive(false);
+                canSpawn = false;
+                BlackBackground.gameObject.SetActive(true);
+                EndOfDayScreen.gameObject.SetActive(true);
+                PlayerVoiceSounds.EndDay();
+                PlayerVoiceSounds.stopSounds();
+                this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
+                numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
+                numofSatisfiedCustomers += numOfSatisfiedCustomers;
+                GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
+                Debug.Log("test4");
+                findUnlockedFood();
+                EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers,
+                    this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
+                ResetInn();
+                Debug.Log("Day Over!");
+            }
         }
 
         //Fail day catch
@@ -124,8 +136,8 @@ public class GameManager : MonoBehaviour
         //Empty inn catch
         if(Customers.Count <= 0 && Time.time + DayStartDelay < nextSpawnTime && canSpawn)
         {
-            StopCoroutine(SpawnCustomer());
-            StartCoroutine(SpawnCustomer());
+            StopCoroutine("SpawnCustomer");
+            StartCoroutine("SpawnCustomer");
         }
 
         //Ambient inn sounds catch
@@ -175,20 +187,22 @@ public class GameManager : MonoBehaviour
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         OriginalMaxSpawnTime = MaxSpawnTime;
         OriginalMinSpawnTime = MinSpawnTime;
-        StartCoroutine(CountTimeline());
-        StartCoroutine(SpawnIncrease());
-        StartCoroutine(SpawnCustomer());
+        StartCoroutine("CountTimeline");
+        StartCoroutine("SpawnIncrease");
+        StartCoroutine("SpawnCustomer");
         this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
         this.gameObject.GetComponent<CapsuleCollider2D>().enabled = true;
         SpawnTimerIncreaseAmount += -.01f;
         SaveLoad.Save();
+        PlayerVoiceSounds.StartDay();
+        PlayerVoiceSounds.startHumming();
     }
 
     public void restart()
     {
         ResetInn();
         SaveLoad.Load("/blankGame.ent");
-        populateUnlockableFoods();
+        UnlockableFoods = populateUnlockableFoods();
     }
 
     public bool StorageTableContains (Sprite Object)
@@ -315,10 +329,12 @@ public class GameManager : MonoBehaviour
         AnyMealWillDoIndicator.gameObject.SetActive(skillActives[4]);
     }
 
-    private void populateUnlockableFoods()
+    public Dictionary<int, string> populateUnlockableFoods()
     {
-        UnlockableFoods.Add(5, GetComponent<ResourceManager>().PastaBowl.name);
-        UnlockableFoods.Add(10, GetComponent<ResourceManager>().DeAcidFly.name);
+        Dictionary<int, string> temp = new Dictionary<int, string>();
+        temp.Add(5, GetComponent<ResourceManager>().PastaBowl.name);
+        temp.Add(10, GetComponent<ResourceManager>().DeAcidFly.name);
+        return temp;
     }
 
     private void findUnlockedFood()
@@ -327,9 +343,10 @@ public class GameManager : MonoBehaviour
         List<int> removes = new List<int>();
         foreach (int level in UnlockableFoods.Keys)
         {
-            if(GetComponent<PlayerBehavior>().Level >= level)
+            Debug.Log("test3 : " + level);
+            if (GetComponent<PlayerBehavior>().Level >= level)
             {
-
+                Debug.Log("test2");
                 removes.Add(level);
                 UnlockedFoods.Add(UnlockableFoods[level]);
             }
