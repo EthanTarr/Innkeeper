@@ -52,6 +52,11 @@ public class CustomerRequestBehavior : MonoBehaviour
             {
                 this.GetComponent<Button>().interactable = false;
             }
+
+            if(Customer.GetComponent<CustomerBehavior>().checkMealSprites(this.GetComponent<Image>().sprite))
+            {
+                this.GetComponent<Image>().sprite = Customer.GetComponent<CustomerBehavior>().PossibleMeals[1].GetComponent<SpriteRenderer>().sprite;
+            }
         }
     }
 
@@ -98,8 +103,8 @@ public class CustomerRequestBehavior : MonoBehaviour
                     {
                         otherRequestCount = satisfyRequest(LeftPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }*/
-                    if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
-                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && RequestCount > 0))
+                    if (((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null)) && RequestCount > 0)
                     {
                         RequestCount = satisfyRequest(RightPlayerObject, this.transform, RequestCount);
                     }
@@ -109,7 +114,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                         otherRequestCount = satisfyRequest(RightPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }*/
 
-                    if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite))
+                    if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite) && RequestCount > 0)
                     {
                         RequestCount = satisfyRequest(Player.GetComponent<GameManager>().StorageTableRetrieve(this.GetComponent<Image>().sprite), this.transform, RequestCount);
                     }

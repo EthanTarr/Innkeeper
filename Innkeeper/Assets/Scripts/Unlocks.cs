@@ -27,7 +27,6 @@ public class Unlocks : MonoBehaviour
         gm.UnlockedFoodScreen.GetChild(1).GetChild(0).GetComponent<Text>().text = "Pasta!";
         gm.UnlockedFoodScreen.GetChild(1).GetChild(1).GetComponent<Image>().sprite = PastaSprite;
         gm.UnlockedFoodScreen.gameObject.SetActive(true);
-        Debug.Log("test " + gm.UnlockedFoodScreen.gameObject.activeSelf);
         gm.PurchaseBoxPupup.GetComponent<PurchasePopupBehavior>().activatePasta();
         foreach(Transform cauldron in gm.CauldronPopups)
         {

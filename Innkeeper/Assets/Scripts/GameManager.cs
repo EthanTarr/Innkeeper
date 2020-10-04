@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public Transform PurchaseBoxPupup;
     public Transform DashIndicator;
     public Transform AnyMealWillDoIndicator;
+    public Transform BlankTabletop;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject BlackFade;
@@ -97,7 +98,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Day ending catch
-        if (TimelineCount > DayTimeLimit || Input.GetKeyDown(KeyCode.T))
+        if (TimelineCount > DayTimeLimit)
         {
             StopCoroutine("SpawnCustomer");
             ClosedText.SetActive(true);
@@ -300,14 +301,8 @@ public class GameManager : MonoBehaviour
         List<bool> skillActives = new List<bool>();
         skillActives.Add(Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.activeSelf);
         skillActives.Add(DashIndicator.gameObject.activeSelf);
-        foreach (Transform popup in CauldronPopups)
-        {
-            skillActives.Add(popup.GetChild(5).gameObject.activeSelf);
-        }
-        foreach (Transform popup in CauldronPopups)
-        {
-            skillActives.Add(popup.GetChild(6).gameObject.activeSelf);
-        }
+        skillActives.Add(CauldronPopups[0].GetChild(5).gameObject.activeSelf);
+        skillActives.Add(CauldronPopups[0].GetChild(6).gameObject.activeSelf);
         skillActives.Add(AnyMealWillDoIndicator.gameObject.activeSelf);
         return skillActives;
     }
@@ -377,6 +372,16 @@ public class GameManager : MonoBehaviour
             UnlockedFoodScreen.gameObject.SetActive(false);
             MarketScreen.gameObject.SetActive(true);
         }
+    }
+
+    public List<int[]> blankTableToSave()
+    {
+        List<int[]> Tables = new List<int[]>();
+        foreach (Transform table in StorageTables)
+        {
+            Tables.Add(BlankTabletop.GetComponent<StorageBehaviour>().Encode());
+        }
+        return Tables;
     }
 
     public List<int[]> tableToSave()

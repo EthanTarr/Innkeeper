@@ -175,24 +175,23 @@ public class StorageBehaviour : MonoBehaviour
         {
             temp[i] = -1;
         }
-        int count = 0;
         if(Player == null)
         {
             Player = GameObject.Find("Player").transform;
         }
-        foreach(Transform food in Player.GetComponent<ResourceManager>().Foods)
+        for(int i = 0; i < Player.GetComponent<ResourceManager>().Foods.Count; i++)
         {
-            if(LeftObject != null && LeftObject.name.Equals(food.name))
+            if(LeftObject != null && LeftObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[0] = count;
+                temp[0] = i;
             }
-            if (CenterObject != null && CenterObject.name.Equals(food.name))
+            if (CenterObject != null && CenterObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[1] = count;
+                temp[1] = i;
             }
-            if (RightObject != null && RightObject.name.Equals(food.name))
+            if (RightObject != null && RightObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[2] = count;
+                temp[2] = i;
             }
         }
         return temp;

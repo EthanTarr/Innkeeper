@@ -171,6 +171,7 @@ public class CustomerBehavior : MonoBehaviour
             this.GetComponent<AudioSource>().Play();
             //this.GetComponent<AudioSource>().clip = GoblinSounds[Random.Range(1,2)];
         }
+        
         int popupIndex = 3;
         if (HungerValue > 1)
         {
@@ -322,5 +323,18 @@ public class CustomerBehavior : MonoBehaviour
         node--;
         Destination = Path[node];
         node--;
+    }
+
+    public bool checkMealSprites(Sprite current)
+    {
+        bool ret = true;
+        foreach (Transform meal in PossibleMeals)
+        {
+            if(meal.GetComponent<SpriteRenderer>().sprite.Equals(current))
+            {
+                ret = false;
+            }
+        }
+        return ret;
     }
 }

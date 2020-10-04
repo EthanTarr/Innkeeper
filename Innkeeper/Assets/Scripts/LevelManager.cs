@@ -824,23 +824,27 @@ public class LevelManager : MonoBehaviour
                 popup.GetChild(5).gameObject.SetActive(true);
             }
         }
+        foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
+        {
+            popup.GetChild(5).GetComponent<canFill>().reseting = false;
+        }
         CheckForMoreSkills();
     }
 
     private void QuickBoiling()
     {
-        Debug.Log("Test1");
         if (!Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Quick Boiling"))
         {
             Player.GetComponent<PlayerBehavior>().PlayerSkills.Add("Quick Boiling");
             FirstMilestoneSkills.Remove(SkillDictionary["Quick Boiling"]);
-            Debug.Log("Test2");
             foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
             {
-                Debug.Log(popup.GetChild(6).gameObject.activeSelf);
                 popup.GetChild(6).gameObject.SetActive(true);
-                Debug.Log(popup.GetChild(6).gameObject.activeSelf);
             }
+        }
+        foreach (Transform popup in Player.GetComponent<GameManager>().CauldronPopups)
+        {
+            popup.GetChild(6).GetComponent<canBoil>().reseting = false;
         }
         CheckForMoreSkills();
     }

@@ -166,7 +166,39 @@ public static class SaveLoad
             Game.DayTimeLimit = save.DayTimeLimit;
             Game.DayStartDelay = save.DayStartDelay;
             Game.EndOfDayScreen.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().originalPercentage = save.xpBarPercentage;
+            Game.EndOfDayScreen.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text = "Level " + save.Level;
             Game.UnlockableFoods = save.UnlockableFoods;
+            if(!save.UnlockableFoods.ContainsKey(5))
+            {
+                Game.PurchaseBoxPupup.GetComponent<PurchasePopupBehavior>().activatePasta();
+                foreach (Transform cauldron in Game.CauldronPopups)
+                {
+                    cauldron.GetComponent<CauldronPopupBehavor>().activatePasta();
+                }
+                Game.DoorPopup.GetComponent<DoorPopupBehavior>().activatePasta();
+                for (int i = 0; i < Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).childCount; i++)
+                {
+                    if (Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).name.Equals("Flour"))
+                    {
+                        Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).gameObject.SetActive(true);
+                        break;
+                    }
+                }
+            }
+            if(!save.UnlockableFoods.ContainsKey(10))
+            {
+                Game.CraftingPopup.GetComponent<CraftingPopupBehavior>().activateFlys();
+                Game.PurchaseBoxPupup.GetComponent<PurchasePopupBehavior>().activateFlys();
+                Game.DoorPopup.GetComponent<DoorPopupBehavior>().activateFlys();
+                for (int i = 0; i < Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).childCount; i++)
+                {
+                    if (Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).name.Equals("Jar"))
+                    {
+                        Game.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).gameObject.SetActive(true);
+                        break;
+                    }
+                }
+            }
             Game.CustomerSatisfactionXpBonus = save.CustomerSatisfactionXpBonus;
             Game.DashIndicator.gameObject.SetActive(save.DashIndicator);
             Game.AnyMealWillDoIndicator.gameObject.SetActive(save.AnyMealWillDoIndicator);
@@ -301,20 +333,37 @@ public static class SaveLoad
         save.xpGain = 20;
         save.maxTip = 3;
 
-        save.TableFood = Game.tableToSave();
-        save.activeSkills = Game.encodeActiveSkills();
+        save.TableFood = Game.blankTableToSave();
+        save.activeSkills = new List<bool>();
+        for (int i = 0; i < 5; i++)
+        {
+            save.activeSkills.Add(false);
+        }
         save.MarketPrices = new List<int>();
+        save.MarketPrices.Add(5);
+        save.MarketPrices.Add(10);
+        save.MarketPrices.Add(50);
+        save.MarketPrices.Add(75);
+        save.MarketPrices.Add(100);
+        save.MarketPrices.Add(100);
+        save.MarketPrices.Add(100);
+        save.MarketPrices.Add(200);
+        save.MarketPrices.Add(50);
+        save.MarketPrices.Add(125);
+        save.MarketPrices.Add(15);
+        save.MarketPrices.Add(25);
+        save.MarketPrices.Add(45);
+        save.MarketPrices.Add(200);
         save.FoodPrices = new List<int>();
-        Transform content = Game.MarketScreen.transform.GetChild(1).GetChild(0).GetChild(0);
-        ResourceManager Resource = GameObject.Find("Player").GetComponent<ResourceManager>();
-        for (int i = 0; i < content.childCount; i++)
-        {
-            save.MarketPrices.Add(content.GetChild(i).GetChild(1).GetComponent<PurchaseInfo>().Cost);
-        }
-        foreach (Transform food in Resource.Foods)
-        {
-            save.FoodPrices.Add(food.GetComponent<ItemBehavior>().ItemValue);
-        }
+        save.FoodPrices.Add(2);
+        save.FoodPrices.Add(2);
+        save.FoodPrices.Add(5);
+        save.FoodPrices.Add(15);
+        save.FoodPrices.Add(1);
+        save.FoodPrices.Add(2);
+        save.FoodPrices.Add(3);
+        save.FoodPrices.Add(1);
+        save.FoodPrices.Add(3);
 
         save.canAnyMeal = false;
         save.canDash = false;

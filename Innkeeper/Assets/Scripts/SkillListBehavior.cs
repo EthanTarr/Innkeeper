@@ -44,6 +44,9 @@ public class SkillListBehavior : MonoBehaviour
             }
             skillNum++;
         }
-        Destroy(SkillArea.gameObject);
+        if (SkillArea != null)
+        {
+            Destroy(SkillArea.gameObject);
+        }
     }
 }

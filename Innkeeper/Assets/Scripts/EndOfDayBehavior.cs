@@ -75,7 +75,7 @@ public class EndOfDayBehavior : MonoBehaviour
                 int levelText = (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)));
                 if (levelText % 10 == 0)
                 {
-                    if(levelText / 10 == 1)
+                    if (levelText / 10 == 1)
                     {
                         LevelChoicesScreen.GetComponent<LevelManager>().numOfFirstMilestoneSkillUps++;
                         if (Random.value < .1f)
@@ -115,6 +115,7 @@ public class EndOfDayBehavior : MonoBehaviour
                     }
                 }
             }
+
             if (CurrentXp != PreviousXp)
             {
                 this.transform.GetChild(6).GetChild(0).GetChild(0).GetComponent<XpBarBehavior>().setSizeByPercentage((CurrentXp - PreviousXp) / Player.LevelMilestones[Player.xpToLevels(CurrentXp)]);
@@ -123,6 +124,7 @@ public class EndOfDayBehavior : MonoBehaviour
                     yield return new WaitForEndOfFrame();
                 }
             }
+        }
 
             this.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(TurnOnMarket);
             if (LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTenSkillUps > 0 || LevelChoicesScreen.GetComponent<LevelManager>().numOfSubTwentySkillUps > 0 || 
@@ -135,7 +137,6 @@ public class EndOfDayBehavior : MonoBehaviour
             {
                 this.transform.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             }
-        }
 
         this.transform.GetChild(2).GetComponent<Button>().interactable = true;
     }
