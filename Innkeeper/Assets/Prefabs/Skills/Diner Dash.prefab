@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Base: 30
-  Level: 5
-  Description: You can dash in a direction by pressing the <color=#F7D64A>(x)</color>
+  Description: You can dash in a direction by pressing the <color=#F7D64A>(E)</color>
     key.
   PreferedToolTipSize: {x: 200, y: 60}
   PrerequisiteSkill: {fileID: 0}

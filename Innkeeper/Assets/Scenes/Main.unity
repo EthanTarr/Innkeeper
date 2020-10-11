@@ -25018,7 +25018,8 @@ MonoBehaviour:
   BoilingWaterCauldron: {fileID: 21300000, guid: b3651b90161eea04ba4699e627489689,
     type: 3}
   PastaCauldron: {fileID: 21300000, guid: a2fca66af84a0824caf28ae717a70c82, type: 3}
-  CookingPastaCauldron: {fileID: 0}
+  CookingPastaCauldron: {fileID: 21300000, guid: 17b265da2a850d541a1ac4bd9b35cad5,
+    type: 3}
   Timer: {fileID: 2373729815216425267, guid: 985e7b23f0611014791fae421db4a600, type: 3}
   isEmpty: 1
   isUnboiledWater: 0

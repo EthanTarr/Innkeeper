@@ -69,7 +69,15 @@ public class EndOfDayBehavior : MonoBehaviour
                 {
                     yield return new WaitForEndOfFrame();
                 }
-                PreviousXp = Player.LevelMilestones[Player.xpToLevels(PreviousXp)];
+                float testXp = Player.LevelMilestones[Player.xpToLevels(PreviousXp)];
+                if (PreviousXp != testXp)
+                {
+                    PreviousXp = testXp;
+                }
+                else
+                {
+                    PreviousXp = testXp + 1;
+                }
                 this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 "Level " + (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)) + 1) + "";
                 int levelText = (int.Parse(this.transform.GetChild(5).GetChild(1).GetChild(0).GetComponent<Text>().text.Substring(6)));

@@ -165,10 +165,9 @@ public class ResourceManager : MonoBehaviour
             else
             {
                 GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-                bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
-                if (!check)
+                if (!Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject)) //set Player to hold object
                 {
-                    Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
+                    Destroy(GatheredObject.gameObject);
                 }
             }
             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI

@@ -98,17 +98,24 @@ public class PlayerBehavior : MonoBehaviour
             {
                 MovementSpeed = 0.1f;
             }
-            if(canDash && Input.GetKey(KeyCode.X))
+
+            //calculating where to move
+            PreviousDestination = transform.position;
+            Destination = transform.position;
+
+            if (canDash && Input.GetKeyDown(KeyCode.E))
             {
-                MovementSpeed += 15;
+                MovementSpeed += 20;
                 canDash = false;
                 Debug.Log("Dash amount " + MovementSpeed);
                 this.GetComponent<GameManager>().DashIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 100);
                 StartCoroutine("DashRecharge");
+                if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D))
+                {
+                    Destination += new Vector2(0, MovementSpeed);
+                }
             }
-            //calculating where to move
-            PreviousDestination = transform.position;
-            Destination = transform.position;
+            
             if (Input.GetKey(KeyCode.W))
             {
                 Destination += new Vector2(0, MovementSpeed);
@@ -605,7 +612,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             return 18;
         }
-        else if (xp < LevelMilestones[19])
+        else if (xp <= LevelMilestones[19])
         {
             return 19;
         }

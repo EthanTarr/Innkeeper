@@ -69,22 +69,24 @@ public class CauldronBehavior : MonoBehaviour
         thisGlassWater.name = Player.GetComponent<ResourceManager>().GlassWater.name; //set new objects name to be the same as the original
         thisGlassWater.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().WaterGlassGain; //Set new objects count to be the corresponding GatherGain
         thisGlassWater.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-        bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisGlassWater); //set Player to hold object
-        if (!check)
+        if (!Player.GetComponent<PlayerBehavior>().GiveObject(thisGlassWater))
         {
-            Debug.LogError(name + " attempted to give player " + thisGlassWater.name + " but player hand was full.");
+            Destroy(thisGlassWater.gameObject);
         }
-        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
 
-        isBoiledWater = false;
-        isEmpty = true;
-        CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
-        this.transform.GetChild(1).gameObject.SetActive(true);
-        this.GetComponent<Animator>().enabled = false;
-        this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
-        this.GetComponent<AudioSource>().clip = CauldronSounds[1];
-        this.GetComponent<AudioSource>().loop = false;
-        this.GetComponent<AudioSource>().Play();
+            isBoiledWater = false;
+            isEmpty = true;
+            CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+            this.transform.GetChild(1).gameObject.SetActive(true);
+            this.GetComponent<Animator>().enabled = false;
+            this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+            this.GetComponent<AudioSource>().clip = CauldronSounds[1];
+            this.GetComponent<AudioSource>().loop = false;
+            this.GetComponent<AudioSource>().Play();
+        }
     }
 
     public void grabPastaBowl()
@@ -93,20 +95,22 @@ public class CauldronBehavior : MonoBehaviour
         thisPastaBowl.name = Player.GetComponent<ResourceManager>().PastaBowl.name; //set new objects name to be the same as the original
         thisPastaBowl.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().PastaGain; //Set new objects count to be the corresponding GatherGain
         thisPastaBowl.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-        bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisPastaBowl); //set Player to hold object
-        if (!check)
+        if (!Player.GetComponent<PlayerBehavior>().GiveObject(thisPastaBowl))
         {
-            Debug.LogError(name + " attempted to give player " + thisPastaBowl.name + " but player hand was full.");
+            Destroy(thisPastaBowl.gameObject);
         }
-        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
 
-        isCookedPasta = false;
-        isEmpty = true;
-        CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
-        this.transform.GetChild(1).gameObject.SetActive(true);
-        this.GetComponent<Animator>().enabled = false;
-        this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
-        this.GetComponent<AudioSource>().Stop();
+            isCookedPasta = false;
+            isEmpty = true;
+            CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
+            this.transform.GetChild(1).gameObject.SetActive(true);
+            this.GetComponent<Animator>().enabled = false;
+            this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+            this.GetComponent<AudioSource>().Stop();
+        }
     }
 
     public void MakePasta()
