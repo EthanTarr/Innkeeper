@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class GameManager : MonoBehaviour
@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
 
     public bool canAnyMeal = false;
 
+    public PlayerSoundManager PlayerVoiceSounds;
+
     public List<Transform> StorageTables;
     public List<Transform> CauldronPopups;
     public Transform CraftingPopup;
@@ -50,11 +52,13 @@ public class GameManager : MonoBehaviour
     public Transform PurchaseBoxPupup;
     public Transform DashIndicator;
     public Transform AnyMealWillDoIndicator;
+    public Transform BlankTabletop;
     public GameObject VoiceSlider;
     public GameObject DayCounter;
     public GameObject BlackFade;
     public GameObject SkillList;
     public GameObject PauseScreen;
+    public GameObject ClosedText;
 
     [HideInInspector] public List<Transform> Timers;
     [HideInInspector] public List<Transform> Customers = new List<Transform>();
@@ -86,7 +90,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
 
-        populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
+        UnlockableFoods = populateUnlockableFoods(); //creates a dictionary with |level to unlock| as int as key and |food to unlock| as transform as value
         SaveLoad.SaveBlank();
     }
 
@@ -96,18 +100,26 @@ public class GameManager : MonoBehaviour
         //Day ending catch
         if (TimelineCount > DayTimeLimit)
         {
-            canSpawn = false;
-            BlackBackground.gameObject.SetActive(true);
-            EndOfDayScreen.gameObject.SetActive(true);
-            this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
-            numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
-            numofSatisfiedCustomers += numOfSatisfiedCustomers;
-            GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
-            findUnlockedFood();
-            EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers, 
-                this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
-            ResetInn();
-            Debug.Log("Day Over!");
+            StopCoroutine("SpawnCustomer");
+            ClosedText.SetActive(true);
+            if (Customers.Count == 0)
+            {
+                ClosedText.SetActive(false);
+                canSpawn = false;
+                BlackBackground.gameObject.SetActive(true);
+                EndOfDayScreen.gameObject.SetActive(true);
+                PlayerVoiceSounds.EndDay();
+                PlayerVoiceSounds.stopSounds();
+                this.GetComponent<PlayerBehavior>().xp += numOfSatisfiedCustomers * CustomerSatisfactionXpBonus;
+                numofDisatisfiedCustomers += numOfDisSatisfiedCustomers;
+                numofSatisfiedCustomers += numOfSatisfiedCustomers;
+                GetComponent<PlayerBehavior>().Level = GetComponent<PlayerBehavior>().xpToLevels(GetComponent<PlayerBehavior>().xp);
+                findUnlockedFood();
+                EndOfDayScreen.GetComponent<EndOfDayBehavior>().SetUpEndOfDay(numOfSatisfiedCustomers, numOfDisSatisfiedCustomers,
+                    this.GetComponent<PlayerBehavior>().PreviousXp, this.GetComponent<PlayerBehavior>().xp);
+                ResetInn();
+                Debug.Log("Day Over!");
+            }
         }
 
         //Fail day catch
@@ -124,8 +136,8 @@ public class GameManager : MonoBehaviour
         //Empty inn catch
         if(Customers.Count <= 0 && Time.time + DayStartDelay < nextSpawnTime && canSpawn)
         {
-            StopCoroutine(SpawnCustomer());
-            StartCoroutine(SpawnCustomer());
+            StopCoroutine("SpawnCustomer");
+            StartCoroutine("SpawnCustomer");
         }
 
         //Ambient inn sounds catch
@@ -142,10 +154,10 @@ public class GameManager : MonoBehaviour
         }
 
         //Any Meal Will Do Skill
-        if(canAnyMeal && Input.GetKey(KeyCode.Z))
+        if(canAnyMeal && AnyMealWillDoIndicator.GetComponent<Image>().color.a > (170/255f) && Input.GetKey(KeyCode.Z))
         {
             canAnyMeal = false;
-            AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 100);
+            AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 100);
             StartCoroutine("AnyMealWillDoRecharge");
         }
     }
@@ -158,6 +170,11 @@ public class GameManager : MonoBehaviour
 
     public void start()
     {
+        if(DayCount == 0)
+        {
+            SaveLoad.reset();
+            SaveLoad.Load("/blankGame.ent");
+        }
         DayCount++;
         DayCounter.GetComponent<Text>().text = DayCount + "";
         if (DayCount == 2)
@@ -171,27 +188,27 @@ public class GameManager : MonoBehaviour
         this.GetComponent<PlayerBehavior>().PreviousXp = this.GetComponent<PlayerBehavior>().xp;
         OriginalMaxSpawnTime = MaxSpawnTime;
         OriginalMinSpawnTime = MinSpawnTime;
-        StartCoroutine(CountTimeline());
-        StartCoroutine(SpawnIncrease());
-        StartCoroutine(SpawnCustomer());
+        StartCoroutine("CountTimeline");
+        StartCoroutine("SpawnIncrease");
+        StartCoroutine("SpawnCustomer");
         this.gameObject.GetComponent<PlayerBehavior>().controlMovement = true;
         this.gameObject.GetComponent<CapsuleCollider2D>().enabled = true;
         SpawnTimerIncreaseAmount += -.01f;
         SaveLoad.Save();
+        PlayerVoiceSounds.StartDay();
+        PlayerVoiceSounds.startHumming();
     }
 
     public void restart()
     {
-        ResetInn();
-        SaveLoad.Load("/blankGame.ent");
-        populateUnlockableFoods();
+        SceneManager.LoadScene(0);
     }
 
     public bool StorageTableContains (Sprite Object)
     {
         foreach(Transform store in StorageTables)
         {
-            if(store.GetComponent<StorageBehaviour>().contains(Object))
+            if (store.GetComponent<StorageBehaviour>().contains(Object))
             {
                 return true;
             }
@@ -264,16 +281,18 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AnyMealWillDoRecharge()
     {
-        yield return new WaitForSeconds(60f - 1.5f * this.GetComponent<PlayerBehavior>().Level);
+        yield return new WaitForSeconds(15f + (.75f * this.GetComponent<PlayerBehavior>().Level));
         canAnyMeal = true;
-        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 170);
+        yield return new WaitForSeconds(30f - (.75f * this.GetComponent<PlayerBehavior>().Level));
+        AnyMealWillDoIndicator.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
     }
 
     public void createDisSatisfiedCustomerCounters()
     {
         Transform customerCounter = GameObject.Find("Upset Customer Counter").transform.GetChild(0);
         Transform newCounter = Instantiate(customerCounter, customerCounter.position + new Vector3(-50 * customerCounter.parent.childCount, 0, 0), customerCounter.transform.rotation);
-        newCounter.parent = customerCounter.parent;
+        newCounter.SetParent(customerCounter.parent);
         DisSatisfiedCustomerCounters.Add(newCounter);
     }
 
@@ -282,14 +301,8 @@ public class GameManager : MonoBehaviour
         List<bool> skillActives = new List<bool>();
         skillActives.Add(Customer.GetComponent<PopUpObjectBehavior>().Popup.transform.GetChild(4).gameObject.activeSelf);
         skillActives.Add(DashIndicator.gameObject.activeSelf);
-        foreach (Transform popup in CauldronPopups)
-        {
-            skillActives.Add(popup.GetChild(5).gameObject.activeSelf);
-        }
-        foreach (Transform popup in CauldronPopups)
-        {
-            skillActives.Add(popup.GetChild(6).gameObject.activeSelf);
-        }
+        skillActives.Add(CauldronPopups[0].GetChild(5).gameObject.activeSelf);
+        skillActives.Add(CauldronPopups[0].GetChild(6).gameObject.activeSelf);
         skillActives.Add(AnyMealWillDoIndicator.gameObject.activeSelf);
         return skillActives;
     }
@@ -309,22 +322,22 @@ public class GameManager : MonoBehaviour
         AnyMealWillDoIndicator.gameObject.SetActive(skillActives[4]);
     }
 
-    private void populateUnlockableFoods()
+    public Dictionary<int, string> populateUnlockableFoods()
     {
-        UnlockableFoods.Add(5, GetComponent<ResourceManager>().PastaBowl.name);
-        UnlockableFoods.Add(10, GetComponent<ResourceManager>().DeAcidFly.name);
+        Dictionary<int, string> temp = new Dictionary<int, string>();
+        temp.Add(5, GetComponent<ResourceManager>().PastaBowl.name);
+        temp.Add(10, GetComponent<ResourceManager>().DeAcidFly.name);
+        return temp;
     }
 
     private void findUnlockedFood()
     {
         UnlockedFoods = new List<string>();
         List<int> removes = new List<int>();
-        MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetComponent<MarketBehavior>().LevelCheck(this.GetComponent<PlayerBehavior>().Level); //tells market to unlock pasta or acid fly items
         foreach (int level in UnlockableFoods.Keys)
         {
-            if(GetComponent<PlayerBehavior>().Level >= level)
+            if (GetComponent<PlayerBehavior>().Level >= level)
             {
-
                 removes.Add(level);
                 UnlockedFoods.Add(UnlockableFoods[level]);
             }
@@ -333,7 +346,10 @@ public class GameManager : MonoBehaviour
         {
             UnlockableFoods.Remove(lev);
         }
-        Unlockfoods();
+        if (UnlockedFoods.Count > 0)
+        {
+            Unlockfoods();
+        }
     }
 
     public void Unlockfoods()
@@ -356,6 +372,16 @@ public class GameManager : MonoBehaviour
             UnlockedFoodScreen.gameObject.SetActive(false);
             MarketScreen.gameObject.SetActive(true);
         }
+    }
+
+    public List<int[]> blankTableToSave()
+    {
+        List<int[]> Tables = new List<int[]>();
+        foreach (Transform table in StorageTables)
+        {
+            Tables.Add(BlankTabletop.GetComponent<StorageBehaviour>().Encode());
+        }
+        return Tables;
     }
 
     public List<int[]> tableToSave()
@@ -517,6 +543,7 @@ public class GameManager : MonoBehaviour
                 if (storage.GetComponent<StorageBehaviour>().LeftObject != null)
                 {
                     leftovers += storage.GetComponent<StorageBehaviour>().LeftObject.GetComponent<ItemBehavior>().ItemCount;
+                    Debug.Log(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
                     Destroy(storage.GetComponent<StorageBehaviour>().LeftObject.gameObject);
                 }
                 if (storage.GetComponent<StorageBehaviour>().CenterObject != null)

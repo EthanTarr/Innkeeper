@@ -8,7 +8,7 @@ public class canBoil : MonoBehaviour
     public float resetTime = 60;
 
     private PlayerBehavior Player;
-    private bool reseting = false;
+    public bool reseting = false;
 
     // Start is called before the first frame update
     void Start()

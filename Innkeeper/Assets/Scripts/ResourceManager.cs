@@ -67,43 +67,43 @@ public class ResourceManager : MonoBehaviour
     //Destroys timer and adds fruits
     private void endBlueFruitGather()
     {
-        Gather(BlueFruit, FruitGain);
+        Gather(BlueFruit, FruitGain, true);
     }
 
     //Destroys timer and creates water
     private void endWaterGather()
     {
-        Gather(Water, WaterGain);
+        Gather(Water, WaterGain, true);
     }
 
     //Destroys timer and creates water
     private void endAcidFlyGather()
     {
-        Gather(AcidFly, AcidFlyGain);
+        Gather(AcidFly, AcidFlyGain, true);
     }
 
     //Destroys timer and creates blue fruit juice
     private void endBlueFruitJuiceCreation()
     {
-        Gather(BlueFruitJuice, BlueFruitJuiceGain);
+        Gather(BlueFruitJuice, BlueFruitJuiceGain, false);
     }
 
     //Destroys timer and creates sliced blue fruit
     private void endSlicedBlueFruitCreation()
     {
-        Gather(BlueFruitSlice, SlicedBlueFruitGain);
+        Gather(BlueFruitSlice, SlicedBlueFruitGain, false);
     }
 
     //Destroys timer and creates noodles
     private void endNoodleGather()
     {
-        Gather(Noodle, NoodleGain);
+        Gather(Noodle, NoodleGain, true);
     }
 
     //Destroys timer and creates noodles
     private void endDeAcidFlyCreation()
     {
-        Gather(DeAcidFly, DeAcidFlyGain);
+        Gather(DeAcidFly, DeAcidFlyGain, false);
     }
 
     public void buyBlueFruit()
@@ -127,7 +127,7 @@ public class ResourceManager : MonoBehaviour
     }
 
     // Gather takes in a gather object counter as a GameObject and an amount of gain that object will have as an int
-    private void Gather(Transform GatherObject, int GatherGain)
+    private void Gather(Transform GatherObject, int GatherGain, bool skill)
     {
         GameObject.Find("CraftingTable").GetComponent<AudioSource>().Stop();
         Player.GetComponent<PlayerBehavior>().controlMovement = true; //Allow the player from moving the Player character
@@ -141,7 +141,7 @@ public class ResourceManager : MonoBehaviour
             Transform GatheredObject = Instantiate(GatherObject, Player.position, GatherObject.rotation); //create gathered object on player
             GatheredObject.name = GatherObject.name; //set new objects name to be the same as the original
             GatheredObject.GetComponent<ItemBehavior>().ItemCount = GatherGain; //Set new objects count to be the corresponding GatherGain
-            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Ready To Cook") && !KitchenTable.GetComponent<StorageBehaviour>().isFull())
+            if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Ready To Cook") && !KitchenTable.GetComponent<StorageBehaviour>().isFull() && skill)
             {
                 GatheredObject.transform.localScale = new Vector2(5, 5); //adjust the size of the new object
                 if (KitchenTable.GetComponent<StorageBehaviour>().LeftObject == null)
@@ -165,10 +165,9 @@ public class ResourceManager : MonoBehaviour
             else
             {
                 GatheredObject.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-                bool check = Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject); //set Player to hold object
-                if (!check)
+                if (!Player.GetComponent<PlayerBehavior>().GiveObject(GatheredObject)) //set Player to hold object
                 {
-                    Debug.LogError(name + " attempted to give player " + GatherObject.name + " but player hand was full.");
+                    Destroy(GatheredObject.gameObject);
                 }
             }
             Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
@@ -468,8 +467,8 @@ public class ResourceManager : MonoBehaviour
     {
         BlueFruitJuiceGain++;
         Player.GetComponent<GameManager>().CraftingPopup.GetChild(5).GetComponent<Info>().Description =
-            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(" + BlueFruitJuiceGain +
-            ")</color> glasses of water to create <color=#F7D64A>(3)</color> glasses of blue fruit juice.";
+            "<b>Blue Fruit Juice</b> - Juice <color=#F7D64A>(1)</color> blue fruit into <color=#F7D64A>(3)</color> glasses of water to create <color=#F7D64A>(" + BlueFruitJuiceGain +
+            ")</color> glasses of blue fruit juice.";
     }
 
     public void Flour()

@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Base: 30
-  Level: 5
   Description: For a period of time guests will accept any food in place of their
     normal order by pressing the <color=#F7D64A>(z)</color> key.
-  PreferedToolTipSize: {x: 200, y: 80}
+  PreferedToolTipSize: {x: 200, y: 100}
   PrerequisiteSkill: {fileID: 0}

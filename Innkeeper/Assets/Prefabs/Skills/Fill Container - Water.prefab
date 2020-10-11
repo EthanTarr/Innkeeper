@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Base: 30
-  Level: 5
-  Description: You can fill a cauldron with water instantly.
-  PreferedToolTipSize: {x: 200, y: 60}
+  Description: You can fill a cauldron with water instantly by clicking the indicator
+    on the cauldron.
+  PreferedToolTipSize: {x: 200, y: 100}
   PrerequisiteSkill: {fileID: 0}

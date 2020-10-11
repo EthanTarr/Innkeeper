@@ -19,7 +19,10 @@ public class MusicManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(!this.GetComponent<AudioSource>().isPlaying)
+        {
+            playSong();
+        }
     }
 
     public void playSong()

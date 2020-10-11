@@ -69,22 +69,24 @@ public class CauldronBehavior : MonoBehaviour
         thisGlassWater.name = Player.GetComponent<ResourceManager>().GlassWater.name; //set new objects name to be the same as the original
         thisGlassWater.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().WaterGlassGain; //Set new objects count to be the corresponding GatherGain
         thisGlassWater.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-        bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisGlassWater); //set Player to hold object
-        if (!check)
+        if (!Player.GetComponent<PlayerBehavior>().GiveObject(thisGlassWater))
         {
-            Debug.LogError(name + " attempted to give player " + thisGlassWater.name + " but player hand was full.");
+            Destroy(thisGlassWater.gameObject);
         }
-        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
 
-        isBoiledWater = false;
-        isEmpty = true;
-        CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
-        this.transform.GetChild(1).gameObject.SetActive(true);
-        this.GetComponent<Animator>().enabled = false;
-        this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
-        this.GetComponent<AudioSource>().clip = CauldronSounds[1];
-        this.GetComponent<AudioSource>().loop = false;
-        this.GetComponent<AudioSource>().Play();
+            isBoiledWater = false;
+            isEmpty = true;
+            CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+            this.transform.GetChild(1).gameObject.SetActive(true);
+            this.GetComponent<Animator>().enabled = false;
+            this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+            this.GetComponent<AudioSource>().clip = CauldronSounds[1];
+            this.GetComponent<AudioSource>().loop = false;
+            this.GetComponent<AudioSource>().Play();
+        }
     }
 
     public void grabPastaBowl()
@@ -93,20 +95,22 @@ public class CauldronBehavior : MonoBehaviour
         thisPastaBowl.name = Player.GetComponent<ResourceManager>().PastaBowl.name; //set new objects name to be the same as the original
         thisPastaBowl.GetComponent<ItemBehavior>().ItemCount = Player.GetComponent<ResourceManager>().PastaGain; //Set new objects count to be the corresponding GatherGain
         thisPastaBowl.transform.localScale = new Vector2(3, 3); //adjust the size of the new object
-        bool check = Player.GetComponent<PlayerBehavior>().GiveObject(thisPastaBowl); //set Player to hold object
-        if (!check)
+        if (!Player.GetComponent<PlayerBehavior>().GiveObject(thisPastaBowl))
         {
-            Debug.LogError(name + " attempted to give player " + thisPastaBowl.name + " but player hand was full.");
+            Destroy(thisPastaBowl.gameObject);
         }
-        Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
+        else
+        {
+            Player.GetComponent<PlayerBehavior>().checkHand(); //tell player script to check hand UI
 
-        isCookedPasta = false;
-        isEmpty = true;
-        CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
-        this.transform.GetChild(1).gameObject.SetActive(true);
-        this.GetComponent<Animator>().enabled = false;
-        this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
-        this.GetComponent<AudioSource>().Stop();
+            isCookedPasta = false;
+            isEmpty = true;
+            CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
+            this.transform.GetChild(1).gameObject.SetActive(true);
+            this.GetComponent<Animator>().enabled = false;
+            this.GetComponent<SpriteRenderer>().sprite = EmptyCauldron;
+            this.GetComponent<AudioSource>().Stop();
+        }
     }
 
     public void MakePasta()
@@ -186,6 +190,10 @@ public class CauldronBehavior : MonoBehaviour
     {
         isUnboiledWater = false;
         isBoiledWater = true;
+        if(myTimer != null)
+        {
+            Destroy(myTimer.gameObject);
+        }
         this.GetComponent<SpriteRenderer>().sprite = BoilingWaterCauldron;
         this.GetComponent<Animator>().enabled = true;
         this.GetComponent<AudioSource>().clip = CauldronSounds[0];
@@ -221,37 +229,38 @@ public class CauldronBehavior : MonoBehaviour
                     GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.3f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 3)))
         {
             Highlight.gameObject.SetActive(true);
-            if (isBoiledWater)
-            {
-                
-                if ((LeftHand == null || RightHand == null || LeftHand.name.Equals("WaterGlass") || RightHand.name.Equals("WaterGlass")) && 
-                    GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
-                {
-                    CauldronPopup.GetChild(4).GetComponent<Button>().interactable = true;
-                }
-                else
-                {
-                    CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
-                }
+        }
 
-                int requiredNoodleCount = 3;
-                if (((LeftHand != null && LeftHand.name.Equals("Noodles") && LeftHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) || 
-                    (RightHand != null && RightHand.name.Equals("Noodles") && RightHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) ||
-                    (LeftHand != null && RightHand != null && LeftHand.name.Equals("Noodles") && RightHand.name.Equals("Noodles") && 
-                    ((LeftHand.GetComponent<ItemBehavior>().ItemCount + RightHand.GetComponent<ItemBehavior>().ItemCount) >= requiredNoodleCount))))
-                {
-                    CauldronPopup.GetChild(3).GetComponent<Button>().interactable = true;
-                }
-                else
-                {
-                    CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
-                }
+        if (isBoiledWater)
+        {
+
+            if ((LeftHand == null || RightHand == null || LeftHand.name.Equals("WaterGlass") || RightHand.name.Equals("WaterGlass")) &&
+                GameObject.Find("Player").GetComponent<PlayerBehavior>().MovementSpeed > ((.1f - GameObject.Find("Player").GetComponent<PlayerBehavior>().strength) * 5))
+            {
+                CauldronPopup.GetChild(4).GetComponent<Button>().interactable = true;
             }
             else
             {
                 CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+            }
+
+            int requiredNoodleCount = 3;
+            if (((LeftHand != null && LeftHand.name.Equals("Noodles") && LeftHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) ||
+                (RightHand != null && RightHand.name.Equals("Noodles") && RightHand.GetComponent<ItemBehavior>().ItemCount >= requiredNoodleCount) ||
+                (LeftHand != null && RightHand != null && LeftHand.name.Equals("Noodles") && RightHand.name.Equals("Noodles") &&
+                ((LeftHand.GetComponent<ItemBehavior>().ItemCount + RightHand.GetComponent<ItemBehavior>().ItemCount) >= requiredNoodleCount))))
+            {
+                CauldronPopup.GetChild(3).GetComponent<Button>().interactable = true;
+            }
+            else
+            {
                 CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
             }
+        }
+        else
+        {
+            CauldronPopup.GetChild(4).GetComponent<Button>().interactable = false;
+            CauldronPopup.GetChild(3).GetComponent<Button>().interactable = false;
         }
     }
 
@@ -260,6 +269,11 @@ public class CauldronBehavior : MonoBehaviour
         checkForHighlights();
         CauldronPopup.gameObject.SetActive(true);
         isCollidingWithPlayer = true;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        checkForHighlights();
     }
 
     private void OnTriggerExit2D(Collider2D collision)

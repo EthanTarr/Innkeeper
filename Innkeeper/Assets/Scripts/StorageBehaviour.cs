@@ -108,7 +108,19 @@ public class StorageBehaviour : MonoBehaviour
 
     public bool contains(Sprite Object)
     {
-        return LeftObject.GetComponent<SpriteRenderer>().sprite.Equals(Object) || CenterObject.GetComponent<SpriteRenderer>().sprite.Equals(Object) || RightObject.GetComponent<SpriteRenderer>().sprite.Equals(Object);
+        if (LeftObject != null && LeftObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return true;
+        }
+        if (CenterObject != null && CenterObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return true;
+        }
+        if (RightObject != null && RightObject.GetComponent<SpriteRenderer>().sprite.Equals(Object))
+        {
+            return true;
+        }
+        return false;
     }
 
     public Transform retrieve(Sprite Object)
@@ -130,28 +142,56 @@ public class StorageBehaviour : MonoBehaviour
 
     public void Decode(int[] foods)
     {
-        LeftObject = Player.GetComponent<ResourceManager>().Foods[foods[0]];
-        CenterObject = Player.GetComponent<ResourceManager>().Foods[foods[1]];
-        RightObject = Player.GetComponent<ResourceManager>().Foods[foods[2]];
+        if (foods[0] >= 0)
+        {
+            LeftObject = Player.GetComponent<ResourceManager>().Foods[foods[0]];
+        }
+        else
+        {
+            LeftObject = null;
+        }
+        if (foods[0] >= 0)
+        {
+            CenterObject = Player.GetComponent<ResourceManager>().Foods[foods[1]];
+        }
+        else
+        {
+            CenterObject = null;
+        }
+        if (foods[0] >= 0)
+        {
+            RightObject = Player.GetComponent<ResourceManager>().Foods[foods[2]];
+        }
+        else
+        {
+            RightObject = null;
+        }
     }
 
     public int[] Encode()
     {
         int[] temp = new int[3];
-        int count = 0;
-        foreach(Transform food in Player.GetComponent<ResourceManager>().Foods)
+        for(int i = 0; i < 3; i++)
         {
-            if(LeftObject != null && LeftObject.name.Equals(food.name))
+            temp[i] = -1;
+        }
+        if(Player == null)
+        {
+            Player = GameObject.Find("Player").transform;
+        }
+        for(int i = 0; i < Player.GetComponent<ResourceManager>().Foods.Count; i++)
+        {
+            if(LeftObject != null && LeftObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[0] = count;
+                temp[0] = i;
             }
-            if (CenterObject != null && CenterObject.name.Equals(food.name))
+            if (CenterObject != null && CenterObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[1] = count;
+                temp[1] = i;
             }
-            if (RightObject != null && RightObject.name.Equals(food.name))
+            if (RightObject != null && RightObject.name.Equals(Player.GetComponent<ResourceManager>().Foods[i].name))
             {
-                temp[2] = count;
+                temp[2] = i;
             }
         }
         return temp;

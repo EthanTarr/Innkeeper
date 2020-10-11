@@ -41,13 +41,21 @@ public class CustomerRequestBehavior : MonoBehaviour
             Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
             Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
             if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
-                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)))
+                (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite)) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && LeftPlayerObject != null) ||
+                (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null))
             {
                 this.GetComponent<Button>().interactable = true;
             }
             else
             {
                 this.GetComponent<Button>().interactable = false;
+            }
+
+            if(Customer.GetComponent<CustomerBehavior>().checkMealSprites(this.GetComponent<Image>().sprite))
+            {
+                this.GetComponent<Image>().sprite = Customer.GetComponent<CustomerBehavior>().PossibleMeals[1].GetComponent<SpriteRenderer>().sprite;
             }
         }
     }
@@ -59,7 +67,7 @@ public class CustomerRequestBehavior : MonoBehaviour
     {
         Transform LeftPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().LeftHandObject;
         Transform RightPlayerObject = GameObject.Find("Player").GetComponent<PlayerBehavior>().RightHandObject;
-        if (LeftPlayerObject != null || RightPlayerObject != null)
+        if (LeftPlayerObject != null || RightPlayerObject != null || Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand"))
         {
             if((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
                 (RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
@@ -73,7 +81,7 @@ public class CustomerRequestBehavior : MonoBehaviour
                 }
                 else
                 {
-                    int otherItemIndex = 3;
+                    /*int otherItemIndex = 3;
                     int originalOtherRequestCount = 1;
                     int otherRequestCount = 1;
                     if (this.transform.parent.transform.childCount == 5)
@@ -84,35 +92,33 @@ public class CustomerRequestBehavior : MonoBehaviour
                         {
                             otherItemIndex = 4;
                         }
-                    }
-
+                    }*/
                     int RequestCount = int.Parse(this.transform.GetChild(0).GetComponent<Text>().text);
                     if ((LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) || 
                         (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && LeftPlayerObject != null))
                     {
                         RequestCount = satisfyRequest(LeftPlayerObject, this.transform, RequestCount);
                     }
-                    else if (LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
+                    /*else if (LeftPlayerObject != null && LeftPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
                     {
                         otherRequestCount = satisfyRequest(LeftPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
-                    }
-
-                    if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
-                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && RequestCount > 0))
+                    }*/
+                    if (((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.GetComponent<Image>().sprite)) ||
+                        (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null)) && RequestCount > 0)
                     {
                         RequestCount = satisfyRequest(RightPlayerObject, this.transform, RequestCount);
                     }
-                    else if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite)) ||
+                    /*else if ((RightPlayerObject != null && RightPlayerObject.GetComponent<SpriteRenderer>().sprite.Equals(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite)) ||
                         (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Any Meal Will Do") && !Player.GetComponent<GameManager>().canAnyMeal && RightPlayerObject != null && otherRequestCount > 0))
                     {
                         otherRequestCount = satisfyRequest(RightPlayerObject, this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
-                    }
+                    }*/
 
-                    if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite))
+                    if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.GetComponent<Image>().sprite) && RequestCount > 0)
                     {
                         RequestCount = satisfyRequest(Player.GetComponent<GameManager>().StorageTableRetrieve(this.GetComponent<Image>().sprite), this.transform, RequestCount);
                     }
-                    else if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
+                    /*else if (Player.GetComponent<PlayerBehavior>().PlayerSkills.Contains("Inn, My Hand") && Player.GetComponent<GameManager>().StorageTableContains(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite))
                     {
                         otherRequestCount = satisfyRequest(Player.GetComponent<GameManager>().StorageTableRetrieve(this.transform.parent.transform.GetChild(otherItemIndex).GetComponent<Image>().sprite), this.transform.parent.transform.GetChild(otherItemIndex), otherRequestCount);
                     }
@@ -122,7 +128,7 @@ public class CustomerRequestBehavior : MonoBehaviour
 
                         ReduceSize(); //change UI to fit less items
                         Destroy(this.transform.parent.transform.GetChild(otherItemIndex).gameObject); //Destroy this gameobject
-                    }
+                    }*/
 
                     if (RequestCount <= 0)
                     {

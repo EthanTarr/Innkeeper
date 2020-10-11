@@ -33,6 +33,14 @@ public class Unlocks : MonoBehaviour
             cauldron.GetComponent<CauldronPopupBehavor>().activatePasta();
         }
         gm.DoorPopup.GetComponent<DoorPopupBehavior>().activatePasta();
+        for (int i = 0; i < gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).childCount; i++)
+        {
+            if (gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).name.Equals("Flour"))
+            {
+                gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).gameObject.SetActive(true);
+                break;
+            }
+        }
     }
 
     public void unlockAcidFlys()
@@ -43,5 +51,13 @@ public class Unlocks : MonoBehaviour
         gm.CraftingPopup.GetComponent<CraftingPopupBehavior>().activateFlys();
         gm.PurchaseBoxPupup.GetComponent<PurchasePopupBehavior>().activateFlys();
         gm.DoorPopup.GetComponent<DoorPopupBehavior>().activateFlys();
+        for (int i = 0; i < gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).childCount; i++)
+        {
+            if (gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).name.Equals("Jar"))
+            {
+                gm.MarketScreen.GetChild(1).GetChild(0).GetChild(0).GetChild(i).gameObject.SetActive(true);
+                break;
+            }
+        }
     }
 }

@@ -7,14 +7,14 @@ public class Save
 {
     public List<string> PlayerSkills = new List<string>();
     public List<string> Purchases = new List<string>();
-    public float MovementSpeed = 15f;
+    public float MovementSpeed = 1.5f;
     public float PreviousXp = 0;
     public float xp = 0;
     public int Level = 0;
     public int money = 0;
 
     public float SpawnTimerIncreaseAmount = .92f;
-    public int DayCount = 0;
+    public int DayCount = 1;
     public int DayTimeLimit = 80;
     public int DayStartDelay = 15;
     public float xpBarPercentage = 0;
@@ -31,6 +31,8 @@ public class Save
     public string GlassWaterCreationDescription = "<b>Glass of Water</b> - <color=#F7D64A>(5)</color> Glasses of Boiled Water collected and heated in your cauldron. Standard stuff.";
     public int DisSatisfiedCustomerCounters = 3;
     public float CustomerSatisfactionXpBonus = 50f;
+    public bool DashIndicator = false;
+    public bool AnyMealWillDoIndicator = false;
 
     public int FruitGain = 2; 
     public int WaterGain = 1; 
@@ -53,6 +55,7 @@ public class Save
     public int DrakeChance = 50;
     public int GoblinChance = 0;
     public int AntiniumChance = 50;
+    public bool StayAwhile = false;
 
     public List<int[]> TableFood = new List<int[]>();
     public List<bool> activeSkills = new List<bool>();

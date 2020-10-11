@@ -50,6 +50,9 @@ public class CustomerBehavior : MonoBehaviour
     private Slider MasterSlider;
     private Slider VoiceSlider;
 
+    private List<Sprite> Meals;
+    private List<Sprite> Meals2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,8 +83,8 @@ public class CustomerBehavior : MonoBehaviour
             thisCustomer = 6;
         }
         this.GetComponent<SpriteRenderer>().sprite = Customers[thisCustomer];
-        List<Sprite> Meals = new List<Sprite>();
-        List<Sprite> Meals2 = new List<Sprite>();
+        Meals = new List<Sprite>();
+        Meals2 = new List<Sprite>();
         if (Customers[thisCustomer].name.Equals("FrontDrake")) //drake
         {
             customer = "drake";
@@ -168,13 +171,14 @@ public class CustomerBehavior : MonoBehaviour
             this.GetComponent<AudioSource>().Play();
             //this.GetComponent<AudioSource>().clip = GoblinSounds[Random.Range(1,2)];
         }
+        
         int popupIndex = 3;
         if (HungerValue > 1)
         {
             Sprite RequestedItem = Meals2[UnityEngine.Random.Range(0, Meals2.Count)];
             this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).GetComponent<Image>().sprite = RequestedItem;
             this.GetComponent<PopUpObjectBehavior>().Popup.GetChild(popupIndex).transform.GetChild(0).GetComponent<Text>().text = "" + HungerValue / 2;
-            popupIndex++;
+            popupIndex += 2;
         }
         if (HungerValue % 2 == 1)
         {
@@ -273,6 +277,10 @@ public class CustomerBehavior : MonoBehaviour
             Player.GetComponent<GameManager>().Timers.Add(myTimer);
             myTimer.GetComponent<TimerBehavior>().startCounting(LifeTimer);
             sitTime = Time.time;
+            if (Random.value > .5f)
+            {
+                Player.GetComponent<GameManager>().PlayerVoiceSounds.Order();
+            }
             Invoke("DisapointedCustomer", LifeTimer);
         }
         else
@@ -315,5 +323,18 @@ public class CustomerBehavior : MonoBehaviour
         node--;
         Destination = Path[node];
         node--;
+    }
+
+    public bool checkMealSprites(Sprite current)
+    {
+        bool ret = true;
+        foreach (Transform meal in PossibleMeals)
+        {
+            if(meal.GetComponent<SpriteRenderer>().sprite.Equals(current))
+            {
+                ret = false;
+            }
+        }
+        return ret;
     }
 }

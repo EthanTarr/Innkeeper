@@ -24,7 +24,7 @@ public class SkillBehavior : MonoBehaviour
         {
             return player.lifts / 5000;
         }
-        else if (this.gameObject.name.Equals("Basic Preparation") || this.gameObject.name.Equals("Advanced Prepation"))
+        else if (this.gameObject.name.Equals("Basic Preparation") || this.gameObject.name.Equals("Advanced Preparation"))
         {
             return player.chopped / 10;
         }

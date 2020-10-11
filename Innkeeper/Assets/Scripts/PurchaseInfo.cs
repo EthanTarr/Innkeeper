@@ -8,6 +8,7 @@ public class PurchaseInfo : MonoBehaviour
     private PlayerBehavior Player;
 
     public int Cost = 0;
+    public int StartingCost = 0;
     
     // Start is called before the first frame update
     void Start()
@@ -18,7 +19,7 @@ public class PurchaseInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
+        
     }
 
     public void updateCost()
@@ -30,8 +31,12 @@ public class PurchaseInfo : MonoBehaviour
 
     public void Purchase()
     {
+        if(Player == null)
+        {
+            Player = GameObject.Find("Player").GetComponent<PlayerBehavior>();
+        }
         Player.money -= Cost;
         GameObject.Find("UI Out").GetComponent<AudioSource>().Play();
-        Destroy(this.transform.parent.gameObject);
+        this.transform.parent.gameObject.SetActive(false);
     }
 }

@@ -28,7 +28,7 @@ public class ClockBehavior : MonoBehaviour
     {
         int Time = Player.TimelineCount;
 
-        if(Time > 0)
+        if(Time > 0 && Time < Player.DayTimeLimit)
         {
             if(Time < Player.DayTimeLimit / 3)
             {
